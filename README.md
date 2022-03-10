@@ -1,5 +1,7 @@
 # ProjScope Tasks 
 
+![Dashboard](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard.PNG) 
+
 Projscope Tasks is free, offline, clean and simple task management tool, built with Kanban methodology in mind! 🚀
 
 At this moment available for Windows and Linux and I consider it as my contribution to the community. I also plan release Mac version in the future.
@@ -23,7 +25,4 @@ It has clean and simple design and yet functional for achieving your goals. As i
 **Others**
 
 - Analytics: https://analytics.google.com/analytics/web/?authuser=0#/dashboard/ccG9TnLmT9maLk5ur6h7Dw/a46448109w208234858p200742617/
-- public releases being uploaded to (after CI/CD run): https://github.com/jviaches/projscope-tasks
-
-
-![Dashboard](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard.PNG) 
+- Public releases being uploaded to (after CI/CD run): https://github.com/jviaches/projscope-tasks
