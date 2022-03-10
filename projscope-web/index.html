@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="description" content="Free offline kanban board">
+	<meta name="keywords" content="kanban, kanban tool, free kanban tool, task manager, free task manager, offline task manager, offline kanban tool, where I can find free kanban tool, offline kanban board">
+
+    <title>Projscope Tasks - Offline Kanban tool</title>
+    <!-- favicon CSS -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alice" rel="stylesheet">
+    <!-- custom fonts -->
+    <link href="fonts/aileron.css" rel="stylesheet">
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="css/plugins.min.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="css/app.css">
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="css/custom.css">
+	
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-46448109-3"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-46448109-3');
+	</script>
+	
+	
+</head>
+
+<body class="" data-spy="scroll" data-target="#navbar-nav">
+
+    <!-- =========== Preloader Start ============ -->
+    <div class="preloader-main">
+        <div class="preloader-wapper">
+            <svg class="preloader" xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="200">
+                <defs>
+                    <filter id="goo" x="-40%" y="-40%" height="200%" width="400%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" result="goo" />
+                    </filter>
+                </defs>
+                <g filter="url(#goo)">
+                    <circle class="dot bg-fill-primary " cx="50" cy="50" r="25" />
+                    <circle class="dot" cx="50" cy="50" r="25" fill="#4c83ff" />
+                </g>
+            </svg>
+            <div>
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+            </div>
+        </div>
+    </div>
+    <!-- =========== Preloader End ============ -->
+    
+    <div class="main">
+        <!-- =========== Start of Navigation (main menu) ============ -->
+        <header class="navbar navbar-sticky navbar-expand-lg navbar-light">
+            <div class="container position-relative">
+                <a class="navbar-brand mr-70" href="index.html">
+                    <img class="navbar-brand__regular" src="img/brand-logo-color.png" alt="brand-logo">
+                    <img class="navbar-brand__sticky" src="img/brand-logo-color.png" alt="sticky brand-logo">
+                </a>
+                <!--  End of brand logo -->
+                <button class="navbar-toggler d-lg-none" type="button" data-toggle="navbarToggler" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- end of Nav toggler -->
+
+                <div class="navbar-inner mr-auto">
+                    <!--  Nav close button inside off-canvas/ mobile menu -->
+                    <button class="navbar-toggler d-lg-none" type="button" data-toggle="navbarToggler" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- end of Nav Toggoler -->
+                    <nav>
+                        <ul class="navbar-nav" id="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#features">Features</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#faq">FAQ</a>
+                            </li>
+                        </ul>
+                        <!-- end of nav menu items -->
+                    </nav>
+                </div>
+            </div>
+            <!-- end of container -->
+        </header>
+        <!-- =========== End of Navigation (main menu)  ============ -->
+        
+        <!-- =========== Start of Hero ============ -->
+        <section class="space-bottom--lg hero">
+            <div>
+                <img src="img/hero-6.svg" alt="hero bg" class="svg pos-abs-top hero__tri-svg">
+            </div>
+            <!-- end Of SVG background -->
+
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-lg-4 mb-50 mb-lg-0">
+                        <div class="d-lg-flex align-items-lg-center position-relative">
+                            <div class="hero-content">
+                                <h1 class="hero__title font-w-900 mb-10 text-uppercase">Plan. <br> Adapt. <br> Manage!</h1>
+                                    <p class="font-size-21 mb-20">Free offline task management tool, in a Kanban way!</p>
+									<a href="download.html" class="btn btn--bg-primary btn-3d-hover btn-splash-hover"><span class="btn__text">Download</span></a>
+                            </div>
+                            <!-- end of content -->
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-7 offset-lg-1">
+                        <div class="position-relative">
+                        <picture><img class="rounded-lg box-shadow-2" src="img/main-UI.png" alt="main-screen"></picture>
+                    </div>
+                    </div>
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+        </section>
+        <!-- =========== End of Hero ============ -->
+        
+        <!-- =========== Start of Features ============ -->
+        <section class="space-bottom" id="features">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-9 mx-auto">
+                        <div class="section-title reveal text-center mb-80 mb-sm-50">
+                            <h3 class="mb-3"><b>Task management</b>, in a Kanban way!</h3>
+                            <p class="lead"><b>Projscope Tasks</b> is a clean and simple task management tool build with Kanban methodology in mind! Dragging a task between areas will speed up task management and improve overall clarity.</p>
+                        </div>
+                        <!-- end of section title -->
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="features features--slider reveal">
+                            <div class="sub-header">
+                                <div class="swipe-tabs">
+                                    <div class="swipe-tab text-left">
+                                        <div class="swipe-tab__inner d-inline-flex flex-column align-items-center text-center">
+                                            <span class="tab__icon">
+                                                <img src="img/icon-drag.png" alt="icon">
+                                            </span>
+                                            <span class="tab__title font-size-21 font-weight-bold">Clean UI</span>
+                                        </div>
+                                    </div>
+                                    <!-- end of tab one -->
+                                    <div class="swipe-tab text-center">
+                                        <div class="swipe-tab__inner d-inline-flex flex-column align-items-center text-center">
+                                            <span class="tab__icon d-flex flex-column">
+                                                <img src="img/icon-settings.png" alt="icon">
+                                            </span>
+                                            <span class="tab__title font-size-21 font-weight-bold">Offline</span>
+                                        </div>
+                                    </div>
+                                    <!-- end of two one -->
+
+                                    <div class="swipe-tab text-right">
+                                        <div class="swipe-tab__inner d-inline-flex flex-column align-items-center text-center">
+                                            <span class="tab__icon">
+                                                <img src="img/icon-responsive.png" alt="icon">
+                                            </span>
+                                            <span class="tab__title font-size-21 font-weight-bold">Multiplatform</span>
+                                        </div>
+                                    </div>
+                                    <!-- end of tab three -->
+                                </div>
+                            </div>
+                            <!-- end of tabs -->
+                            <div class="main-container">
+                                <div class="swipe-tabs-container">
+                                    <div class="swipe-tab-content d-lg-flex justify-content-md-between align-items-center">
+                                        <picture class="features--tab__image">
+                                            <img src="img/features-1.svg" alt="browser-image">
+                                        </picture>
+                                        <div class="tab-content">
+                                            <h4 class="tab-content__title mb-30">Clean and simple UI</h4>
+                                            <ul class="tab-content__list">
+												<li>
+													<p>This task manager differentiates itself by design with minimalism and efficiency in mind, allowing free of easy task management.</p>
+												</li>
+                                                <li>
+                                                    <p>Our tool currently has 4 sections [<i>Backlog, To Do, In progress, Done</i>] which reflects the four stages of Kanban methodology.</p>
+                                                </li>
+                                                <li>
+                                                    <p>Once you have tasks, you can easily drag & drop them between sections reflecting each project status and updates.</p>
+                                                </li>
+												<li>
+                                                    <p>Ability to set task priority will provide indication which task should be prioritized first.</p>
+                                                </li>
+                                            </ul>
+                                            <div class="testimonial">                                                
+												 <span class="font-weight-bold">*We will be adding more functionality and features over time.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end of first tab content -->
+                                    <div class="swipe-tab-content d-lg-flex justify-content-md-between align-items-center">
+                                        <picture class="features--tab__image">
+                                            <img src="img/online-protection.svg" alt="browser-image">
+                                        </picture>
+                                        <div class="tab-content">
+                                            <h4 class="tab-content__title mb-30">Fully Offline</h4>
+                                            <ul class="tab-content__list">
+                                                <li>
+                                                    <p>In noways reality most of the apps and services running in a cloud, creating opportunity for data breach and dependency in service provider.</p>
+                                                </li>
+                                                <li>
+                                                    <p>This product was build in a different mind set where you the only data owner and you do not need to rely neigher on weak Internet signal (to be exact on any Internet signal :) ) nor on service provider.</p>
+                                                </li>
+												<li>
+													<p>You in control of your data.</b>
+												 </li>
+                                            </ul>
+                                            <div class="testimonial">
+                                                <span class="font-weight-bold">*We might explore future possibilities for cross-device project management.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end of second tab content -->
+                                    <div class="swipe-tab-content d-lg-flex justify-content-md-between align-items-center">
+                                        <picture class="features--tab__image">
+                                            <img src="img/feature-3.svg" alt="browser-image">
+                                        </picture>
+                                        <div class="tab-content">
+                                            <h4 class="tab-content__title mb-30">Different OS, same UI!</h4>
+                                            <ul class="tab-content__list">
+                                                <li>
+                                                    <p>Projscope Tasks will support three major platforms: Windows, Mac and Linux.</p>
+                                                </li>
+                                                <li>
+                                                    <p>Currently Windows versions & Linux is released</p>
+                                                </li>
+												<li>
+													<p>Mac  will be released soon!</p>
+												</li>
+                                            </ul>
+                                            <!-- <div class="testimonial"> -->
+                                                <!-- <blockquote class="blockquote"> -->
+                                                    <!-- “Wow. I just updated my site and it was SO SIMPLE. I am blown away. You guys truly kick ass. Thanks for being so awesome. High fives!” -->
+                                                <!-- </blockquote> -->
+                                                <!-- <span class="font-weight-bold">James Duren, CTO, Fish & co</span> -->
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
+                                    <!-- end of third tab content -->
+                                </div>
+                            </div>
+                            <!-- end of tab/ features items -->
+                        </div>
+                        <!-- end of features -->
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+
+        </section>
+        <!-- =========== End of Features ============ -->
+
+        <!-- =========== Start of Content Block ============ -->
+        <section class="space-top pb-50 bg-color-grey">
+            <div class="container position-relative">
+                <div class="background-holder background-holder--circle">
+                    <img src="img/oval.svg" alt="oval" class="background-image-holder">
+                </div>
+                <!-- end of background-holder image -->
+                <div class="row flex-row-reverse">
+                    <div class="col-12 col-lg-6 ml-auto">
+                        <picture>
+                            <img src="img/blocks.png" alt="blocks">
+                        </picture>
+                    </div>
+                    <div class="col-12 col-lg-5 mt-lg-5 mt-0 reveal">
+                        <h3 class="mb-20">Crafted for solopreneurs and small projects</h3>
+                        <p class="mb-20">Regardless, if this being a hobby, a project or you wish to run your life by, </p>
+						<p class="mb-20">This tool will ideal to help you manage your hobby, pet projects or small business in efficient manner. </p>
+	                        <a href="download.html" class="btn btn--underline btn--color-primary btn-text-hover">
+                            <span class="btn__text">Download Now!</span>
+                        </a>
+
+                        <!-- <a href="#" class="btn btn--underline btn--color-primary btn-text-hover"> -->
+                            <!-- <span class="btn__text">See all blocks live</span> -->
+                        <!-- </a> -->
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+        </section>
+		
+		<section class="space bg-color-grey">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-6 mb-40 mb-lg-0">
+                        <picture>
+                            <img src="img/main-UI-dark.png" alt="build">
+                        </picture>
+                    </div>
+                    <div class="col-12 col-lg-5 ml-auto reveal">
+                        <h3 class="mb-30">Built for growth</h3>
+                        <p class="mb-30">- Task priority management</p>
+						<p class="mb-30">- Ability to search across all sections</p>
+						<p class="mb-30">- Light and Dark Themes</p>
+						<p class="mb-30">- Many others...</p>
+                        <a href="download.html" class="btn btn--underline btn--color-primary btn-text-hover">
+                            <span class="btn__text">Download Now!</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+        </section>
+		
+        <!-- =========== Start of FAQ ============ -->
+        <section class="space" id="faq">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-6 mx-auto">
+                        <div class="section-title reveal text-center mb-80 mb-sm-50 reveal">
+                            <h3 class="mb-3">Frequently Asked Questions</h3>
+                            <!-- <p class="lead">Millions of people around the world have already made xPider the place where their -->
+                                <!-- dream happens. </p> -->
+                        </div>
+                        <!-- end of section title -->
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+                <div class="row justify-content-between">
+                    <div class="col-12 col-xl-11 mx-auto">
+                        <div class="row justify-content-between reveal">
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">Is Projscope Tasks free of charge ?</h5>
+                                <p>This task manager differentiate itself by designed with minimalism and efficiency in mind, allowing <b>free of charge</b> task management.</p>
+                            </div>
+                            <!-- end of single item -->
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">How about future features ?</h5>
+                                <p>Projscope Tasks will periodically notify and automatically update if there is new version.</p>
+                            </div>
+                            <!-- end of single item -->
+                        </div>
+                        <!-- end of single col -->
+                        <div class="row justify-content-between reveal">
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">I see Windows 10 prevent app from running message </h5>
+                                <p>First of all nothing to be afraid of. This is standard Windows 10 protection procedure and it requires certificate purchase( > $500) yearly.</p>
+								<br>
+								<p>Since this Projscope Tasks is free of charge, we need to find revenue channels in  the future to address it.</p>
+								<br>
+								<p>So for now hit <i><b>Click More Info link</b></i> in mentioned message and then click on <i><b>Run anyway</b></i> button.</p>
+                            </div>
+                            <!-- end of single item -->
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">Why Projscope Tasks ?</h5>
+                                <p>Most task management tools are online and it is clear overkill when it is one man project or small team of individuals but one focal point on tasks.</p>
+								<br>
+								<p>Projscope Tasks was developed for personal needs to manage variety of small software projects. It easily performs both with software and non software task management needs.</p>
+								<br>
+								<p>This software will be periodically updated with new features and bug fixes.</p>
+                            </div>
+                            <!-- end of single item -->
+                        </div>
+                        <!-- end of single col -->
+                        <div class="row justify-content-between reveal">
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">Is there plans for paid version ?</h5>
+                                <p>Currently Projscope Tasks is provided AS IS, free of charge. Paid version might be evaluated in the future.</p>
+                            </div>
+                            <!-- end of single item -->
+                            <div class="col-12 col-md-6 mb-40 px-lg-4">
+                                <h5 class="mb-2">I have and idea or business proposition</h5>
+                                <p>Ideas, business propositions, bug fixes requests and other please send to <a href="mailto:support@projscope.com" class="color-primary"> support@projscope.com</a></p>
+                            </div>
+                            <!-- end of single item -->
+                        </div>
+                        <!-- end of single col -->
+                    </div>
+                </div>
+                <!-- end of row -->
+                <div class="row">
+                    <div class="col-12 text-md-center mt-20 reveal">
+                        <span>Still have a question? Reach out to: <a href="mailto:support@projscope.com" class="color-primary"> support@projscope.com</a></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+	<!-- =========== End of FAQ ============ -->
+
+        <!-- =========== Start of News Letter ============ -->
+   
+		<section class="space-bottom--xl bg-color-grey hero">
+            <div class="background-holder background-holder--bottom background-holder--auto" style="background-image: url(&quot;img/hero-3.png&quot;); background-repeat: no-repeat;">
+                <img src="img/hero-3.png" alt="oval" class="background-image-holder" style="display: none;">
+            </div>
+            <!-- end of background-holder image -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-lg-flex align-items-lg-center position-relative text-center">
+                            <div class="hero-content mx-auto">
+                                <h1 class="hero__title">Stay up to-date!</h1>
+                                <p class="lead hero__description">Subscribe to our Projscope news letter and you will be notified about upcoming changes. We can assure you, we won't bombard you with the messages! </p>
+                                <div class="hero-form position-relative" id="mc_embed_signup">
+                                    <!-- <form action="https://Projscope.us6.list-manage.com/subscribe/post?u=83cdd2ae0bdad41e17f5e9bce&amp;id=04259331fc" class="form form-subscription form--sm mb-10"  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate> -->
+                                        <!-- <div class="input-group mb-3 mb-sm-0"> -->
+                                            <!-- <input type="email" class="form-control" id="mce-EMAIL" placeholder="Enter your email to start" required=""> -->
+                                        <!-- </div> -->
+                                        <!-- <button class="btn btn--submit btn--bg-primary btn-splash-hover" name="subscribe" id="mc-embedded-subscribe" type="submit">Subscribe</button> -->
+                                    <!-- </form>		 -->
+
+									<iframe class="mj-w-res-iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://app.mailjet.com/widget/iframe/70sC/K3X" width="100%"></iframe>
+																		
+                                </div>
+                            </div>
+                            <!-- end of content -->
+                        </div>
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+        </section>
+	<!--End Banner Section-->
+       
+
+        <!-- =========== Start of footer height emulator============ -->
+        <!-- this height emulator helps to calculate the fixed footer height  -->
+        <div class="height-emulator d-none d-lg-block"></div>
+        <!-- =========== End of footer height emulator============ -->
+
+        <!-- =========== Start of Footer ============ -->
+        <footer class="footer footer--fixed">
+            <div class="pt-80 pb-80 border-bottom-light">
+                <div class="container">
+                    <div class="button-group flex-column flex-sm-row align-items-center justify-content-center">
+						<a href="download.html" class="btn btn--bg-primary btn-3d-hover btn-splash-hover"><span class="btn__text">Download</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="py-5">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-12 col-lg-4 mb-20 mb-lg-0 text-center text-lg-left">
+                            <span class="mb-20"><a href="index.html"><img src="img/brand-logo-color.png" alt="logo"></a></span>
+                            <p class="color-light-secondary-2">© Projscope 2021,
+                                <br> All rights reserved.</p>
+                        </div>
+                        <!-- end of col -->
+                        <div class="col-12 col-lg-4 mb-20 mb-lg-0">
+                            <nav class="nav justify-content-center">
+                                <ul class="d-flex mb-md-0">
+                                    <!-- <li><a href="#" class="font-w-400">Status</a></li> -->
+                                    <!-- <li><a href="#" class="font-w-400">Privacy & Terms</a></li> -->
+                                    <li><a href="mailto:support@projscope.com" class="font-w-400">Contact Us</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- end of col -->
+                        <div class="col-12 col-lg-4 mb-20 mb-lg-0 ml-auto">
+                            <ul class="social-lists d-flex justify-content-center justify-content-lg-end mb-0">
+                                <!-- <li><a href="#"><i class="fa fa-facebook"></i></a></li> -->
+                                <li><a href="https://twitter.com/ProjScope" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                <!-- <li><a href="#"><i class="fa fa-dribbble"></i></a></li> -->
+                                <!-- <li><a href="#"><i class="fa fa-youtube-play"></i></a></li> -->
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- end of row -->
+                </div>
+                <!-- end of container -->
+            </div>
+            <!-- end of main footer -->
+        </footer>
+        <!-- =========== End of Footer ============ -->
+    </div>
+    <!-- =========== End of Main (Body) ============ -->
+
+    <script src="js/plugins.min.js"></script>
+    <script src="js/app.js"></script>
+	<script type="text/javascript" src="https://app.mailjet.com/statics/js/iframeResizer.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+<div class="yes-no-modal-dialog">
+    <h2 mat-dialog-title>Confirmation</h2>
+
+    <mat-dialog-content>
+        <p>{{additionalMessage}}</p>
+        <p></p>
+        <p>Are you sure ?</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+        <button class="mat-raised-button" (click)="yes()">
+            Yes
+        </button>
+        <button class="mat-raised-button" (click)="no()">
+            No
+        </button>
+    </mat-dialog-actions>
+</div>

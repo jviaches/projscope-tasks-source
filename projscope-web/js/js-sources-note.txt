@@ -1,0 +1,4 @@
+We have compress all the plugins into one file to load the site faster. If you need the source plugins of this template you can download from the link below-
+
+JS PLUGIN SOURCE: 
+http://uxtheme.website/template-source-files/xpider-sources/plugins.zip

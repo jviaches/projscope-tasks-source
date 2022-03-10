@@ -1,0 +1,15 @@
+<router-outlet></router-outlet>
+<article id="notification" class="message is-small hidden">
+  <div class="message-header">
+    <p>Update {{updateName}} ready!</p>
+    <button class="delete is-small" aria-label="delete" (click)="closeNotification()"></button>
+  </div>
+  <div class="message-body">A New Version has been Downloaded. Restart Now to Complete the Update. <b>Restart now?</b>
+  </div>
+  <div class="centered-equally">
+    <button class="button is-small" (click)="closeNotification()">Close</button>
+    <button (click)="restartApp()" class="button is-small">
+      Restart
+    </button>
+  </div>
+</article>

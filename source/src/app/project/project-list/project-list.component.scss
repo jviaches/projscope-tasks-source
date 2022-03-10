@@ -1,0 +1,113 @@
+.centerall {
+  height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  color: rgba(152, 152, 152, 0.43); /*IconColor*/
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  font-size: 40px;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  font-weight: bold;
+  background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+  background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    0 2px 2px rgba(0, 0, 0, 0.19);
+  border-bottom: solid 2px #b5b5b5;
+}
+.btn .fa {
+  line-height: 80px;
+}
+.btn:active {
+  /*onClick*/
+  background-image: -webkit-linear-gradient(#efefef 0%, #d6d6d6 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 2px rgba(0, 0, 0, 0.19);
+  border-bottom: none;
+}
+
+// ul {
+//   list-style-type: none;
+// }
+a {
+   text-decoration: none;
+   outline: none;
+}
+
+// /*main menu*/
+// .main-menu {
+//   float: left;
+//   position: absolute;
+//   min-height: 100%;
+//   width: 590px;
+// }
+
+// .main-menu.open .main-menu-form:after {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   right: 0;
+//   width: 1px;
+//   height: 100%;
+//   background-color: #ebf0f7;
+//   box-shadow: 0px 0px 6px 1px rgba(93, 173, 226, 0.7);
+// }
+// .main-menu-form {
+//   position: absolute;
+//   top: 20%;
+//   left: 0;
+//   width: 300px;
+//   height: 20%;
+//   background: #283747;
+// }
+
+/*main menu content*/
+// .main-menu-content {
+//   position: relative;
+//   padding: 35px 55px 35px 25px;
+//   font: normal 16px/1.25 'Open Sans';
+// }
+// .main-menu.open .main-menu-content {
+//   z-index: 1002;
+// }
+// .main-menu-logo h2 {
+//   font-size: 28px;
+//   opacity: 0;
+// }
+
+// .main-menu-nav {
+//   margin-top: 40%;
+// }
+
+// .main-menu-nav a {
+//   display: inline-block;
+//   padding: 10px 15px;
+//   font-size: 20px;
+//   color: #5DADE2;
+// }
+
+// .main-menu.open .main-menu-nav a:hover {
+//   color: #3498DB;
+// }
+
+// .main-content {
+//   padding: 35px 55px 35px 350px;
+//   padding-top: 10%;
+// }
+
+// .main-content .posts li {
+//   margin: 10px 0;
+// }

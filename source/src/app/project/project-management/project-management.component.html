@@ -1,0 +1,175 @@
+<div>
+   <div class="app" *ngIf="project !== null">
+    <main class="project">
+      <div class="project-info">
+        <div class="project-title" style="display: flex" *ngIf="!editProjectName">
+          <h1>{{ project.name }}</h1>
+          <i class="fas fa-pen" (click)="setProjectNameEditMode()"></i>
+        </div>
+
+        <div *ngIf="editProjectName" style="display: flex">
+          <form class="example-form">
+            <mat-form-field class="example-full-width">
+              <mat-label>Project Name</mat-label>
+              <input
+                matInput
+                name="projName"
+                [(ngModel)]="project.name"
+              />
+            </mat-form-field>
+          </form>
+          <i class="fas fa-save" (click)="setProjectNameEditMode()"></i>
+        </div>
+
+        <div class="project-participants">
+          <button class="project-participants__add" (click)="createTask()">
+            Add Participant
+          </button>
+        </div>
+      </div>
+
+      <div class="is-two-thirds" style="margin-bottom: 20px;">
+        <div>
+          <form class="example-form">
+            <mat-form-field class="example-full-width">
+              <mat-label>Search</mat-label>
+              <input matInput
+                    aria-label="search"
+                    #autoCompleteInput
+                    [matAutocomplete]="auto"
+                    [formControl]="searchTasksCtrl">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let taskSection of filteredTasks | async" [value]="taskSection.taskName" (click)="viewTaskById(taskSection.taskId, taskSection.sectionId)">
+                    <span
+                    class="priority"
+                    [style.background-color]="taskSection.taskPriorityColor"
+                    style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"></span>
+                  <span>{{taskSection.taskName}}</span> |
+                  <small>{{taskSection.sectionName}}</small>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+    
+          </form>
+        </div>
+      </div>
+      <div class="project-tasks">
+        <div class="project-column" *ngFor="let section of project.sections">
+          <div class="section-title">
+            <div>
+              <span
+                matBadge="{{ sectionId(section.orderIndex) }}"
+                matBadgeOverlap="true">
+                {{ section.name }}
+              </span>
+            </div>
+          </div>
+          <div
+            cdkDropList
+            class="section"
+            [id]="'cdk-drop-list-' + section.orderIndex"
+            [cdkDropListData]="sectionsTasks['cdk-drop-list-' + section.orderIndex]"
+            [cdkDropListConnectedTo]="sectiondIds"
+            (cdkDropListDropped)="taskDrop($event)">
+            <div
+              class="task"
+              *ngFor="let task of sectionsTasks['cdk-drop-list-' + section.orderIndex]"
+              cdkDrag
+              (dblclick)="viewTask(task, section.orderIndex)"
+              [style.border-color]="setTaskColor(task.priority)">
+              <div class="task__tags">
+                <span></span>
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="viewTask(task, section.orderIndex)">
+                    <i class="far fa-clipboard"></i>
+                    <span> Details</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteTask(task.id, section.orderIndex)">
+                    <i class="far fa-trash-alt"></i>
+                    <span> Delete</span>
+                  </button>
+                </mat-menu>
+              </div>
+              <p>{{ task.title }}</p>
+              <div class="task__stats">
+                <span><i class="far fa-calendar-plus"         
+                  matTooltip="Creation date"
+                  aria-label="Task creation date"></i>   {{ task.creationDate | date: 'mediumDate' }}</span>
+                <!-- <span><i class="fas fa-comment"></i>2</span>
+                  <span><i class="fas fa-paperclip"></i>5</span>
+                  <span class='task__owner'></span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <aside class="task-details">
+      <div class="tag-progress">
+        <h2>
+          <b>Project Progress - {{ projectCopletionPecentage }}%</b>
+        </h2>
+        <div class="tag-progress columns">
+          <progress
+            class="progress progress--copyright is-7"
+            max="100"
+            value="{{ projectCopletionPecentage }}"
+          ></progress>
+        </div>
+      </div>
+
+      <!-- <div class='tag-progress'>
+        <h2><b>Tags</b> (drag on task)</h2>
+        <div>
+          <input class="input is-small" type="text" placeholder="Add new tag.." style="margin-bottom: 16px;">
+
+          <mat-chip-list class="example-chip" [id]="tagsList" cdkDropList (cdkDropListDropped)="tagDrop($event)">
+            <mat-chip class="example-box" cdkDrag *ngFor="let tag of tags">
+              {{tag.name}}
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+      </div> -->
+
+      <div>
+        <h2><b>Priority agenda</b></h2>
+        <div style="display: flex; flex-wrap: wrap;">
+          <div
+            style="flex: 50%; width: 100%;"
+            *ngFor="let color of utilsService.priorityColors | keyvalue">
+            <span
+              class="priority"
+              [style.background-color]="color.key"
+              style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"
+            ></span>
+            <span>{{ color.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tag-progress">
+        <h2><b>Notes</b></h2>
+        <div>
+          <quill-editor
+            id="editor"
+            [styles]="editorStyle"
+            [modules]="quillConfiguration"
+            (onContentChanged)="onContentChanged($event)"
+            required
+            [(ngModel)]="project.notes"
+          ></quill-editor>
+        </div>
+      </div>
+
+      <div style="display:flex;">
+        <h2 style="margin-right: 20px;"><b>Theme</b></h2>
+        <mat-slide-toggle [(ngModel)]="isLightTheme" (change)="changedTheme()"></mat-slide-toggle>
+      </div>
+        
+    </aside>
+  </div>
+  <!-- <a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a> -->
+</div>

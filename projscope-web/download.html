@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Projscope Tasks - Download Offline Kanban tool</title>
+	<meta name="description" content="Free offline kanban board">
+	<meta name="keywords" content="kanban, kanban tool, free kanban tool, task manager, free task manager, offline task manager, offline kanban tool, where I can find free kanban tool, offline kanban board">
+    <!-- favicon CSS -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alice" rel="stylesheet">
+    <!-- custom fonts -->
+    <link href="fonts/aileron.css" rel="stylesheet">
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="css/plugins.min.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="css/app.css">
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="css/custom.css">
+	
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-46448109-3"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-46448109-3');
+	</script>
+</head>
+
+<body class="" data-spy="scroll" data-target="#navbar-nav">
+    <div class="main">
+        <!-- =========== Start of Navigation (main menu) ============ -->
+        <header class="navbar navbar-expand-lg navbar-light">
+            <div class="container position-relative">
+                <a class="navbar-brand mx-auto mt-2 mt-md-3 text-center" href="index.html">
+                    <img class="navbar-brand__regular" src="img/brand-logo-color.png" alt="brand-logo">
+                    <img class="navbar-brand__sticky" src="img/brand-logo-color.png" alt="sticky brand-logo">
+                </a>
+            </div>
+            <!-- end of container -->
+        </header>
+        <!-- =========== End of Navigation (main menu)  ============ -->
+
+
+        <!-- =========== Start of Download ============ -->
+        <section class="space">
+            <div class="background-holder reveal">
+                <img src="img/pricing-bg.svg" alt="pattern" class="background-image-holder">
+            </div>
+            <div class="container">
+                <!-- end of row -->
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+                        <div class="card text-center mb-40 reveal">
+                            <div class="header pt-30 pb-30 border-bottom-light">
+								<i class="fa fa-windows" aria-hidden="true" style="font-size: 10rem;"></i>
+                            </div>
+                            <div class="body pb-40 pt-30 pr-30 pl-30">
+                                <a id="download_win" href="#" class="btn btn--outline btn-3d-hover btn-splash-hover">
+                                    <span class="btn__text">Windows</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of col -->
+                    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+                        <div class="card text-center mb-40 reveal">
+                            <div class="header pt-30 pb-30 border-bottom-light">
+								<i class="fa fa-apple" aria-hidden="true" style="font-size: 10rem;"></i>
+                            </div>
+                            <div class="body pb-40 pt-30 pr-30 pl-30" style="pointer-events: none; opacity: 0.6;">
+                                <a id="download_mac" href="#" class="btn btn--outline btn-3d-hover btn-splash-hover">
+                                    <span class="btn__text">Mac - Comming soon!</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+					<div class="col-12 col-md-6 col-lg-5 col-xl-4">
+                        <div class="card text-center mb-40 reveal">
+                            <div class="header pt-30 pb-30 border-bottom-light">
+								<i class="fa fa-linux fa-10" aria-hidden="true" style="font-size: 10rem;"></i>
+                            </div>
+                            <div class="body pb-40 pt-30 pr-30 pl-30">
+                                <a id="download_linux" href="#" class="btn btn--outline btn-3d-hover btn-splash-hover">
+                                    <span class="btn__text">Linux</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-center reveal">
+                        <h1 class="color-primary h3-font mb-20">Your download should begin automatically.</h1>
+                        <p> it doesn’t start automatically, <a id="download_link" href="#" class="btn-text-hover"> please click here to downlaod manually.</a></p>
+                        <a href="index.html" class="btn btn--bg-primary btn-splash-hover btn-3d-hover mt-40"><i class="fa fa fa-long-arrow-left mr-20"></i><span class="btn__text">Go Back</span></a>
+                        </div>
+                    </div>
+                    <!-- end of col -->
+                </div>
+                <!-- end of row -->
+            </div>
+            <!-- end of container -->
+        </section>
+        <!-- =========== End of Download ============ -->
+
+    </div>
+    <script src="js/plugins.min.js"></script>
+    <script src="js/app.js"></script>
+	<script>
+		function getOS() {
+		  var userAgent = window.navigator.userAgent,
+		  platform = window.navigator.platform,
+		  macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+		  windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+		  iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+		  os = null;
+
+		  if (macosPlatforms.indexOf(platform) !== -1) {
+			//os = 'Mac OS';
+			//os = 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-Setup-1.1.0.exe';			
+		  } else if (iosPlatforms.indexOf(platform) !== -1) {
+			//os = 'iOS';			
+		  } else if (windowsPlatforms.indexOf(platform) !== -1) {
+			//os = 'Windows';
+			os = 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-Setup-1.1.0.exe';		
+		  } else if (/Android/.test(userAgent)) {
+			os = 'Android';
+		  } else if (!os && /Linux/.test(platform)) {
+			//os = 'Linux';
+			os = 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-1.1.0.AppImage';		
+		  }
+		  
+		  document.getElementById("download_link").setAttribute("href",os);
+		  document.getElementById("download_win").setAttribute("href", 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-Setup-1.1.0.exe');
+		  //document.getElementById("download_mac").setAttribute("href", 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-Setup-1.1.0.exe');
+		  document.getElementById("download_linux").setAttribute("href", 'https://github.com/jviaches/projscope-tasks/releases/download/v1.1.0/Projscope-Tasks-1.1.0.AppImage');
+		  setTimeout(function () { window.location = os; }, 3000)
+		}
+		
+		getOS();
+	</script>	
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="687" height="367" viewBox="0 0 687 367">
+  <defs>
+    <rect id="oval-a" width="775" height="370"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(-14)">
+    <mask id="oval-b" fill="#fff">
+      <use xlink:href="#oval-a"/>
+    </mask>
+    <circle cx="357.5" cy="23.5" r="340.5" stroke="#F6F8F9" stroke-width="6" mask="url(#oval-b)" opacity=".645"/>
+  </g>
+</svg>
