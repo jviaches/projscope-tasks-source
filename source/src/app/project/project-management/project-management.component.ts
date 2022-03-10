@@ -40,7 +40,7 @@ export class ProjectManagementComponent implements OnInit {
   public connectedSections: Array<string> = [];
   public sectionsTasks: Dictionary<string> = {};
   public editProjectName: boolean = false;
-  public isLightTheme =  this.electronService.getActiveThemeId() === 1;
+  public isLightTheme = this.electronService.getActiveThemeId() === 1;
 
   searchTasksCtrl = new FormControl();
   taskSections: TaskSection[] = [];
@@ -69,22 +69,22 @@ export class ProjectManagementComponent implements OnInit {
     public utilsService: UtilsService,
   ) {
     this.filteredTasks = this.searchTasksCtrl.valueChanges
-    .pipe(
-      startWith(''),
-      map(task => task ? this._filterTasks(task) : this.taskSections.slice())
-    );
+      .pipe(
+        startWith(''),
+        map(task => task ? this._filterTasks(task) : this.taskSections.slice())
+      );
   }
-  
+
   ngOnInit(): void {
 
     this.electronService.project.subscribe((project) => {
-        this.project = project;
-        this.recalculateData();
-      },
-      (error) => {}
+      this.project = project;
+      this.recalculateData();
+    },
+      (error) => { }
     );
   }
-  
+
   changedTheme() {
     if (this.isLightTheme) {
       this.electronService.updateTheme(1);
@@ -143,7 +143,7 @@ export class ProjectManagementComponent implements OnInit {
       const prevSectionId = Number(event.previousContainer.id.replace("cdk-drop-list-", ""));
       const movedTask: Task = <Task>(event.container.data[event.currentIndex] as unknown);
 
-      const taskIndex = this.project.sections[Number(prevSectionId) - 1].tasks.indexOf(movedTask); 
+      const taskIndex = this.project.sections[Number(prevSectionId) - 1].tasks.indexOf(movedTask);
       if (taskIndex !== -1) {
         this.project.sections[Number(prevSectionId) - 1].tasks.splice(taskIndex, 1);
       }
@@ -187,7 +187,7 @@ export class ProjectManagementComponent implements OnInit {
   }
 
   viewTask(task: Task, sectionIndex: number) {
-    sectionIndex -=1;
+    sectionIndex -= 1;
     this.notificationService
       .showModalComponent(TaskViewComponent, "", { task, sectionIndex })
       .subscribe((result) => {
@@ -196,7 +196,7 @@ export class ProjectManagementComponent implements OnInit {
 
           for (let index = 0; index < this.project.sections.length; index++) {
             const section = this.project.sections[index];
-            const indexResult = section.tasks.findIndex((task) => task.id === viewedTask.id );
+            const indexResult = section.tasks.findIndex((task) => task.id === viewedTask.id);
 
             if (indexResult !== -1) {
               // task found
@@ -219,8 +219,8 @@ export class ProjectManagementComponent implements OnInit {
                 this.recalculateData();
               }
 
-              if (section.orderIndex-1 !== result.section.value) {
-                
+              if (section.orderIndex - 1 !== result.section.value) {
+
                 //remove task from a prev section 
                 this.project.sections[index].tasks.splice(indexResult, 1);
 
@@ -274,7 +274,7 @@ export class ProjectManagementComponent implements OnInit {
         this.connectedSections.push("cdk-drop-list-" + section.orderIndex)
       );
       this.project.sections.map((section) =>
-          (this.sectionsTasks["cdk-drop-list-" + section.orderIndex] = [])
+        (this.sectionsTasks["cdk-drop-list-" + section.orderIndex] = [])
       );
 
       this.project.sections.forEach((section) => {
@@ -288,9 +288,9 @@ export class ProjectManagementComponent implements OnInit {
     for (let index = 0; index < this.project.sections.length; index++) {
       const section = this.project.sections[index];
       section.tasks.forEach(task => {
-        this.taskSections.push( {
+        this.taskSections.push({
           sectionId: section.orderIndex,
-          sectionName: section.name,          
+          sectionName: section.name,
           taskId: task.id,
           taskName: task.title,
           taskPriorityColor: this.setTaskColor(task.priority)
