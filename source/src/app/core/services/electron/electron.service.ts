@@ -504,7 +504,7 @@ export class ElectronService {
 
   // app settings
   private saveAppSettings() {
-    this.fs.writeFile('settings.cfg', JSON.stringify(this.appSettings), (err) => {
+    this.fs.writeFile('settings.json', JSON.stringify(this.appSettings), (err) => {
       if (err) {
         console.log(err);
         return;
@@ -513,7 +513,7 @@ export class ElectronService {
   }
 
   private loadAppSettings() {
-    this.fs.readFile('settings.cfg', "utf-8", (err, data) => {
+    this.fs.readFile('settings.json', "utf-8", (err, data) => {
       if (err) {
         this.appSettings = new AppSettings();
         this.themeService.setActiveThemeById(1);
