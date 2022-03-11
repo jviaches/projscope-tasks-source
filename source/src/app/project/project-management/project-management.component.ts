@@ -332,6 +332,16 @@ export class ProjectManagementComponent implements OnInit {
     }
   }
 
+  deleteSection(sectionId: number) {
+    this.notificationService.showYesNoModalMessage("").subscribe
+      ((result) => {
+        if (result === "yes") {
+          this.project.sections = this.project.sections.filter(sec => sec.orderIndex != sectionId);
+          this.recalculateData();
+        }
+      });
+  }
+
   private getTaskById(taskId: number): Task {
     let foundTask = null;
 
