@@ -18,6 +18,15 @@ Currently it provides core functionality (have lo-o-ong roadmap ahead):
 
 It has clean and simple design and yet functional for achieving your goals. As it is an initial version, there are a lot of exciting features on their way! To name just a few:
 
+**Collaboration:**
+
+Collaboration is highly welcomed in any form:
+- Designer ? Help us create most appealing UI!
+- Developer ? Bug fixes, refactoring, peer review and new features awaits you!
+- Tester ? Show us where we can improve!
+
+Regardless of your background feel free to roll up your sleeves and make this software one of the kind!
+
 **Scripts:**
 - Build for Production: `npm run build`
 - Deploy for Production: `npm run deploy`
