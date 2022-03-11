@@ -7,6 +7,7 @@
 }
 
 .section {
+  max-width: 250px;
   min-height: 200px;
   border-radius: 5px;
   box-shadow: 0.5px 0.5px #d3d3d3;
@@ -67,13 +68,21 @@
 }
 
 .section {
-  min-height: 350px;
+  min-height: 400px;
+  max-width: 250px;
+  min-width: 250px;
   word-break: break-all;
 }
 
 .section-title {
   display: flex;
   justify-content: space-between;
+  max-width: 250px;
+}
+
+.menu {
+  display: flex;
+  align-items: flex-start;
 }
 
 .priority {
