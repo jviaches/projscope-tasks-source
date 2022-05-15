@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { SelectionItem } from "../../core/models/priority.model";
-import { Project } from "../../core/models/project.model";
-import { ElectronService } from "../../core/services";
-import { NotificationService } from "../../core/services/notification.service";
-import { UtilsService } from "../../core/services/utils.service";
+import {Component, Inject, OnInit} from "@angular/core";
+import {MatDialogRef, MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {SelectionItem} from "../../core/models/priority.model";
+import {Project} from "../../core/models/project.model";
+import {ElectronService} from "../../core/services";
+import {NotificationService} from "../../core/services/notification.service";
+import {UtilsService} from "../../core/services/utils.service";
 
 @Component({
   selector: "app-task-view",
@@ -24,8 +24,8 @@ export class TaskViewComponent implements OnInit {
     toolbar: [
       ["bold", "italic", "underline", "strike"],
       // ['blockquote', 'code-block'],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{list: "ordered"}, {list: "bullet"}],
+      [{header: [1, 2, 3, 4, 5, 6, false]}],
       // [{ color: [] }, { background: [] }],
       // ['link'],
       // ['clean'],

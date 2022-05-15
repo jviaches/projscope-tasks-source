@@ -8,14 +8,15 @@
     </h1>
 
   </div>
-  <input [(ngModel)]="caption" class="input" type="text" placeholder="Caption" style="margin-bottom: 5px" />
+  <input [(ngModel)]="caption" class="input" type="text" placeholder="Caption" style="margin-bottom: 5px"/>
 
   <form style="display: flex; justify-content: space-between">
     <mat-form-field appearance="legacy" style="width: 48%">
       <mat-label>Priority</mat-label>
       <mat-select [(ngModel)]="selectedPriority" name="priority">
         <mat-option *ngFor="let priority of utilsService.priorities" [value]="priority"
-          [ngStyle]="{'border-color': this.utilsService.getColorByPriority(priority.viewValue)}" class="task-priority">
+                    [ngStyle]="{'border-color': this.utilsService.getColorByPriority(priority.viewValue)}"
+                    class="task-priority">
           {{ priority.viewValue }}
         </mat-option>
       </mat-select>
@@ -32,7 +33,7 @@
   </form>
 
   <quill-editor id="editor" [styles]="editorStyle" [modules]="quillConfiguration" [(ngModel)]="editorText"
-    (onContentChanged)="onContentChanged($event)" required></quill-editor>
+                (onContentChanged)="onContentChanged($event)" required></quill-editor>
 
   <div style="margin-top: 20px">
     <button mat-raised-button (click)="updateTask()" style="margin-right: 10px" [disabled]="caption === ''">

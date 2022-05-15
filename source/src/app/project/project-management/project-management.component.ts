@@ -1,19 +1,19 @@
-import { AfterViewChecked, Component, OnInit, ViewChild } from "@angular/core";
+import {AfterViewChecked, Component, OnInit, ViewChild} from "@angular/core";
 import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { Project, Tag, Task } from "../../core/models/project.model";
-import { NotificationService } from "../../core/services/notification.service";
-import { TaskViewComponent } from "../../task/task-view/task-view.component";
-import { ElectronService } from "../../core/services";
-import { Priority, PriorityColor } from "../../core/models/priority.model";
-import { UtilsService } from "../../core/services/utils.service";
-import { FormControl } from '@angular/forms';
-import { Observable } from "rxjs";
-import { map, startWith } from 'rxjs/operators';
-import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import {Project, Tag, Task} from "../../core/models/project.model";
+import {NotificationService} from "../../core/services/notification.service";
+import {TaskViewComponent} from "../../task/task-view/task-view.component";
+import {ElectronService} from "../../core/services";
+import {Priority, PriorityColor} from "../../core/models/priority.model";
+import {UtilsService} from "../../core/services/utils.service";
+import {FormControl} from '@angular/forms';
+import {Observable} from "rxjs";
+import {map, startWith} from 'rxjs/operators';
+import {MatAutocompleteTrigger} from "@angular/material/autocomplete";
 
 interface Dictionary<T> {
   [Key: string]: Task[];
@@ -34,7 +34,7 @@ export interface TaskSection {
 })
 export class ProjectManagementComponent implements OnInit {
 
-  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger }) autoComplete: MatAutocompleteTrigger;
+  @ViewChild('autoCompleteInput', {read: MatAutocompleteTrigger}) autoComplete: MatAutocompleteTrigger;
 
   public project: Project = null;
   public connectedSections: Array<string> = [];
@@ -51,8 +51,8 @@ export class ProjectManagementComponent implements OnInit {
     toolbar: [
       ["bold", "italic", "underline", "strike"],
       // ['blockquote', 'code-block'],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{list: "ordered"}, {list: "bullet"}],
+      [{header: [1, 2, 3, 4, 5, 6, false]}],
       // [{ color: [] }, { background: [] }],
       // ['link'],
       // ['clean'],
@@ -78,10 +78,11 @@ export class ProjectManagementComponent implements OnInit {
   ngOnInit(): void {
 
     this.electronService.project.subscribe((project) => {
-      this.project = project;
-      this.recalculateData();
-    },
-      (error) => { }
+        this.project = project;
+        this.recalculateData();
+      },
+      (error) => {
+      }
     );
   }
 
@@ -97,7 +98,7 @@ export class ProjectManagementComponent implements OnInit {
     return Object.keys(this.sectionsTasks);
   }
 
-  public get projectCopletionPecentage(): Number {
+  public get projectCopletionPercentage(): Number {
     let taskAmount = 0;
     this.project.sections.map((a) => (taskAmount += a.tasks.length));
 
@@ -111,12 +112,12 @@ export class ProjectManagementComponent implements OnInit {
   }
 
   tags: Tag[] = [
-    { id: 1, name: "Ui design", color: "blue" },
-    { id: 2, name: "First Bug", color: "red" },
-    { id: 3, name: "Wont Fix", color: "yellow" },
+    {id: 1, name: "Ui design", color: "blue"},
+    {id: 2, name: "First Bug", color: "red"},
+    {id: 3, name: "Wont Fix", color: "yellow"},
   ];
 
-  taskDrop(event: CdkDragDrop<string[]>) {
+  taskDrop(event: CdkDragDrop<Task[], any>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -173,7 +174,7 @@ export class ProjectManagementComponent implements OnInit {
     //     event.item.element.nativeElement.textContent +
     //     `' + dropped on ` +
     //     event.container.id
-    // ); 
+    // );
 
     // transferArrayItem(event.previousContainer.data,
     //      event.container.data,
@@ -189,7 +190,7 @@ export class ProjectManagementComponent implements OnInit {
   viewTask(task: Task, sectionIndex: number) {
     sectionIndex -= 1;
     this.notificationService
-      .showModalComponent(TaskViewComponent, "", { task, sectionIndex })
+      .showModalComponent(TaskViewComponent, "", {task, sectionIndex})
       .subscribe((result) => {
         if (result !== "FAIL") {
           const viewedTask = this.getTaskById(task.id);
@@ -221,7 +222,7 @@ export class ProjectManagementComponent implements OnInit {
 
               if (section.orderIndex - 1 !== result.section.value) {
 
-                //remove task from a prev section 
+                //remove task from a prev section
                 this.project.sections[index].tasks.splice(indexResult, 1);
 
                 //add task to new a section
@@ -304,15 +305,15 @@ export class ProjectManagementComponent implements OnInit {
     }
   }
 
-  sectionId(id: string): Number {
+  sectionId(id: number): Number {
     return this.sectionsTasks["cdk-drop-list-" + id]
       ? this.sectionsTasks["cdk-drop-list-" + id].length
       : 0;
   }
 
-  taskPriority(task: Task) {
-    return task ? task.priority : "";
-  }
+  // taskPriority(task: Task) {
+  //   return task ? task.priority : "";
+  // }
 
   setTaskColor(priority: Priority): PriorityColor {
     if (priority == Priority.Minor) {
@@ -334,12 +335,12 @@ export class ProjectManagementComponent implements OnInit {
 
   deleteSection(sectionId: number) {
     this.notificationService.showYesNoModalMessage("").subscribe
-      ((result) => {
-        if (result === "yes") {
-          this.project.sections = this.project.sections.filter(sec => sec.orderIndex != sectionId);
-          this.recalculateData();
-        }
-      });
+    ((result) => {
+      if (result === "yes") {
+        this.project.sections = this.project.sections.filter(sec => sec.orderIndex != sectionId);
+        this.recalculateData();
+      }
+    });
   }
 
   private getTaskById(taskId: number): Task {

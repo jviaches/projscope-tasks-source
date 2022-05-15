@@ -11,7 +11,7 @@
           <form class="example-form">
             <mat-form-field class="example-full-width">
               <mat-label>Project Name</mat-label>
-              <input matInput name="projName" [(ngModel)]="project.name" />
+              <input matInput name="projName" [(ngModel)]="project.name"/>
             </mat-form-field>
           </form>
           <i class="fas fa-save" (click)="setProjectNameEditMode()"></i>
@@ -30,12 +30,12 @@
             <mat-form-field class="example-full-width">
               <mat-label>Search</mat-label>
               <input matInput aria-label="search" #autoCompleteInput [matAutocomplete]="auto"
-                [formControl]="searchTasksCtrl">
+                     [formControl]="searchTasksCtrl">
               <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let taskSection of filteredTasks | async" [value]="taskSection.taskName"
-                  (click)="viewTaskById(taskSection.taskId, taskSection.sectionId)">
+                            (click)="viewTaskById(taskSection.taskId, taskSection.sectionId)">
                   <span class="priority" [style.background-color]="taskSection.taskPriorityColor"
-                    style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"></span>
+                        style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"></span>
                   <span>{{taskSection.taskName}}</span> |
                   <small>{{taskSection.sectionName}}</small>
                 </mat-option>
@@ -60,15 +60,15 @@
                 <button mat-menu-item (click)="deleteSection(section.orderIndex)">
                   <i class="far fa-trash-alt"></i>
                   <span> Delete</span>
-                </button>                
+                </button>
               </mat-menu>
             </div>
           </div>
           <div cdkDropList class="section" [id]="'cdk-drop-list-' + section.orderIndex"
-            [cdkDropListData]="sectionsTasks['cdk-drop-list-' + section.orderIndex]"
-            [cdkDropListConnectedTo]="sectiondIds" (cdkDropListDropped)="taskDrop($event)">
+               [cdkDropListData]="sectionsTasks['cdk-drop-list-' + section.orderIndex]"
+               [cdkDropListConnectedTo]="sectiondIds" (cdkDropListDropped)="taskDrop($event)">
             <div class="task" *ngFor="let task of sectionsTasks['cdk-drop-list-' + section.orderIndex]" cdkDrag
-              (dblclick)="viewTask(task, section.orderIndex)" [style.border-color]="setTaskColor(task.priority)">
+                 (dblclick)="viewTask(task, section.orderIndex)" [style.border-color]="setTaskColor(task.priority)">
               <div class="task__tags">
                 <span></span>
                 <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -101,11 +101,11 @@
     <aside class="task-details">
       <div class="tag-progress">
         <h2>
-          <b>Project Progress - {{ projectCopletionPecentage }}%</b>
+          <b>Project Progress - {{ projectCopletionPercentage }}%</b>
         </h2>
         <div class="tag-progress columns">
           <progress class="progress progress--copyright is-7" max="100"
-            value="{{ projectCopletionPecentage }}"></progress>
+                    value="{{ projectCopletionPercentage }}"></progress>
         </div>
       </div>
 
@@ -127,7 +127,7 @@
         <div style="display: flex; flex-wrap: wrap;">
           <div style="flex: 50%; width: 100%;" *ngFor="let color of utilsService.priorityColors | keyvalue">
             <span class="priority" [style.background-color]="color.key"
-              style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"></span>
+                  style="margin-right: 5px; border-radius: 5px 5px 5px; border: 1px solid gray;"></span>
             <span>{{ color.value }}</span>
           </div>
         </div>
@@ -137,7 +137,8 @@
         <h2><b>Notes</b></h2>
         <div>
           <quill-editor id="editor" [styles]="editorStyle" [modules]="quillConfiguration"
-            (onContentChanged)="onContentChanged($event)" required [(ngModel)]="project.notes"></quill-editor>
+                        (onContentChanged)="onContentChanged($event)" required
+                        [(ngModel)]="project.notes"></quill-editor>
         </div>
       </div>
 

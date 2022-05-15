@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ElectronService } from '../../core/services';
-import { ThemeService } from '../../core/services/theme.service';
+import {Component, OnInit} from '@angular/core';
+import {ElectronService} from '../../core/services';
+import {ThemeService} from '../../core/services/theme.service';
 
 // export interface PeriodicElement {
 //   name: string;
@@ -29,7 +29,8 @@ import { ThemeService } from '../../core/services/theme.service';
 })
 export class ProjectListComponent implements OnInit {
 
-  constructor(private themeService: ThemeService, private electronService: ElectronService) { }
+  constructor(private themeService: ThemeService, private electronService: ElectronService) {
+  }
 
   //displayedColumns: string[] = ['name', 'actions'];
   //dataSource = ELEMENT_DATA;
@@ -39,10 +40,10 @@ export class ProjectListComponent implements OnInit {
   }
 
   loadProject() {
-      this.electronService.loadProject().then(value => {
-        this.electronService.ipcRenderer.send('close-project-enable', true)
-        this.electronService.redirectTo('/project', false);
-      });
+    this.electronService.loadProject().then(value => {
+      this.electronService.ipcRenderer.send('close-project-enable', true)
+      this.electronService.redirectTo('/project', false);
+    });
   }
 
   newProject() {
@@ -50,10 +51,6 @@ export class ProjectListComponent implements OnInit {
       this.electronService.ipcRenderer.send('close-project-enable', true)
       this.electronService.redirectTo('/project', false);
     });
-
-    // this.electronService.newProject().then(value => {
-    //   this.router.navigateByUrl('/project');
-    // });
   }
 
   exitProject() {
