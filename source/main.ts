@@ -16,8 +16,7 @@ import { autoUpdater } from "electron-updater";
 let win: BrowserWindow = null;
 const args = process.argv.slice(1), serve = args.some((val) => val === "--serve");
 function createWindow(): BrowserWindow {
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
   win = new BrowserWindow({
@@ -27,14 +26,14 @@ function createWindow(): BrowserWindow {
     height: size.height,
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: serve ? true : false,
+      allowRunningInsecureContent: serve,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
     icon: "./src/assets/icons/favicon.ico",
   });
 
-  var menu = Menu.buildFromTemplate([
+  const menu = Menu.buildFromTemplate([
     {
       label: "File",
       submenu: [
@@ -123,7 +122,7 @@ function createWindow(): BrowserWindow {
 
   // Emitted when the window is closed.
   win.on("close", e => {
-    if (win) {      
+    if (win) {
       e.preventDefault();
       win.webContents.send("exit", null);
     }
@@ -142,7 +141,7 @@ function createWindow(): BrowserWindow {
     app.removeAllListeners("window-all-closed");
     app.removeAllListeners("exit");
     app.removeAllListeners("close");
-    
+
     autoUpdater.quitAndInstall();
     app.relaunch();
     app.exit(0);

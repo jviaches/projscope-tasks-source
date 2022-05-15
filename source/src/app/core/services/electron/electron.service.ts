@@ -262,6 +262,7 @@ export class ElectronService {
     this.setPageTitle(false);
     this.setLastTaskId(null);
     this.redirectTo("/", false);
+    this.loadAppSettings();
   }
 
   saveProject(content: any) {
