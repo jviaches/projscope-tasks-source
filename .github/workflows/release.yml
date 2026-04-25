@@ -29,7 +29,10 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build & publish
+      - name: Build Angular app + compile main.ts
+        run: npm run build:prod
+
+      - name: Package and publish
         run: npm run deploy:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +62,10 @@ jobs:
       - name: Install Linux packaging deps
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm
 
-      - name: Build & publish
+      - name: Build Angular app + compile main.ts
+        run: npm run build:prod
+
+      - name: Package and publish
         run: npm run deploy:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
