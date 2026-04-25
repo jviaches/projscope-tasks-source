@@ -47,16 +47,29 @@
       <div class="project-tasks">
         <div class="project-column" *ngFor="let section of project.sections">
           <div class="section-title">
-            <div>
+            <div class="section-title__label" *ngIf="editingSectionIndex !== section.orderIndex">
               <span matBadge="{{ sectionId(section.orderIndex) }}" matBadgeOverlap="true">
                 {{ section.name }}
               </span>
+              <i class="fas fa-pen" (click)="setSectionEditMode(section.orderIndex)"></i>
+            </div>
+            <div class="section-title__edit" *ngIf="editingSectionIndex === section.orderIndex">
+              <input class="section-name-input"
+                     [(ngModel)]="section.name"
+                     (keyup.enter)="setSectionEditMode(null)"
+                     (blur)="setSectionEditMode(null)"
+                     autofocus />
+              <i class="fas fa-save" (click)="setSectionEditMode(null)"></i>
             </div>
             <div class="menu">
               <button mat-icon-button [matMenuTriggerFor]="sectionMenu">
                 <i class="fas fa-ellipsis-h"></i>
               </button>
               <mat-menu #sectionMenu="matMenu">
+                <button mat-menu-item (click)="setSectionEditMode(section.orderIndex)">
+                  <i class="far fa-edit"></i>
+                  <span> Rename</span>
+                </button>
                 <button mat-menu-item (click)="deleteSection(section.orderIndex)">
                   <i class="far fa-trash-alt"></i>
                   <span> Delete</span>
@@ -86,6 +99,12 @@
                 </mat-menu>
               </div>
               <p>{{ task.title }}</p>
+              <div class="task__tag-chips" *ngIf="task.tags?.length > 0">
+                <span class="task-tag-chip" *ngFor="let tag of task.tags"
+                      [style.background-color]="tag.color">
+                  {{ tag.name }}
+                </span>
+              </div>
               <div class="task__stats">
                 <span><i class="far fa-calendar-plus" matTooltip="Creation date" aria-label="Task creation date"></i> {{
                   task.creationDate | date: 'mediumDate' }}</span>
@@ -109,18 +128,27 @@
         </div>
       </div>
 
-      <!-- <div class='tag-progress'>
-        <h2><b>Tags</b> (drag on task)</h2>
-        <div>
-          <input class="input is-small" type="text" placeholder="Add new tag.." style="margin-bottom: 16px;">
-
-          <mat-chip-list class="example-chip" [id]="tagsList" cdkDropList (cdkDropListDropped)="tagDrop($event)">
-            <mat-chip class="example-box" cdkDrag *ngFor="let tag of tags">
-              {{tag.name}}
-            </mat-chip>
-          </mat-chip-list>
+      <div class="tag-progress">
+        <h2><b>Tags</b></h2>
+        <mat-chip-list class="project-tags-list">
+          <mat-chip *ngFor="let tag of project.tags"
+                    [style.background-color]="tag.color"
+                    removable
+                    (removed)="deleteTag(tag)">
+            {{ tag.name }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+        <div class="tag-create">
+          <input class="section-name-input"
+                 placeholder="New tag name..."
+                 [(ngModel)]="newTagName"
+                 (keyup.enter)="createTag()" />
+          <button mat-icon-button (click)="createTag()" [disabled]="!newTagName.trim()">
+            <i class="fas fa-plus"></i>
+          </button>
         </div>
-      </div> -->
+      </div>
 
       <div>
         <h2><b>Priority agenda</b></h2>

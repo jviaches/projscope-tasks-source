@@ -333,7 +333,7 @@ export class ElectronService {
             title: result.caption,
             content: result.text,
             priority: result.priority.value,
-            tags: [],
+            tags: result.tags ?? [],
             orderIndex: result.section.value,
             creationDate: new Date(),
           };

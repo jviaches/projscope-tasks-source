@@ -11,7 +11,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { Project, Task } from "../../core/models/project.model";
+import { Project, Tag, Task } from "../../core/models/project.model";
 import { NotificationService } from "../../core/services/notification.service";
 import { TaskViewComponent } from "../../task/task-view/task-view.component";
 import { ElectronService } from "../../core/services";
@@ -48,6 +48,13 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   public connectedSections: Array<string> = [];
   public sectionsTasks: Dictionary = {};
   public editProjectName: boolean = false;
+  public editingSectionIndex: number | null = null;
+  private editingSectionOriginalName = '';
+  public newTagName = '';
+  private readonly tagColors = [
+    '#4CAF50', '#2196F3', '#FF9800', '#9C27B0',
+    '#F44336', '#00BCD4', '#FF5722', '#607D8B',
+  ];
   public isLightTheme = this.electronService.getActiveThemeId() === 1;
 
   searchTasksCtrl = new FormControl();
@@ -183,6 +190,14 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
                 this.recalculateData();
               }
 
+              const incomingTagIds = (result.tags as Tag[]).map((t) => t.id).sort().join(',');
+              const currentTagIds = section.tasks[indexResult]?.tags.map((t) => t.id).sort().join(',') ?? '';
+              if (incomingTagIds !== currentTagIds) {
+                section.tasks[indexResult].tags = result.tags;
+                this.electronService.setDataChange();
+                this.recalculateData();
+              }
+
               break;
             }
           }
@@ -208,6 +223,28 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
       this.electronService.updateProjectName(this.project.name);
     }
     this.editProjectName = !this.editProjectName;
+  }
+
+  setSectionEditMode(orderIndex: number | null) {
+    if (this.editingSectionIndex !== null) {
+      const section = this.project.sections.find(s => s.orderIndex === this.editingSectionIndex);
+      if (section) {
+        const trimmed = section.name.trim();
+        if (trimmed.length === 0) {
+          section.name = this.editingSectionOriginalName;
+        } else if (trimmed !== this.editingSectionOriginalName) {
+          section.name = trimmed;
+          this.electronService.setDataChange();
+        }
+        this.recalculateData();
+      }
+    }
+    if (orderIndex !== null) {
+      const section = this.project.sections.find(s => s.orderIndex === orderIndex);
+      this.editingSectionOriginalName = section?.name ?? '';
+    }
+    this.editingSectionIndex = orderIndex;
+    this.cdr.markForCheck();
   }
 
   private recalculateData() {
@@ -259,6 +296,30 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     if (priority === Priority.Normal) return PriorityColor.Normal;
     if (priority === Priority.High) return PriorityColor.High;
     if (priority === Priority.Critical) return PriorityColor.Critical;
+  }
+
+  createTag() {
+    const name = this.newTagName.trim();
+    if (!name) return;
+    const nextId = this.project.tags.length > 0
+      ? Math.max(...this.project.tags.map((t) => t.id)) + 1
+      : 1;
+    const color = this.tagColors[this.project.tags.length % this.tagColors.length];
+    this.project.tags.push({ id: nextId, name, color });
+    this.newTagName = '';
+    this.electronService.setDataChange();
+    this.cdr.markForCheck();
+  }
+
+  deleteTag(tag: Tag) {
+    this.project.tags = this.project.tags.filter((t) => t.id !== tag.id);
+    this.project.sections.forEach((section) => {
+      section.tasks.forEach((task) => {
+        task.tags = task.tags.filter((t) => t.id !== tag.id);
+      });
+    });
+    this.electronService.setDataChange();
+    this.recalculateData();
   }
 
   deleteSection(sectionId: number) {

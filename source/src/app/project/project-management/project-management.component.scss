@@ -77,7 +77,40 @@
 .section-title {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   max-width: 250px;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .fas.fa-pen {
+      visibility: hidden;
+    }
+
+    &:hover .fas.fa-pen {
+      visibility: visible;
+    }
+  }
+
+  &__edit {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.section-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--purple);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  width: 140px;
+  outline: none;
+  padding: 2px 4px;
 }
 
 .menu {
@@ -90,6 +123,36 @@
   width: 14px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.task__tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.task-tag-chip {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.project-tags-list {
+  margin-bottom: 10px;
+
+  .mat-chip {
+    color: #fff;
+  }
+}
+
+.tag-create {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
 }
 
 .example-form {
