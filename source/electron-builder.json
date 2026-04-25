@@ -3,6 +3,11 @@
   "directories": {
     "output": "release/"
   },
+  "publish": {
+    "provider": "github",
+    "owner": "jviaches",
+    "repo": "projscope-tasks-source"
+  },
     "files": [
         "**/*",
         "!**/*.ts",
