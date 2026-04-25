@@ -28,12 +28,14 @@
     "icon": "dist/assets/icons",
     "target": [
       {
-          "target": "nsis",
-          "arch": [
-              "x64",
-              "ia32"
-          ]
-      }]
+        "target": "nsis",
+        "arch": ["x64", "ia32"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ]
   },
   "mac": {
     "icon": "dist/assets/icons",
