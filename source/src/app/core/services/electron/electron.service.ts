@@ -57,6 +57,35 @@ export class ElectronService {
       this.systemUpdateMessage.next({ releaseNotes: null, releaseName: "" });
       this.loadAppSettings();
 
+      // Startup: main sends this after did-finish-load with CLI path or null.
+      // If a CLI path is provided it takes precedence; otherwise fall back to
+      // the last opened project stored in settings.
+      this.ipcRenderer.on("startup-load", (event, cliPath: string | null) => {
+        this.ngZone.run(() => {
+          const pathToLoad = cliPath || this.appSettings?.lastProjectPath || "";
+          if (!pathToLoad) return;
+
+          if (!this.fs.existsSync(pathToLoad)) {
+            if (!cliPath && this.appSettings) {
+              this.appSettings.lastProjectPath = "";
+              this.saveAppSettings();
+            }
+            return;
+          }
+
+          this.loadProjectFromPath(pathToLoad).then((value) => {
+            if (value) {
+              this.ipcRenderer.send("close-project-enable", true);
+              this.redirectTo("/project", false);
+            } else if (!cliPath && this.appSettings) {
+              // Auto-load failed — don't keep trying a bad path
+              this.appSettings.lastProjectPath = "";
+              this.saveAppSettings();
+            }
+          });
+        });
+      });
+
       this.ipcRenderer.on("new-project", (event, arg) => {
         this.ngZone.run(() => {
           this.newProject().then(() => {
@@ -188,6 +217,10 @@ export class ElectronService {
     this.dataChangeDetected = false;
     this.setPageTitle(false);
     this.setLastTaskId(null);
+    if (this.appSettings) {
+      this.appSettings.lastProjectPath = "";
+      this.saveAppSettings();
+    }
     this.redirectTo("/", false);
     this.loadAppSettings();
   }
@@ -236,6 +269,10 @@ export class ElectronService {
       this.ipcRenderer.send("close-project-enable", true);
       this.dataChangeDetected = false;
       this.setPageTitle(false);
+      if (this.appSettings) {
+        this.appSettings.lastProjectPath = filepath;
+        this.saveAppSettings();
+      }
     });
   }
 
@@ -252,35 +289,9 @@ export class ElectronService {
                 properties: ["openFile"],
                 filters: [{ name: "Project", extensions: ["prj"] }],
               });
-
-              this.fs.readFile(file[0], "utf-8", (err, data) => {
-                if (err) {
-                  this.notificationService.showModalMessage(
-                    "Load Error",
-                    `Failed to read file: ${err.message}`
-                  );
-                  resolve(null);
-                  return;
-                }
-                try {
-                  const decryptedContent = this.decrypt(data);
-                  const parsed = JSON.parse(decryptedContent);
-                  if (!this.isValidProject(parsed)) {
-                    throw new Error("Invalid project structure");
-                  }
-                  this.filePath = file[0];
-                  this.setPageTitle(false);
-                  this.setLastTaskId(parsed);
-                  this.project.next(parsed);
-                  resolve(this.project.value);
-                } catch (error) {
-                  this.notificationService.showModalMessage(
-                    "Error",
-                    "Incorrect or corrupted projscope file!"
-                  );
-                  resolve(null);
-                }
-              });
+              if (file) {
+                this.loadProjectFromPath(file[0]).then(resolve);
+              }
             }
           });
       } else {
@@ -288,38 +299,47 @@ export class ElectronService {
           properties: ["openFile"],
           filters: [{ name: "Project", extensions: ["prj"] }],
         });
-
         if (file !== undefined) {
-          this.fs.readFile(file[0], "utf-8", (err, data) => {
-            if (err) {
-              this.notificationService.showModalMessage(
-                "Load Error",
-                `Failed to read file: ${err.message}`
-              );
-              resolve(null);
-              return;
-            }
-            try {
-              const decryptedContent = this.decrypt(data);
-              const parsed = JSON.parse(decryptedContent);
-              if (!this.isValidProject(parsed)) {
-                throw new Error("Invalid project structure");
-              }
-              this.filePath = file[0];
-              this.setPageTitle(false);
-              this.setLastTaskId(parsed);
-              this.project.next(parsed);
-              resolve(this.project.value);
-            } catch (error) {
-              this.notificationService.showModalMessage(
-                "Error",
-                "Incorrect or corrupted projscope file!"
-              );
-              resolve(null);
-            }
-          });
+          this.loadProjectFromPath(file[0]).then(resolve);
         }
       }
+    });
+  }
+
+  loadProjectFromPath(filePath: string): Promise<Project> {
+    return new Promise<Project>((resolve) => {
+      this.fs.readFile(filePath, "utf-8", (err, data) => {
+        if (err) {
+          this.notificationService.showModalMessage(
+            "Load Error",
+            `Failed to read file: ${err.message}`
+          );
+          resolve(null);
+          return;
+        }
+        try {
+          const decryptedContent = this.decrypt(data);
+          const parsed = JSON.parse(decryptedContent);
+          if (!this.isValidProject(parsed)) {
+            throw new Error("Invalid project structure");
+          }
+          this.filePath = filePath;
+          this.setPageTitle(false);
+          this.setLastTaskId(parsed);
+          this.project.next(parsed);
+          if (this.appSettings) {
+            this.appSettings.lastProjectPath = filePath;
+            this.saveAppSettings();
+          }
+          resolve(this.project.value);
+        } catch (error) {
+          this.notificationService.showModalMessage(
+            "Error",
+            "Incorrect or corrupted projscope file!"
+          );
+          resolve(null);
+        }
+      });
     });
   }
 
