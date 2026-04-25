@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProjScope Tasks — Dashboard Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* ─── Reset & tokens ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0f1117;
+      --surface:     #181c24;
+      --surface-2:   #1f2430;
+      --surface-3:   #252b3a;
+      --border:      #2a3147;
+      --border-soft: #1e2638;
+      --text:        #e2e8f0;
+      --text-muted:  #7c8db5;
+      --text-dim:    #4a5680;
+      --accent:      #6c63ff;
+      --accent-glow: rgba(108,99,255,.25);
+      --accent-2:    #38bdf8;
+      --green:       #34d399;
+      --yellow:      #fbbf24;
+      --red:         #f87171;
+      --orange:      #fb923c;
+
+      --p1: #f87171; /* high   */
+      --p2: #fbbf24; /* medium */
+      --p3: #34d399; /* low    */
+      --p4: #94a3b8; /* none   */
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow:    0 4px 24px rgba(0,0,0,.4);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,.3);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top bar ───────────────────────────────────── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .topbar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .4px;
+    }
+    .logo__icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #fff;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+    }
+
+    .project-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      transition: background .15s;
+    }
+    .project-name-wrap:hover { background: var(--surface-2); }
+    .project-name-wrap span { color: var(--text); }
+    .project-name-wrap i { font-size: 10px; color: var(--text-dim); }
+
+    .topbar__center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 0 40px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      width: 340px;
+      height: 36px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .search-box i { color: var(--text-dim); font-size: 13px; }
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      width: 100%;
+    }
+    .search-box input::placeholder { color: var(--text-dim); }
+    .kbd {
+      font-size: 10px;
+      color: var(--text-dim);
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      white-space: nowrap;
+    }
+
+    .topbar__right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, background .15s;
+    }
+    .btn--primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+    .btn--primary:hover { opacity: .88; }
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn--ghost:hover { background: var(--surface-2); color: var(--text); }
+    .btn--icon {
+      padding: 6px 9px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .btn--icon:hover { background: var(--surface-2); color: var(--text); }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6c63ff, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ─── Stats strip ───────────────────────────────── */
+    .stats-strip {
+      display: flex;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 0;
+    }
+    .stat-card__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .stat-card__icon--purple { background: rgba(108,99,255,.15); color: var(--accent); }
+    .stat-card__icon--blue   { background: rgba(56,189,248,.15); color: var(--accent-2); }
+    .stat-card__icon--green  { background: rgba(52,211,153,.15); color: var(--green); }
+    .stat-card__icon--orange { background: rgba(251,146,60,.15);  color: var(--orange); }
+
+    .stat-card__info { min-width: 0; }
+    .stat-card__value {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .stat-card__label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+
+    .stat-card__trend {
+      margin-left: auto;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .trend--up   { color: var(--green); }
+    .trend--down { color: var(--red); }
+
+    /* ─── Progress bar (inline) ─────────────────────── */
+    .progress-ring-wrap {
+      margin-left: auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .progress-bar-thin {
+      width: 80px;
+      height: 6px;
+      background: var(--surface-3);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-thin__fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 99px;
+    }
+
+    /* ─── Main layout ───────────────────────────────── */
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ─── Board area ────────────────────────────────── */
+    .board-area {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .board-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .board-toolbar__left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .view-toggle {
+      display: flex;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .view-toggle button {
+      padding: 5px 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .view-toggle button.active {
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .filter-chip:hover, .filter-chip.active {
+      background: rgba(108,99,255,.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-chip .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    /* ─── Kanban columns ────────────────────────────── */
+    .board-columns {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      min-height: 0;
+    }
+
+    .column {
+      width: 272px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .column__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .column__header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .column__dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+    .column__name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .column__count {
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--surface-3);
+      padding: 1px 6px;
+      border-radius: 99px;
+    }
+    .column__menu {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: background .15s;
+    }
+    .column__menu:hover { background: var(--surface-3); color: var(--text-muted); }
+
+    .column__body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ─── Task cards ────────────────────────────────── */
+    .task-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s, transform .1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .task-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+    .task-card.p1::before { background: var(--p1); }
+    .task-card.p2::before { background: var(--p2); }
+    .task-card.p3::before { background: var(--p3); }
+    .task-card.p4::before { background: var(--p4); }
+
+    .task-card:hover {
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .task-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .task-card__title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+      flex: 1;
+    }
+    .task-card__menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 0 2px;
+      font-size: 12px;
+      transition: color .15s;
+      flex-shrink: 0;
+    }
+    .task-card__menu-btn:hover { color: var(--text-muted); }
+
+    .task-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .tag-pill {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 99px;
+      color: #fff;
+      letter-spacing: .2px;
+    }
+
+    .task-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .task-card__date {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .task-card__priority {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+    .task-card__priority.p1 { background: rgba(248,113,113,.12); color: var(--p1); }
+    .task-card__priority.p2 { background: rgba(251,191,36,.12);  color: var(--p2); }
+    .task-card__priority.p3 { background: rgba(52,211,153,.12);  color: var(--p3); }
+    .task-card__priority.p4 { background: rgba(148,163,184,.1);  color: var(--p4); }
+
+    /* add-task placeholder card */
+    .task-card--add {
+      background: transparent;
+      border: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 42px;
+      font-size: 12px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .task-card--add:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .task-card--add::before { display: none; }
+
+    /* add column */
+    .column--add {
+      width: 272px;
+      flex-shrink: 0;
+    }
+    .column--add-btn {
+      width: 100%;
+      padding: 10px 12px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      font-family: inherit;
+    }
+    .column--add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── Right sidebar ─────────────────────────────── */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      background: var(--surface);
+    }
+
+    .sidebar-section__title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 12px;
+    }
+
+    /* progress donut */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    svg.donut { transform: rotate(-90deg); }
+    .donut-info { display: flex; flex-direction: column; gap: 2px; }
+    .donut-pct { font-size: 26px; font-weight: 700; line-height: 1; }
+    .donut-sub { font-size: 11px; color: var(--text-muted); }
+
+    /* per-column progress */
+    .col-progress-list { display: flex; flex-direction: column; gap: 8px; }
+    .col-progress-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .col-progress-item__label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .col-progress-item__bar {
+      height: 5px;
+      background: var(--surface-3);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .col-progress-item__fill {
+      height: 100%;
+      border-radius: 99px;
+    }
+
+    /* tags list */
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 99px;
+      color: #fff;
+      cursor: default;
+    }
+    .tag-badge i { font-size: 9px; cursor: pointer; opacity: .7; }
+    .tag-badge i:hover { opacity: 1; }
+
+    .tag-add-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .tag-add-input {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .tag-add-input:focus { border-color: var(--accent); }
+    .tag-add-input::placeholder { color: var(--text-dim); }
+
+    /* priority legend */
+    .priority-legend { display: flex; flex-direction: column; gap: 6px; }
+    .priority-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .priority-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .priority-legend-item span:last-child { margin-left: auto; color: var(--text-dim); font-size: 11px; }
+
+    /* notes area */
+    .notes-area {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      min-height: 80px;
+      resize: none;
+      width: 100%;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .notes-area:focus { border-color: var(--accent); }
+
+    /* theme toggle */
+    .theme-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--surface-3);
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 2px; top: 2px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      transition: transform .2s, background .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: #fff; }
+
+    /* ─── Scrollbar ─────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border); }
+
+    /* ─── Hover tooltip-like label ───────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      background: var(--surface-3);
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-dim);
+      padding: 0 5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     TOP BAR
+═══════════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar__left">
+    <div class="logo">
+      <div class="logo__icon"><i class="fas fa-bolt"></i></div>
+      ProjScope Tasks
+    </div>
+    <div class="divider-v"></div>
+    <div class="project-name-wrap">
+      <span>Website Redesign</span>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </div>
+
+  <div class="topbar__center">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search tasks…" />
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+
+  <div class="topbar__right">
+    <button class="btn btn--ghost" style="font-size:12px;"><i class="fas fa-file-export"></i> Export</button>
+    <button class="btn btn--ghost" style="font-size:12px;"><i class="fas fa-cog"></i></button>
+    <button class="btn btn--primary"><i class="fas fa-plus"></i> Add Task</button>
+    <div class="avatar">VB</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     STATS STRIP
+═══════════════════════════════════════════════════ -->
+<div class="stats-strip">
+  <div class="stat-card">
+    <div class="stat-card__icon stat-card__icon--purple"><i class="fas fa-layer-group"></i></div>
+    <div class="stat-card__info">
+      <div class="stat-card__value">24</div>
+      <div class="stat-card__label">Total Tasks</div>
+    </div>
+    <div class="stat-card__trend trend--up"><i class="fas fa-arrow-up"></i> 3</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__icon stat-card__icon--blue"><i class="fas fa-spinner"></i></div>
+    <div class="stat-card__info">
+      <div class="stat-card__value">9</div>
+      <div class="stat-card__label">In Progress</div>
+    </div>
+    <div class="stat-card__trend trend--up"><i class="fas fa-arrow-up"></i> 2</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__icon stat-card__icon--green"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-card__info">
+      <div class="stat-card__value">11</div>
+      <div class="stat-card__label">Done</div>
+    </div>
+    <div class="stat-card__trend trend--up"><i class="fas fa-arrow-up"></i> 5</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__icon stat-card__icon--orange"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="stat-card__info">
+      <div class="stat-card__value">4</div>
+      <div class="stat-card__label">High Priority</div>
+    </div>
+    <div class="stat-card__trend trend--down"><i class="fas fa-arrow-down"></i> 1</div>
+  </div>
+  <div class="stat-card" style="flex:1.5">
+    <div class="stat-card__icon stat-card__icon--purple" style="background:none; width:auto; padding:0">
+      <span style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Project Progress</span>
+    </div>
+    <div class="progress-ring-wrap" style="flex:1; margin-left:12px;">
+      <div class="progress-bar-thin" style="flex:1; width:auto;">
+        <div class="progress-bar-thin__fill" style="width:46%;"></div>
+      </div>
+      <span style="font-size:13px; font-weight:600; color:var(--accent); white-space:nowrap;">46%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════════ -->
+<div class="main-layout">
+
+  <!-- ── Board ── -->
+  <div class="board-area">
+    <div class="board-toolbar">
+      <div class="board-toolbar__left">
+        <div class="view-toggle">
+          <button class="active"><i class="fas fa-columns"></i></button>
+          <button><i class="fas fa-list"></i></button>
+          <button><i class="fas fa-calendar-alt"></i></button>
+        </div>
+        <div style="width:1px; height:20px; background:var(--border);"></div>
+        <span class="filter-chip active"><span class="dot" style="background:#6c63ff;"></span> All</span>
+        <span class="filter-chip"><span class="dot" style="background:var(--p1);"></span> High</span>
+        <span class="filter-chip"><span class="dot" style="background:var(--p2);"></span> Medium</span>
+        <span class="filter-chip"><i class="fas fa-tag" style="font-size:9px;"></i> Design</span>
+      </div>
+      <button class="btn btn--ghost" style="font-size:12px;"><i class="fas fa-plus"></i> Add Section</button>
+    </div>
+
+    <div class="board-columns">
+
+      <!-- Column: Backlog -->
+      <div class="column">
+        <div class="column__header">
+          <div class="column__header-left">
+            <div class="column__dot" style="background:#7c8db5;"></div>
+            <span class="column__name">Backlog</span>
+            <span class="column__count">4</span>
+          </div>
+          <button class="column__menu"><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+        <div class="column__body">
+
+          <div class="task-card p2">
+            <div class="task-card__top">
+              <span class="task-card__title">Set up project repository and CI pipeline</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#6c63ff;">DevOps</span>
+              <span class="tag-pill" style="background:#0ea5e9;">Backend</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 20, 2026</span>
+              <span class="task-card__priority p2"><i class="fas fa-circle" style="font-size:6px;"></i> Medium</span>
+            </div>
+          </div>
+
+          <div class="task-card p4">
+            <div class="task-card__top">
+              <span class="task-card__title">Write onboarding documentation</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> May 2, 2026</span>
+              <span class="task-card__priority p4"><i class="fas fa-circle" style="font-size:6px;"></i> None</span>
+            </div>
+          </div>
+
+          <div class="task-card p3">
+            <div class="task-card__top">
+              <span class="task-card__title">Define color tokens and design system</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#a855f7;">Design</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 25, 2026</span>
+              <span class="task-card__priority p3"><i class="fas fa-circle" style="font-size:6px;"></i> Low</span>
+            </div>
+          </div>
+
+          <div class="task-card p1">
+            <div class="task-card__top">
+              <span class="task-card__title">Audit current accessibility issues</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#ef4444;">Urgent</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 22, 2026</span>
+              <span class="task-card__priority p1"><i class="fas fa-circle" style="font-size:6px;"></i> High</span>
+            </div>
+          </div>
+
+          <div class="task-card task-card--add"><i class="fas fa-plus" style="font-size:10px;"></i> Add task</div>
+        </div>
+      </div>
+
+      <!-- Column: In Progress -->
+      <div class="column">
+        <div class="column__header">
+          <div class="column__header-left">
+            <div class="column__dot" style="background:#38bdf8;"></div>
+            <span class="column__name">In Progress</span>
+            <span class="column__count">3</span>
+          </div>
+          <button class="column__menu"><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+        <div class="column__body">
+
+          <div class="task-card p1" style="border-color: var(--accent);">
+            <div class="task-card__top">
+              <span class="task-card__title">Redesign navigation component</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#a855f7;">Design</span>
+              <span class="tag-pill" style="background:#6c63ff;">Frontend</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 24, 2026</span>
+              <span class="task-card__priority p1"><i class="fas fa-circle" style="font-size:6px;"></i> High</span>
+            </div>
+          </div>
+
+          <div class="task-card p2">
+            <div class="task-card__top">
+              <span class="task-card__title">Implement tag system and filters</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#6c63ff;">Frontend</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 28, 2026</span>
+              <span class="task-card__priority p2"><i class="fas fa-circle" style="font-size:6px;"></i> Medium</span>
+            </div>
+          </div>
+
+          <div class="task-card p3">
+            <div class="task-card__top">
+              <span class="task-card__title">Dark/light theme variables</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 27, 2026</span>
+              <span class="task-card__priority p3"><i class="fas fa-circle" style="font-size:6px;"></i> Low</span>
+            </div>
+          </div>
+
+          <div class="task-card task-card--add"><i class="fas fa-plus" style="font-size:10px;"></i> Add task</div>
+        </div>
+      </div>
+
+      <!-- Column: Review -->
+      <div class="column">
+        <div class="column__header">
+          <div class="column__header-left">
+            <div class="column__dot" style="background:#fbbf24;"></div>
+            <span class="column__name">Review</span>
+            <span class="column__count">2</span>
+          </div>
+          <button class="column__menu"><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+        <div class="column__body">
+
+          <div class="task-card p2">
+            <div class="task-card__top">
+              <span class="task-card__title">Hero section copy & imagery</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#a855f7;">Design</span>
+              <span class="tag-pill" style="background:#10b981;">Content</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 21, 2026</span>
+              <span class="task-card__priority p2"><i class="fas fa-circle" style="font-size:6px;"></i> Medium</span>
+            </div>
+          </div>
+
+          <div class="task-card p1">
+            <div class="task-card__top">
+              <span class="task-card__title">Cross-browser QA pass</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#ef4444;">Urgent</span>
+              <span class="tag-pill" style="background:#0ea5e9;">Backend</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 22, 2026</span>
+              <span class="task-card__priority p1"><i class="fas fa-circle" style="font-size:6px;"></i> High</span>
+            </div>
+          </div>
+
+          <div class="task-card task-card--add"><i class="fas fa-plus" style="font-size:10px;"></i> Add task</div>
+        </div>
+      </div>
+
+      <!-- Column: Done -->
+      <div class="column">
+        <div class="column__header">
+          <div class="column__header-left">
+            <div class="column__dot" style="background:#34d399;"></div>
+            <span class="column__name">Done</span>
+            <span class="column__count">3</span>
+          </div>
+          <button class="column__menu"><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+        <div class="column__body">
+
+          <div class="task-card p3" style="opacity:.65;">
+            <div class="task-card__top">
+              <span class="task-card__title" style="text-decoration:line-through; color:var(--text-muted);">User research interviews</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__tags">
+              <span class="tag-pill" style="background:#10b981;">Content</span>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 15, 2026</span>
+              <span class="task-card__priority p3"><i class="fas fa-circle" style="font-size:6px;"></i> Low</span>
+            </div>
+          </div>
+
+          <div class="task-card p2" style="opacity:.65;">
+            <div class="task-card__top">
+              <span class="task-card__title" style="text-decoration:line-through; color:var(--text-muted);">Competitor analysis report</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 12, 2026</span>
+              <span class="task-card__priority p2"><i class="fas fa-circle" style="font-size:6px;"></i> Medium</span>
+            </div>
+          </div>
+
+          <div class="task-card p4" style="opacity:.65;">
+            <div class="task-card__top">
+              <span class="task-card__title" style="text-decoration:line-through; color:var(--text-muted);">Kick-off meeting notes</span>
+              <button class="task-card__menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="task-card__footer">
+              <span class="task-card__date"><i class="far fa-calendar"></i> Apr 10, 2026</span>
+              <span class="task-card__priority p4"><i class="fas fa-circle" style="font-size:6px;"></i> None</span>
+            </div>
+          </div>
+
+          <div class="task-card task-card--add"><i class="fas fa-plus" style="font-size:10px;"></i> Add task</div>
+        </div>
+      </div>
+
+      <!-- Add column -->
+      <div class="column--add">
+        <button class="column--add-btn"><i class="fas fa-plus" style="font-size:11px;"></i> Add Section</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+
+    <!-- Progress -->
+    <div>
+      <div class="sidebar-section__title">Project Progress</div>
+      <div class="donut-wrap">
+        <svg class="donut" width="70" height="70" viewBox="0 0 70 70">
+          <circle cx="35" cy="35" r="28" fill="none" stroke="#252b3a" stroke-width="8"/>
+          <circle cx="35" cy="35" r="28" fill="none" stroke="url(#grad)" stroke-width="8"
+                  stroke-dasharray="175.93" stroke-dashoffset="94.9"
+                  stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#6c63ff"/>
+              <stop offset="100%" style="stop-color:#38bdf8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="donut-info">
+          <span class="donut-pct" style="background:linear-gradient(90deg,#6c63ff,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">46%</span>
+          <span class="donut-sub">11 of 24 tasks done</span>
+        </div>
+      </div>
+      <div class="col-progress-list" style="margin-top:14px;">
+        <div class="col-progress-item">
+          <div class="col-progress-item__label"><span>Backlog</span><span>4</span></div>
+          <div class="col-progress-item__bar"><div class="col-progress-item__fill" style="width:17%; background:#7c8db5;"></div></div>
+        </div>
+        <div class="col-progress-item">
+          <div class="col-progress-item__label"><span>In Progress</span><span>3</span></div>
+          <div class="col-progress-item__bar"><div class="col-progress-item__fill" style="width:37%; background:#38bdf8;"></div></div>
+        </div>
+        <div class="col-progress-item">
+          <div class="col-progress-item__label"><span>Review</span><span>2</span></div>
+          <div class="col-progress-item__bar"><div class="col-progress-item__fill" style="width:25%; background:#fbbf24;"></div></div>
+        </div>
+        <div class="col-progress-item">
+          <div class="col-progress-item__label"><span>Done</span><span>3</span></div>
+          <div class="col-progress-item__bar"><div class="col-progress-item__fill" style="width:46%; background:#34d399;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div>
+      <div class="sidebar-section__title">Tags</div>
+      <div class="tags-list">
+        <span class="tag-badge" style="background:#6c63ff;">Frontend <i class="fas fa-times"></i></span>
+        <span class="tag-badge" style="background:#a855f7;">Design <i class="fas fa-times"></i></span>
+        <span class="tag-badge" style="background:#0ea5e9;">Backend <i class="fas fa-times"></i></span>
+        <span class="tag-badge" style="background:#10b981;">Content <i class="fas fa-times"></i></span>
+        <span class="tag-badge" style="background:#ef4444;">Urgent <i class="fas fa-times"></i></span>
+        <span class="tag-badge" style="background:#f59e0b;">DevOps <i class="fas fa-times"></i></span>
+      </div>
+      <div class="tag-add-row">
+        <input class="tag-add-input" placeholder="New tag name…" />
+        <button class="btn btn--icon" style="padding:5px 9px;"><i class="fas fa-plus" style="font-size:11px;"></i></button>
+      </div>
+    </div>
+
+    <!-- Priority -->
+    <div>
+      <div class="sidebar-section__title">Priority Legend</div>
+      <div class="priority-legend">
+        <div class="priority-legend-item">
+          <div class="priority-dot" style="background:var(--p1);"></div>
+          <span>High</span>
+          <span>4 tasks</span>
+        </div>
+        <div class="priority-legend-item">
+          <div class="priority-dot" style="background:var(--p2);"></div>
+          <span>Medium</span>
+          <span>7 tasks</span>
+        </div>
+        <div class="priority-legend-item">
+          <div class="priority-dot" style="background:var(--p3);"></div>
+          <span>Low</span>
+          <span>9 tasks</span>
+        </div>
+        <div class="priority-legend-item">
+          <div class="priority-dot" style="background:var(--p4);"></div>
+          <span>None</span>
+          <span>4 tasks</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <div class="sidebar-section__title">Notes</div>
+      <textarea class="notes-area" rows="5" placeholder="Add project notes…">Homepage redesign sprint. Focus on performance and mobile-first layout. Deadline: end of May.</textarea>
+    </div>
+
+    <!-- Theme -->
+    <div>
+      <div class="theme-row">
+        <span><i class="fas fa-moon" style="margin-right:6px;"></i>Dark mode</span>
+        <label class="toggle-switch">
+          <input type="checkbox" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+</body>
+</html>

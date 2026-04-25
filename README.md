@@ -1,13 +1,13 @@
-# TaskForce
+# ProjScope Tasks
 
 A free, offline, privacy-first task management desktop app built on Kanban methodology.  
 Available for **Windows** and **Linux** (macOS build planned).
 
 ---
 
-## What is TaskForce?
+## What is ProjScope Tasks?
 
-TaskForce is designed for solopreneurs, indie developers, and small teams who want a clean, fast, local-first task board with zero cloud dependency. Every project lives in a single encrypted `.prj` file on your machine — no accounts, no subscriptions, no data leaving your computer.
+ProjScope Tasks is designed for solopreneurs, indie developers, and small teams who want a clean, fast, local-first task board with zero cloud dependency. Every project lives in a single encrypted `.prj` file on your machine — no accounts, no subscriptions, no data leaving your computer.
 
 The app is built with **Angular 13** + **Electron 12** and ships as a self-contained executable.
 
