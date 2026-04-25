@@ -7,6 +7,11 @@ Available for **Windows** and **Linux** (macOS build planned).
 
 ## What is ProjScope Tasks?
 
+![Dashboard Bright](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-bright.png)
+
+
+![Dashboard Dark](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-dark.png)
+
 ProjScope Tasks is designed for solopreneurs, indie developers, and small teams who want a clean, fast, local-first task board with zero cloud dependency. Every project lives in a single encrypted `.prj` file on your machine — no accounts, no subscriptions, no data leaving your computer.
 
 The app is built with **Angular 13** + **Electron 12** and ships as a self-contained executable.
