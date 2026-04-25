@@ -119,6 +119,43 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     return Math.round((lastSection.tasks.length / taskAmount) * 100);
   }
 
+  public get totalTaskCount(): number {
+    if (!this.project) return 0;
+    return this.project.sections.reduce((sum, s) => sum + s.tasks.length, 0);
+  }
+
+  public get doneTaskCount(): number {
+    if (!this.project || this.project.sections.length === 0) return 0;
+    return this.project.sections[this.project.sections.length - 1].tasks.length;
+  }
+
+  public get highPriorityTaskCount(): number {
+    if (!this.project) return 0;
+    let count = 0;
+    this.project.sections.forEach((s) =>
+      s.tasks.forEach((t) => {
+        if (t.priority === Priority.High || t.priority === Priority.Critical) count++;
+      })
+    );
+    return count;
+  }
+
+  public get inProgressTaskCount(): number {
+    if (!this.project || this.project.sections.length < 2) return 0;
+    const middleSections = this.project.sections.slice(1, -1);
+    return middleSections.reduce((sum, s) => sum + s.tasks.length, 0);
+  }
+
+  public get donutDashOffset(): number {
+    const circumference = 175.93;
+    return Math.round(circumference * (1 - this.projectCopletionPercentage / 100));
+  }
+
+  public sectionColor(index: number): string {
+    const palette = ['#7c8db5', '#38bdf8', '#fbbf24', '#34d399', '#a855f7', '#fb923c', '#f87171', '#6c63ff'];
+    return palette[index % palette.length];
+  }
+
   taskDrop(event: CdkDragDrop<Task[], Task[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);

@@ -200,6 +200,10 @@ export class ElectronService {
   }
 
   exitProgram() {
+    if (!this.dataChangeDetected) {
+      this.ipcRenderer.send("app-close", null);
+      return;
+    }
     this.notificationService
       .showYesNoModalMessage(this.dialogContent())
       .subscribe((response) => {
