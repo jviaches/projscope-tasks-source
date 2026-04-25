@@ -13,8 +13,7 @@
   }
   &-participants {
     @include display;
-    span,
-    &__add {
+    span {
       width: 30px;
       height: 30px;
       display: inline-block;
@@ -22,17 +21,29 @@
       border-radius: 100rem;
       margin: 0 0.2rem;
     }
-    &__add {
-      background: transparent;
-      border: 1px dashed rgb(150, 150, 150);
-      font-size: 0;
+    &__add-task {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
       cursor: pointer;
-      position: relative;
+      transition: opacity 0.15s;
 
-      &:after {
+      &:before {
         content: "+";
-        font-size: 15px;
-        color: rgb(150, 150, 150);
+        font-size: 16px;
+        line-height: 1;
+        font-weight: 400;
+      }
+
+      &:hover {
+        opacity: 0.85;
       }
     }
     &__edit {
