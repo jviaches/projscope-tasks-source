@@ -15,6 +15,17 @@ import { autoUpdater } from "electron-updater";
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1), serve = args.some((val) => val === "--serve");
+
+function getStartupFilePath(): string | null {
+  // Support: -o <path>  or  --open <path>
+  const flagIdx = args.findIndex((a) => a === "-o" || a === "--open");
+  if (flagIdx !== -1 && args[flagIdx + 1]) {
+    return args[flagIdx + 1];
+  }
+  // Support file-association / double-click: path passed as bare argument
+  const prjArg = args.find((a) => a.endsWith(".prj") && !a.startsWith("-"));
+  return prjArg ?? null;
+}
 function createWindow(): BrowserWindow {
   const size = screen.getPrimaryDisplay().workAreaSize;
 
@@ -119,6 +130,12 @@ function createWindow(): BrowserWindow {
       })
     );
   }
+
+  // After Angular bootstraps, send the startup file path (CLI arg or null).
+  // The renderer uses it to auto-load; null triggers fallback to lastProjectPath in settings.
+  win.webContents.once("did-finish-load", () => {
+    win.webContents.send("startup-load", getStartupFilePath());
+  });
 
   // Emitted when the window is closed.
   win.on("close", e => {

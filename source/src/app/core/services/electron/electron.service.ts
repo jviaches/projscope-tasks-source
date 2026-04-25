@@ -1,9 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 
-// If you import a module but never use any of the imported values other than as TypeScript types,
-// the resulting javascript file will look as if you never imported the module at all.
 import { ipcRenderer, webFrame, remote, dialog } from "electron";
-import * as childProcess from "child_process";
 import * as fs from "fs";
 
 import { Project, Task } from "../../models/project.model";
@@ -14,7 +11,6 @@ import { Router } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { AboutComponent } from "../../../about/about.component";
-
 import { TaskViewComponent } from "../../../task/task-view/task-view.component";
 import { ThemeService } from "../theme.service";
 
@@ -24,13 +20,53 @@ import { ThemeService } from "../theme.service";
 export class ElectronService {
   public static readonly PAGE_TITLE = "ProjScope Tasks";
 
+  // Bump this and add an entry to MIGRATIONS whenever the Project shape changes.
+  private static readonly CURRENT_SCHEMA_VERSION = 1;
+
+  // Each key is the version being migrated FROM. The function returns the
+  // project with any missing fields filled in and schemaVersion incremented.
+  // Add a new entry here whenever a new feature adds/removes/renames fields.
+  //
+  // Example for a future "due date" feature:
+  //   1: (p) => ({ ...p, schemaVersion: 2,
+  //        sections: p.sections.map((s: any) => ({
+  //          ...s, tasks: s.tasks.map((t: any) => ({ ...t, dueDate: null }))
+  //        }))
+  //      }),
+  private static readonly MIGRATIONS: Record<number, (p: any) => any> = {
+    // v0 → v1: first versioned release. Covers all files saved before schema
+    // versioning was introduced. Fills in every field that may be absent.
+    0: (p: any) => ({
+      ...p,
+      schemaVersion: 1,
+      notes: p.notes ?? "",
+      tags: (p.tags ?? []).map((t: any) => ({
+        id: t.id ?? 0,
+        name: t.name ?? "",
+        color: t.color ?? "#607D8B",
+      })),
+      sections: (p.sections ?? []).map((s: any) => ({
+        orderIndex: s.orderIndex ?? 0,
+        name: s.name ?? "Section",
+        tasks: (s.tasks ?? []).map((t: any) => ({
+          id: t.id ?? 0,
+          title: t.title ?? "",
+          content: t.content ?? "",
+          priority: t.priority ?? 1,
+          tags: t.tags ?? [],
+          orderIndex: t.orderIndex ?? 0,
+          creationDate: t.creationDate ?? new Date().toISOString(),
+        })),
+      })),
+    }),
+  };
+
   CryptoJS = require("crypto-js");
-  encrypedSecretKey = "321c3c23-cbf1-4a30-938d-f8bd80757a0e";
+  private readonly encryptionKey = "321c3c23-cbf1-4a30-938d-f8bd80757a0e";
 
   ipcRenderer: typeof ipcRenderer;
   webFrame: typeof webFrame;
   remote: typeof remote;
-  childProcess: typeof childProcess;
   fs: typeof fs;
   dialog: typeof dialog;
 
@@ -39,7 +75,6 @@ export class ElectronService {
   systemUpdateMessage: BehaviorSubject<ProgramUpdate> = new BehaviorSubject(null);
   filePath: string = "";
   dataChangeDetected = false;
-  autosave: boolean = false;
   lastTaskId: number = 0;
 
   get isElectron(): boolean {
@@ -53,30 +88,48 @@ export class ElectronService {
     private titleService: Title,
     private themeService: ThemeService
   ) {
-    // Conditional imports
     if (this.isElectron) {
-
       this.ipcRenderer = window.require("electron").ipcRenderer;
       this.webFrame = window.require("electron").webFrame;
-
-      // If you wan to use remote object, please set enableRemoteModule to true in main.ts
       this.remote = window.require("electron").remote;
-
-      this.childProcess = window.require("child_process");
       this.fs = window.require("fs");
       this.dialog = this.remote.dialog;
 
-      const newUpdate = {
-        releaseNotes: null,
-        releaseName: ''
-      };
-      this.systemUpdateMessage.next(newUpdate);
+      this.systemUpdateMessage.next({ releaseNotes: null, releaseName: "" });
       this.loadAppSettings();
 
+      // Startup: main sends this after did-finish-load with CLI path or null.
+      // If a CLI path is provided it takes precedence; otherwise fall back to
+      // the last opened project stored in settings.
+      this.ipcRenderer.on("startup-load", (event, cliPath: string | null) => {
+        this.ngZone.run(() => {
+          const pathToLoad = cliPath || this.appSettings?.lastProjectPath || "";
+          if (!pathToLoad) return;
+
+          if (!this.fs.existsSync(pathToLoad)) {
+            if (!cliPath && this.appSettings) {
+              this.appSettings.lastProjectPath = "";
+              this.saveAppSettings();
+            }
+            return;
+          }
+
+          this.loadProjectFromPath(pathToLoad).then((value) => {
+            if (value) {
+              this.ipcRenderer.send("close-project-enable", true);
+              this.redirectTo("/project", false);
+            } else if (!cliPath && this.appSettings) {
+              // Auto-load failed — don't keep trying a bad path
+              this.appSettings.lastProjectPath = "";
+              this.saveAppSettings();
+            }
+          });
+        });
+      });
 
       this.ipcRenderer.on("new-project", (event, arg) => {
         this.ngZone.run(() => {
-          this.newProject().then((value) => {
+          this.newProject().then(() => {
             this.redirectTo("/project", false);
           });
         });
@@ -85,24 +138,19 @@ export class ElectronService {
       this.ipcRenderer.on("save-project", (event, arg) => {
         this.ngZone.run(() => {
           if (this.project === null) {
-            this.notificationService.showActionConfirmationFail(
-              "No active project!"
-            );
+            this.notificationService.showActionConfirmationFail("No active project!");
           } else {
             this.saveProject(JSON.stringify(this.project.value));
             this.notificationService.showActionConfirmationSuccess("Project has been saved.");
           }
         });
-
         this.ipcRenderer.send("close-project-enable", true);
       });
 
       this.ipcRenderer.on("save-as-project", (event, arg) => {
         this.ngZone.run(() => {
           if (this.project === null) {
-            this.notificationService.showActionConfirmationFail(
-              "No active project!"
-            );
+            this.notificationService.showActionConfirmationFail("No active project!");
           } else {
             this.saveAsProject(JSON.stringify(this.project.value));
             this.notificationService.showActionConfirmationSuccess("Project has been saved.");
@@ -110,16 +158,6 @@ export class ElectronService {
         });
         this.ipcRenderer.send("close-project-enable", true);
       });
-
-      // this.ipcRenderer.on("auto-save-project", (event, status) => {
-      //   this.ngZone.run(() => {
-      //     this.notificationService.showActionConfirmationFail(
-      //       status ? " Autosave enabled" : "Autosave disabled"
-      //     );
-      //     this.autosave = status;
-      //   });
-      //   this.ipcRenderer.send("close-project-enable", true);
-      // });
 
       this.ipcRenderer.on("open-project", (event, arg) => {
         this.ngZone.run(() => {
@@ -148,55 +186,24 @@ export class ElectronService {
 
       this.ipcRenderer.on("about", (event, arg) => {
         this.ngZone.run(() => {
-          this.notificationService.showModalComponent(AboutComponent, 'About', '');
+          this.notificationService.showModalComponent(AboutComponent, "About", "");
         });
       });
 
-
-      // this.ipcRenderer.on('checking-for-update', () => {
-      //   //this.ipcRenderer.removeAllListeners('checking-for-update');
-      //   this.notificationService.showActionConfirmationSuccess('checking-for-update..');
-      // });
-
-      this.ipcRenderer.on('update-available', () => {
-        //this.ipcRenderer.removeAllListeners('update-available');
-        //this.notificationService.showActionConfirmationSuccess('update-available..');
+      this.ipcRenderer.on("update-downloaded", (event, releaseNotes, releaseName) => {
+        this.systemUpdateMessage.next({
+          releaseNotes: (releaseNotes as string) ?? null,
+          releaseName: (releaseName as string) ?? "",
+        });
       });
-
-      // this.ipcRenderer.on('update-not-available', () => {
-      //   //this.ipcRenderer.removeAllListeners('update-not-available');
-      //   this.notificationService.showActionConfirmationSuccess('update-not-available..');
-      // });
-
-      // this.ipcRenderer.on('update-error', () => {
-      //   //this.ipcRenderer.removeAllListeners('update-error');
-      //   this.notificationService.showActionConfirmationSuccess('update-error..');
-      // });
-
-      this.ipcRenderer.on("update-downloaded", (releaseNotes, releaseName) => {
-
-        const newUpdate = {
-          releaseNotes: releaseNotes,
-          releaseName: releaseName
-        };
-        this.systemUpdateMessage.next(newUpdate);
-      });
-
-      // this.ipcRenderer.send('app_version');
-      // this.ipcRenderer.on('app_version', (event, arg) => {
-      //   this.ipcRenderer.removeAllListeners('app_version');
-      //   this.notificationService.showActionConfirmationSuccess('app_ver: ' + arg.version)
-      // });
-
-      // this.ipcRenderer.on('update_available', () => {
-      //   this.ipcRenderer.removeAllListeners('update_available');
-      //   this.notificationService.showActionConfirmationSuccess('A new update is available. Downloading now...');
-      // });
     }
   }
 
   exitProgram() {
-    this.project = new BehaviorSubject(null);
+    if (!this.dataChangeDetected) {
+      this.ipcRenderer.send("app-close", null);
+      return;
+    }
     this.notificationService
       .showYesNoModalMessage(this.dialogContent())
       .subscribe((response) => {
@@ -210,10 +217,8 @@ export class ElectronService {
     return new Promise<Project>((resolve) => {
       if (this.project.value === null) {
         this.ipcRenderer.send("close-project-enable", true);
-
         this.filePath = "";
         this.setPageTitle(false);
-
         this.project.next(this.defaultProject);
         this.setLastTaskId(this.defaultProject);
         resolve(this.project.value);
@@ -224,10 +229,8 @@ export class ElectronService {
             if (response === "yes") {
               this.ipcRenderer.send("close-project-enable", true);
               this.project.next(this.defaultProject);
-
               this.filePath = "";
               this.setPageTitle(false);
-
               this.setLastTaskId(this.defaultProject);
               resolve(this.project.value);
             }
@@ -255,62 +258,66 @@ export class ElectronService {
   resetProject() {
     this.ipcRenderer.send("close-project-enable", false);
     this.project = new BehaviorSubject(null);
-
     this.filePath = "";
     this.dataChangeDetected = false;
-
     this.setPageTitle(false);
     this.setLastTaskId(null);
+    if (this.appSettings) {
+      this.appSettings.lastProjectPath = "";
+      this.saveAppSettings();
+    }
     this.redirectTo("/", false);
     this.loadAppSettings();
   }
 
-  saveProject(content: any) {
+  saveProject(content: string) {
     if (this.filePath === "") {
       this.saveAsProject(content);
     } else {
-      var encryptedContent = this.encrypt(content);
+      const encryptedContent = this.encrypt(content);
       this.fs.writeFile(this.filePath, encryptedContent, (err) => {
         if (err) {
-          alert("An error ocurred updating the file" + err.message);
-          console.log(err);
+          this.notificationService.showModalMessage(
+            "Save Error",
+            `Failed to save project: ${err.message}`
+          );
           return;
         }
+        this.dataChangeDetected = false;
+        this.setPageTitle(false);
       });
     }
-
-    this.dataChangeDetected = false;
-    this.setPageTitle(false);
   }
 
-  saveAsProject(content: any) {
-    console.log(content);
+  saveAsProject(content: string) {
+    const encryptedContent = this.encrypt(content);
 
-    var encryptedContent = this.encrypt(content);
-
-    var filepath = this.dialog.showSaveDialogSync(null, {
+    const filepath = this.dialog.showSaveDialogSync(null, {
       properties: ["createDirectory"],
       filters: [{ name: "Project", extensions: ["prj"] }],
     });
 
-    // dialog was cancelled by user
     if (filepath === undefined) {
       return;
-    } else {
-      this.filePath = filepath;
     }
+
+    this.filePath = filepath;
 
     this.fs.writeFile(filepath, encryptedContent, (err) => {
       if (err) {
-        alert("An error ocurred updating the file" + err.message);
-        console.log(err);
+        this.notificationService.showModalMessage(
+          "Save Error",
+          `Failed to save project: ${err.message}`
+        );
         return;
       }
-
       this.ipcRenderer.send("close-project-enable", true);
-
       this.dataChangeDetected = false;
       this.setPageTitle(false);
+      if (this.appSettings) {
+        this.appSettings.lastProjectPath = filepath;
+        this.saveAppSettings();
+      }
     });
   }
 
@@ -323,58 +330,62 @@ export class ElectronService {
             if (response === "no") {
               resolve(this.project.value);
             } else {
-              var file = this.dialog.showOpenDialogSync(null, {
+              const file = this.dialog.showOpenDialogSync(null, {
                 properties: ["openFile"],
                 filters: [{ name: "Project", extensions: ["prj"] }],
               });
-
-              this.fs.readFile(file[0], "utf-8", (err, data) => {
-                try {
-                  const decryptedContent = this.decrypt(data);
-
-                  this.filePath = file[0];
-                  this.setPageTitle(false);
-                  this.setLastTaskId(JSON.parse(decryptedContent));
-
-                  this.project.next(JSON.parse(decryptedContent));
-                } catch (error) {
-                  this.notificationService.showModalMessage(
-                    "Error",
-                    "Incorrect or corrupted projscope file!"
-                  );
-                  Promise.reject('Error');
-                }
-                resolve(this.project.value);
-              });
+              if (file) {
+                this.loadProjectFromPath(file[0]).then(resolve);
+              }
             }
           });
       } else {
-        var file = this.dialog.showOpenDialogSync(null, {
+        const file = this.dialog.showOpenDialogSync(null, {
           properties: ["openFile"],
           filters: [{ name: "Project", extensions: ["prj"] }],
         });
-
         if (file !== undefined) {
-          this.fs.readFile(file[0], "utf-8", (err, data) => {
-            try {
-              const decryptedContent = this.decrypt(data);
-              this.filePath = file[0];
-              this.setPageTitle(false);
-              this.setLastTaskId(JSON.parse(decryptedContent));
-              this.project.next(JSON.parse(decryptedContent));
-            } catch (error) {
-              this.notificationService.showModalMessage(
-                "Error",
-                "Incorrect or corrupted projscope file!"
-              );
-
-              Promise.reject('Error');
-            }
-
-            resolve(this.project.value);
-          });
+          this.loadProjectFromPath(file[0]).then(resolve);
         }
       }
+    });
+  }
+
+  loadProjectFromPath(filePath: string): Promise<Project> {
+    return new Promise<Project>((resolve) => {
+      this.fs.readFile(filePath, "utf-8", (err, data) => {
+        if (err) {
+          this.notificationService.showModalMessage(
+            "Load Error",
+            `Failed to read file: ${err.message}`
+          );
+          resolve(null);
+          return;
+        }
+        try {
+          const decryptedContent = this.decrypt(data);
+          const raw = JSON.parse(decryptedContent);
+          if (!this.isValidProject(raw)) {
+            throw new Error("Invalid project structure");
+          }
+          const parsed = this.migrateProject(raw);
+          this.filePath = filePath;
+          this.setPageTitle(false);
+          this.setLastTaskId(parsed);
+          this.project.next(parsed);
+          if (this.appSettings) {
+            this.appSettings.lastProjectPath = filePath;
+            this.saveAppSettings();
+          }
+          resolve(this.project.value);
+        } catch (error) {
+          this.notificationService.showModalMessage(
+            "Error",
+            "Incorrect or corrupted projscope file!"
+          );
+          resolve(null);
+        }
+      });
     });
   }
 
@@ -388,11 +399,10 @@ export class ElectronService {
             title: result.caption,
             content: result.text,
             priority: result.priority.value,
-            tags: [],
+            tags: result.tags ?? [],
             orderIndex: result.section.value,
             creationDate: new Date(),
           };
-
           this.setDataChange();
           this.project.value.sections[result.section.value].tasks.push(task);
           this.project.next(this.project.value);
@@ -401,16 +411,18 @@ export class ElectronService {
   }
 
   deleteTask(taskId: number, sectionIndex: number) {
-    this.notificationService.showYesNoModalMessage("").subscribe((result) => {
-      if (result === "yes") {
-
-        const taskIndex = this.project.value.sections[sectionIndex - 1].tasks.findIndex((task) => task.id === taskId);
-        this.project.value.sections[sectionIndex - 1].tasks.splice(taskIndex, 1);
-
-        this.setDataChange();
-        this.project.next(this.project.value);
-      }
-    });
+    this.notificationService
+      .showYesNoModalMessage("Delete this task?")
+      .subscribe((result) => {
+        if (result === "yes") {
+          const taskIndex = this.project.value.sections[sectionIndex - 1].tasks.findIndex(
+            (task) => task.id === taskId
+          );
+          this.project.value.sections[sectionIndex - 1].tasks.splice(taskIndex, 1);
+          this.setDataChange();
+          this.project.next(this.project.value);
+        }
+      });
   }
 
   redirectTo(uri: string, fromHomePage: boolean) {
@@ -425,7 +437,8 @@ export class ElectronService {
 
   public get defaultProject(): Project {
     const project = {
-      version: this.appSettings?.version || 'DEBUG',
+      schemaVersion: ElectronService.CURRENT_SCHEMA_VERSION,
+      version: this.appSettings?.version || "DEBUG",
       name: "Project Name",
       notes: "notes..",
       sections: [
@@ -436,35 +449,31 @@ export class ElectronService {
       ],
       tags: [],
     };
-
     return project;
   }
 
   setDataChange() {
     this.dataChangeDetected = true;
     this.setPageTitle(true);
+    if (this.filePath !== "") {
+      this.saveProject(JSON.stringify(this.project.value));
+    }
   }
 
   setPageTitle(change: boolean) {
     if (this.filePath === "") {
       this.titleService.setTitle(ElectronService.PAGE_TITLE);
     } else {
-      if (change) {
-        this.titleService.setTitle(
-          ElectronService.PAGE_TITLE + " - " + this.filePath + "*"
-        );
-      } else {
-        this.titleService.setTitle(
-          ElectronService.PAGE_TITLE + " - " + this.filePath
-        );
-      }
+      this.titleService.setTitle(
+        change
+          ? `${ElectronService.PAGE_TITLE} - ${this.filePath}*`
+          : `${ElectronService.PAGE_TITLE} - ${this.filePath}`
+      );
     }
   }
 
   dialogContent(): string {
-    return this.filePath !== "" && this.dataChangeDetected
-      ? "Project is not saved!"
-      : "";
+    return this.dataChangeDetected ? "Project is not saved!" : "";
   }
 
   getNextTaskId(): number {
@@ -477,54 +486,61 @@ export class ElectronService {
       this.lastTaskId = 0;
     } else {
       let maxTaskId = 0;
-
-      project.sections.forEach(section => {
-        const localMaxId = Math.max(...section.tasks.map((task) => task.id))
+      project.sections.forEach((section) => {
+        const localMaxId = Math.max(...section.tasks.map((task) => task.id));
         if (localMaxId > maxTaskId) {
           maxTaskId = localMaxId;
         }
       });
-
       this.lastTaskId = maxTaskId;
     }
   }
 
   encrypt(content: string): string {
-    const ciphertext = this.CryptoJS.AES.encrypt(
-      content,
-      this.encrypedSecretKey
-    ).toString();
-    return ciphertext;
+    return this.CryptoJS.AES.encrypt(content, this.encryptionKey).toString();
   }
 
   decrypt(ciphertext: string): string {
-    const bytes = this.CryptoJS.AES.decrypt(ciphertext, this.encrypedSecretKey);
-    const originalText = bytes.toString(this.CryptoJS.enc.Utf8);
-    return originalText;
+    const bytes = this.CryptoJS.AES.decrypt(ciphertext, this.encryptionKey);
+    return bytes.toString(this.CryptoJS.enc.Utf8);
   }
 
-  // app settings
+  private migrateProject(raw: unknown): Project {
+    let p: any = raw;
+    const from: number = typeof p.schemaVersion === "number" ? p.schemaVersion : 0;
+    for (let v = from; v < ElectronService.CURRENT_SCHEMA_VERSION; v++) {
+      const migrate = ElectronService.MIGRATIONS[v];
+      if (migrate) p = migrate(p);
+    }
+    p.schemaVersion = ElectronService.CURRENT_SCHEMA_VERSION;
+    return p as Project;
+  }
+
+  // Only checks the structural minimum — migrations guarantee everything else.
+  private isValidProject(data: unknown): data is Project {
+    if (!data || typeof data !== "object") return false;
+    const p = data as Record<string, unknown>;
+    return typeof p.name === "string" && Array.isArray(p.sections);
+  }
+
   private saveAppSettings() {
-    this.fs.writeFile('settings.json', JSON.stringify(this.appSettings), (err) => {
+    this.fs.writeFile("settings.json", JSON.stringify(this.appSettings), (err) => {
       if (err) {
-        console.log(err);
-        return;
+        console.error("Failed to save app settings:", err);
       }
     });
   }
 
   private loadAppSettings() {
-    this.fs.readFile('settings.json', "utf-8", (err, data) => {
+    this.fs.readFile("settings.json", "utf-8", (err, data) => {
       if (err) {
         this.appSettings = new AppSettings();
         this.themeService.setActiveThemeById(1);
         this.saveAppSettings();
         return;
-      } else {
-        this.appSettings = JSON.parse(data)
-        this.themeService.setActiveThemeById(this.appSettings.themeId)
-
       }
+      this.appSettings = JSON.parse(data);
+      this.themeService.setActiveThemeById(this.appSettings.themeId);
     });
   }
 

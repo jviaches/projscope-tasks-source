@@ -1,6 +1,7 @@
 import { Priority } from "./priority.model";
 
 export interface Project {
+    schemaVersion: number;
     version: string;
     name: string;
     notes: string;
@@ -29,4 +30,3 @@ export class Task {
     orderIndex: number;
     creationDate: Date;
 }
-

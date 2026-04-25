@@ -1,6 +1,4 @@
-import { IpcRendererEvent } from "electron/main";
-
 export interface ProgramUpdate {
-    releaseNotes: IpcRendererEvent;
-    releaseName: any;
+  releaseNotes: string | null;
+  releaseName: string;
 }

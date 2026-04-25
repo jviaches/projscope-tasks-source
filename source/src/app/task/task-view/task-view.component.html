@@ -6,8 +6,8 @@
         <span *ngIf="taskId !== 0"> - #{{taskId}}</span>
       </div>
     </h1>
-
   </div>
+
   <input [(ngModel)]="caption" class="input" type="text" placeholder="Caption" style="margin-bottom: 5px"/>
 
   <form style="display: flex; justify-content: space-between">
@@ -31,6 +31,18 @@
       </mat-select>
     </mat-form-field>
   </form>
+
+  <div class="tags-section" *ngIf="availableTags.length > 0">
+    <label class="tags-label">Tags</label>
+    <mat-chip-list class="tags-chip-list">
+      <mat-chip *ngFor="let tag of availableTags"
+                [class.tag-selected]="isTagSelected(tag)"
+                [style.background-color]="isTagSelected(tag) ? tag.color : null"
+                (click)="toggleTag(tag)">
+        {{ tag.name }}
+      </mat-chip>
+    </mat-chip-list>
+  </div>
 
   <quill-editor id="editor" [styles]="editorStyle" [modules]="quillConfiguration" [(ngModel)]="editorText"
                 (onContentChanged)="onContentChanged($event)" required></quill-editor>
