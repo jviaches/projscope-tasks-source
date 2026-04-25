@@ -20,6 +20,47 @@ import { ThemeService } from "../theme.service";
 export class ElectronService {
   public static readonly PAGE_TITLE = "ProjScope Tasks";
 
+  // Bump this and add an entry to MIGRATIONS whenever the Project shape changes.
+  private static readonly CURRENT_SCHEMA_VERSION = 1;
+
+  // Each key is the version being migrated FROM. The function returns the
+  // project with any missing fields filled in and schemaVersion incremented.
+  // Add a new entry here whenever a new feature adds/removes/renames fields.
+  //
+  // Example for a future "due date" feature:
+  //   1: (p) => ({ ...p, schemaVersion: 2,
+  //        sections: p.sections.map((s: any) => ({
+  //          ...s, tasks: s.tasks.map((t: any) => ({ ...t, dueDate: null }))
+  //        }))
+  //      }),
+  private static readonly MIGRATIONS: Record<number, (p: any) => any> = {
+    // v0 → v1: first versioned release. Covers all files saved before schema
+    // versioning was introduced. Fills in every field that may be absent.
+    0: (p: any) => ({
+      ...p,
+      schemaVersion: 1,
+      notes: p.notes ?? "",
+      tags: (p.tags ?? []).map((t: any) => ({
+        id: t.id ?? 0,
+        name: t.name ?? "",
+        color: t.color ?? "#607D8B",
+      })),
+      sections: (p.sections ?? []).map((s: any) => ({
+        orderIndex: s.orderIndex ?? 0,
+        name: s.name ?? "Section",
+        tasks: (s.tasks ?? []).map((t: any) => ({
+          id: t.id ?? 0,
+          title: t.title ?? "",
+          content: t.content ?? "",
+          priority: t.priority ?? 1,
+          tags: t.tags ?? [],
+          orderIndex: t.orderIndex ?? 0,
+          creationDate: t.creationDate ?? new Date().toISOString(),
+        })),
+      })),
+    }),
+  };
+
   CryptoJS = require("crypto-js");
   private readonly encryptionKey = "321c3c23-cbf1-4a30-938d-f8bd80757a0e";
 
@@ -319,10 +360,11 @@ export class ElectronService {
         }
         try {
           const decryptedContent = this.decrypt(data);
-          const parsed = JSON.parse(decryptedContent);
-          if (!this.isValidProject(parsed)) {
+          const raw = JSON.parse(decryptedContent);
+          if (!this.isValidProject(raw)) {
             throw new Error("Invalid project structure");
           }
+          const parsed = this.migrateProject(raw);
           this.filePath = filePath;
           this.setPageTitle(false);
           this.setLastTaskId(parsed);
@@ -391,6 +433,7 @@ export class ElectronService {
 
   public get defaultProject(): Project {
     const project = {
+      schemaVersion: ElectronService.CURRENT_SCHEMA_VERSION,
       version: this.appSettings?.version || "DEBUG",
       name: "Project Name",
       notes: "notes..",
@@ -458,22 +501,22 @@ export class ElectronService {
     return bytes.toString(this.CryptoJS.enc.Utf8);
   }
 
+  private migrateProject(raw: unknown): Project {
+    let p: any = raw;
+    const from: number = typeof p.schemaVersion === "number" ? p.schemaVersion : 0;
+    for (let v = from; v < ElectronService.CURRENT_SCHEMA_VERSION; v++) {
+      const migrate = ElectronService.MIGRATIONS[v];
+      if (migrate) p = migrate(p);
+    }
+    p.schemaVersion = ElectronService.CURRENT_SCHEMA_VERSION;
+    return p as Project;
+  }
+
+  // Only checks the structural minimum — migrations guarantee everything else.
   private isValidProject(data: unknown): data is Project {
     if (!data || typeof data !== "object") return false;
     const p = data as Record<string, unknown>;
-    return (
-      typeof p.name === "string" &&
-      typeof p.version === "string" &&
-      Array.isArray(p.sections) &&
-      Array.isArray(p.tags) &&
-      (p.sections as unknown[]).every(
-        (s: unknown) =>
-          s &&
-          typeof (s as Record<string, unknown>).orderIndex === "number" &&
-          typeof (s as Record<string, unknown>).name === "string" &&
-          Array.isArray((s as Record<string, unknown>).tasks)
-      )
-    );
+    return typeof p.name === "string" && Array.isArray(p.sections);
   }
 
   private saveAppSettings() {
