@@ -1,8 +1,6 @@
 <div class="dashboard" *ngIf="project !== null">
 
-  <!-- ══════════════════════════════════════════
-       TOP BAR
-  ══════════════════════════════════════════ -->
+  <!-- ══ TOP BAR ════════════════════════════════════════════════════════ -->
   <header class="topbar">
     <div class="topbar__left">
       <div class="logo">
@@ -11,14 +9,16 @@
       </div>
       <div class="divider-v"></div>
 
-      <!-- Project name inline edit -->
       <div class="project-name-wrap" *ngIf="!editProjectName" (click)="setProjectNameEditMode()">
         <span>{{ project.name }}</span>
         <i class="fas fa-chevron-down"></i>
       </div>
       <div class="project-name-edit" *ngIf="editProjectName">
-        <input class="project-name-input" [(ngModel)]="project.name" (keyup.enter)="setProjectNameEditMode()" autofocus />
-        <button class="btn btn--icon" (click)="setProjectNameEditMode()"><i class="fas fa-check"></i></button>
+        <input class="project-name-input" [(ngModel)]="project.name"
+               (keyup.enter)="setProjectNameEditMode()" autofocus />
+        <button class="icon-btn" (click)="setProjectNameEditMode()">
+          <i class="fas fa-check"></i>
+        </button>
       </div>
     </div>
 
@@ -41,23 +41,21 @@
     </div>
 
     <div class="topbar__right">
-      <button class="btn btn--ghost" (click)="createTask()">
+      <button class="primary-btn" (click)="createTask()">
         <i class="fas fa-plus"></i> Add Task
       </button>
       <div class="theme-toggle-wrap">
-        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
         <label class="toggle-switch">
           <input type="checkbox" [(ngModel)]="isLightTheme" (change)="changedTheme()" />
           <span class="toggle-slider"></span>
         </label>
-        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
       </div>
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       STATS STRIP
-  ══════════════════════════════════════════ -->
+  <!-- ══ STATS STRIP ════════════════════════════════════════════════════ -->
   <div class="stats-strip">
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--purple"><i class="fas fa-layer-group"></i></div>
@@ -88,7 +86,7 @@
       </div>
     </div>
     <div class="stat-card stat-card--progress">
-      <span class="stat-card__label" style="white-space:nowrap;">Project Progress</span>
+      <div class="stat-card__label">Progress</div>
       <div class="progress-bar-wrap">
         <div class="progress-bar-track">
           <div class="progress-bar-fill" [style.width.%]="projectCopletionPercentage"></div>
@@ -98,25 +96,21 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       MAIN LAYOUT
-  ══════════════════════════════════════════ -->
+  <!-- ══ MAIN LAYOUT ════════════════════════════════════════════════════ -->
   <div class="main-layout">
 
     <!-- ── Board ── -->
     <div class="board-area">
       <div class="board-columns">
-        <!-- Sections -->
+
         <div class="column" *ngFor="let section of project.sections; let i = index">
           <div class="column__header">
             <div class="column__header-left">
               <div class="column__dot" [style.background]="sectionColor(i)"></div>
 
-              <!-- View mode -->
               <span class="column__name" *ngIf="editingSectionIndex !== section.orderIndex">
                 {{ section.name }}
               </span>
-              <!-- Edit mode -->
               <input class="column-name-input"
                      *ngIf="editingSectionIndex === section.orderIndex"
                      [(ngModel)]="section.name"
@@ -126,7 +120,7 @@
 
               <span class="column__count">{{ sectionId(section.orderIndex) }}</span>
             </div>
-            <button class="column__menu" mat-icon-button [matMenuTriggerFor]="sectionMenu">
+            <button class="column__menu" [matMenuTriggerFor]="sectionMenu">
               <i class="fas fa-ellipsis-h"></i>
             </button>
             <mat-menu #sectionMenu="matMenu">
@@ -139,7 +133,6 @@
             </mat-menu>
           </div>
 
-          <!-- Task list -->
           <div cdkDropList
                class="column__body"
                [id]="'cdk-drop-list-' + section.orderIndex"
@@ -158,10 +151,11 @@
                  (dblclick)="viewTask(task, section.orderIndex)">
 
               <div class="task-card__top">
-                <span class="task-card__title" [class.done-title]="i === project.sections.length - 1">
+                <span class="task-card__title"
+                      [class.done-title]="i === project.sections.length - 1">
                   {{ task.title }}
                 </span>
-                <button class="task-card__menu-btn" mat-icon-button [matMenuTriggerFor]="taskMenu">
+                <button class="task-card__menu-btn" [matMenuTriggerFor]="taskMenu">
                   <i class="fas fa-ellipsis-h"></i>
                 </button>
                 <mat-menu #taskMenu="matMenu">
@@ -175,9 +169,8 @@
               </div>
 
               <div class="task-card__tags" *ngIf="task.tags?.length > 0">
-                <span class="tag-pill" *ngFor="let tag of task.tags" [style.background-color]="tag.color">
-                  {{ tag.name }}
-                </span>
+                <span class="tag-pill" *ngFor="let tag of task.tags"
+                      [style.background-color]="tag.color">{{ tag.name }}</span>
               </div>
 
               <div class="task-card__footer">
@@ -190,7 +183,7 @@
                       [class.p-high]="task.priority === 2"
                       [class.p-normal]="task.priority === 1"
                       [class.p-minor]="task.priority === 0">
-                  <i class="fas fa-circle" style="font-size:5px;"></i>
+                  <i class="fas fa-circle" style="font-size:4px;"></i>
                   <span *ngIf="task.priority === 3">Critical</span>
                   <span *ngIf="task.priority === 2">High</span>
                   <span *ngIf="task.priority === 1">Normal</span>
@@ -199,42 +192,37 @@
               </div>
             </div>
 
-            <!-- Add-task ghost card -->
             <div class="task-card task-card--add" (click)="createTask()">
-              <i class="fas fa-plus"></i> Add task
+              <i class="fas fa-plus" style="font-size:10px;"></i> Add task
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
     <!-- ── Sidebar ── -->
     <aside class="sidebar">
 
-      <!-- Progress -->
       <div class="sidebar-section">
-        <div class="sidebar-section__title">Project Progress</div>
+        <div class="sidebar-section__title">Progress</div>
         <div class="donut-wrap">
-          <svg class="donut" width="72" height="72" viewBox="0 0 70 70">
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#252b3a" stroke-width="8"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="url(#tfGrad)" stroke-width="8"
+          <svg class="donut" width="68" height="68" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="28" fill="none"
+                    [attr.stroke]="isLightTheme ? '#e8e4de' : '#2c2c4c'"
+                    stroke-width="7"/>
+            <circle cx="35" cy="35" r="28" fill="none"
+                    [attr.stroke]="isLightTheme ? '#6550d6' : '#a67ef8'"
+                    stroke-width="7"
                     [attr.stroke-dasharray]="175.93"
                     [attr.stroke-dashoffset]="donutDashOffset"
                     stroke-linecap="round"/>
-            <defs>
-              <linearGradient id="tfGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#6c63ff"/>
-                <stop offset="100%" style="stop-color:#38bdf8"/>
-              </linearGradient>
-            </defs>
           </svg>
           <div class="donut-info">
             <span class="donut-pct">{{ projectCopletionPercentage }}%</span>
             <span class="donut-sub">{{ doneTaskCount }} of {{ totalTaskCount }} done</span>
           </div>
         </div>
-
-        <!-- Per-section bars -->
         <div class="col-progress-list">
           <div class="col-progress-item" *ngFor="let section of project.sections; let i = index">
             <div class="col-progress-item__label">
@@ -251,49 +239,47 @@
         </div>
       </div>
 
-      <!-- Tags -->
       <div class="sidebar-section">
         <div class="sidebar-section__title">Tags</div>
         <div class="tags-list">
-          <span class="tag-badge" *ngFor="let tag of project.tags" [style.background-color]="tag.color">
+          <span class="tag-badge" *ngFor="let tag of project.tags"
+                [style.background-color]="tag.color">
             {{ tag.name }}
             <i class="fas fa-times" (click)="deleteTag(tag)"></i>
           </span>
         </div>
         <div class="tag-add-row">
-          <input class="tag-add-input" placeholder="New tag name…"
+          <input class="tag-add-input" placeholder="New tag…"
                  [(ngModel)]="newTagName" (keyup.enter)="createTag()" />
-          <button class="btn btn--icon" (click)="createTag()" [disabled]="!newTagName.trim()">
+          <button class="icon-btn" (click)="createTag()" [disabled]="!newTagName.trim()">
             <i class="fas fa-plus"></i>
           </button>
         </div>
       </div>
 
-      <!-- Priority legend -->
       <div class="sidebar-section">
-        <div class="sidebar-section__title">Priority Legend</div>
+        <div class="sidebar-section__title">Priority</div>
         <div class="priority-legend">
           <div class="priority-legend-item">
-            <div class="priority-dot" style="background:#f87171;"></div>
+            <div class="priority-dot" style="background:#e5534b;"></div>
             <span>Critical</span>
           </div>
           <div class="priority-legend-item">
-            <div class="priority-dot" style="background:pink;"></div>
+            <div class="priority-dot" style="background:#e8936a;"></div>
             <span>High</span>
           </div>
           <div class="priority-legend-item">
-            <div class="priority-dot" style="background:var(--surface-3);"></div>
+            <div class="priority-dot" style="background:var(--col-border);"></div>
             <span>Normal</span>
           </div>
           <div class="priority-legend-item">
-            <div class="priority-dot" style="background:#d8ecf3;"></div>
+            <div class="priority-dot" style="background:var(--chip-bg);"></div>
             <span>Minor</span>
           </div>
         </div>
       </div>
 
-      <!-- Notes -->
-      <div class="sidebar-section">
+      <div class="sidebar-section notes-quill-wrap">
         <div class="sidebar-section__title">Notes</div>
         <quill-editor [styles]="editorStyle" [modules]="quillConfiguration"
                       (onContentChanged)="onContentChanged($event)"

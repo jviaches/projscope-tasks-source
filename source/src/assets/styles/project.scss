@@ -1,65 +1,83 @@
-/* Shared project-level styles referenced across components */
+/* Shared project-level styles */
 
 .task-hover {
-  border: 3px dashed var(--light-grey) !important;
+  border: 2px dashed var(--col-border) !important;
 }
 
-/* Quill editor theming */
-.ql-snow {
-  color: var(--text);
-  .ql-stroke { stroke: var(--text-muted) !important; }
-  .ql-fill   { fill:   var(--text-muted) !important; }
-  .ql-picker-label { color: var(--text-muted) !important; }
-}
+/* ── Quill editor ─────────────────────────────────────────────────────── */
 .ql-toolbar.ql-snow {
-  background: var(--surface-2);
-  border-color: var(--border) !important;
+  background: var(--col-bg);
+  border-color: var(--col-border) !important;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: 6px 8px;
+  .ql-stroke { stroke: var(--text-tertiary) !important; }
+  .ql-fill   { fill:   var(--text-tertiary) !important; }
+  .ql-picker-label { color: var(--text-tertiary) !important; }
+  button:hover .ql-stroke { stroke: var(--text-primary) !important; }
 }
 .ql-container.ql-snow {
-  background: var(--surface-2);
-  border-color: var(--border) !important;
+  background: var(--input-bg);
+  border-color: var(--col-border) !important;
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 13px;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
 }
-.ql-editor { color: var(--text); }
+.ql-editor {
+  color: var(--text-primary);
+  &.ql-blank::before { color: var(--text-quaternary); font-style: normal; }
+}
 
-/* Material autocomplete dropdown theming */
+/* ── Material autocomplete ────────────────────────────────────────────── */
 .mat-autocomplete-panel {
-  background: var(--surface-2) !important;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md) !important;
+  background: var(--surface-1) !important;
+  border: 1px solid var(--col-border);
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--modal-shadow) !important;
 
   .mat-option {
-    color: var(--text) !important;
-    font-family: inherit;
-    font-size: 13px;
-    &:hover, &.mat-active { background: var(--surface-3) !important; }
+    color: var(--text-primary) !important;
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    &:hover, &.mat-active { background: var(--chip-bg) !important; }
   }
 }
 
-/* Material menu theming */
+/* ── Material menu ───────────────────────────────────────────────────── */
 .mat-menu-panel {
-  background: var(--surface-2) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,.4) !important;
+  background: var(--surface-1) !important;
+  border: 1px solid var(--col-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--modal-shadow) !important;
+  min-width: 148px !important;
 
   .mat-menu-item {
-    color: var(--text-muted) !important;
-    font-family: inherit;
-    font-size: 13px;
-    &:hover { background: var(--surface-3) !important; color: var(--text) !important; }
-    i { color: var(--text-dim); margin-right: 6px; }
+    color: var(--text-secondary) !important;
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    height: 34px;
+    line-height: 34px;
+    &:hover { background: var(--chip-bg) !important; color: var(--text-primary) !important; }
+    i { color: var(--text-tertiary); margin-right: 8px; font-size: 12px; }
   }
 }
 
-/* Global scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border); }
+/* ── Material form fields (search input) ─────────────────────────────── */
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: var(--col-border) !important;
+}
+.mat-form-field-appearance-legacy.mat-focused .mat-form-field-underline {
+  background-color: var(--accent) !important;
+}
+.mat-form-field-label { color: var(--text-tertiary) !important; font-family: var(--font-ui) !important; }
+.mat-input-element { color: var(--text-primary) !important; font-family: var(--font-ui) !important; }
+
+/* ── Material chips ──────────────────────────────────────────────────── */
+.mat-chip.mat-standard-chip {
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
 
 button:focus { outline: none; }
