@@ -1,7 +1,13 @@
 # ProjScope Tasks
 
+[![Release](https://img.shields.io/github/v/release/jviaches/projscope-tasks-source?label=latest&color=6550d6)](https://github.com/jviaches/projscope-tasks-source/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/jviaches/projscope-tasks-source/release.yml?label=build)](https://github.com/jviaches/projscope-tasks-source/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Open Issues](https://img.shields.io/github/issues/jviaches/projscope-tasks-source)](https://github.com/jviaches/projscope-tasks-source/issues)
+
 A free, offline, privacy-first task management desktop app built on Kanban methodology.  
-Available for **Windows** and **Linux** (macOS build planned).
+Available for **Windows**, **macOS**, and **Linux** — no account, no cloud, no subscription.
 
 ---
 
@@ -194,10 +200,26 @@ Built installers are published at: https://github.com/jviaches/projscope-tasks
 
 ## Contributing
 
-Collaboration is welcome in any form:
+**Contributions of any kind are very welcome.** Whether you're fixing a typo or shipping a whole new feature — every bit helps.
 
-- **Designer** — help craft an even more compelling UI
-- **Developer** — bug fixes, new features, refactoring, peer review
-- **Tester** — find rough edges and report issues
+| Role | How to help |
+|---|---|
+| 🐛 **Bug hunter** | [Open a bug report](https://github.com/jviaches/projscope-tasks-source/issues/new?template=bug_report.md) |
+| 💡 **Idea person** | [Suggest a feature](https://github.com/jviaches/projscope-tasks-source/issues/new?template=feature_request.md) |
+| 🎨 **Designer** | Improve UI/UX, icons, or accessibility |
+| 👩‍💻 **Developer** | Fix bugs, add features, refactor, review PRs |
+| 🧪 **Tester** | Try the app on different platforms and report rough edges |
 
-Open an issue or a pull request to get started.
+Please read **[CONTRIBUTING.md](CONTRIBUTING.md)** before opening a pull request — it covers the dev setup, branch conventions, and PR checklist.
+
+---
+
+## Code of Conduct
+
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating you agree to uphold it.
+
+---
+
+## Security
+
+Found a vulnerability? Please **do not** open a public issue. See [SECURITY.md](SECURITY.md) for responsible-disclosure instructions.
