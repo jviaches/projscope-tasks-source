@@ -41,7 +41,9 @@ function createWindow(): BrowserWindow {
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
-    icon: "./src/assets/icons/favicon.ico",
+    icon: process.platform === "linux"
+      ? "./src/assets/icons/favicon.512x512.png"
+      : "./src/assets/icons/favicon.ico",
   });
 
   const menu = Menu.buildFromTemplate([
