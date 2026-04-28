@@ -13,6 +13,10 @@ import { autoUpdater } from "electron-updater";
 
 //const { autoUpdater } = require('electron-updater');
 
+// Ensure the correct product name is shown in the Linux taskbar / window list
+// (Electron defaults to package.json "name" which is the lowercase npm slug)
+app.setName("Projscope Tasks");
+
 let win: BrowserWindow = null;
 const args = process.argv.slice(1), serve = args.some((val) => val === "--serve");
 
