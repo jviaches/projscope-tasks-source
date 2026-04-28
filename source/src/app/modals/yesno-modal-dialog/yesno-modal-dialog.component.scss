@@ -6,4 +6,34 @@
 
 button {
     margin: 5px;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+
+    /* Yes — accent / primary action */
+    &:first-of-type {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+
+        &:hover { opacity: 0.85; }
+    }
+
+    /* No — muted secondary action */
+    &:last-of-type {
+        background: transparent;
+        color: var(--text-secondary);
+        border-color: var(--col-border);
+
+        &:hover {
+            background: var(--chip-bg);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+    }
 }

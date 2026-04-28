@@ -1,0 +1,18 @@
+button {
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--col-border);
+    background: transparent;
+    color: var(--text-secondary);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &:hover {
+        background: var(--chip-bg);
+        border-color: var(--border);
+        color: var(--text-primary);
+    }
+}

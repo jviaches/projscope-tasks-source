@@ -148,7 +148,9 @@
                  [class.done-card]="i === project.sections.length - 1"
                  *ngFor="let task of sectionsTasks['cdk-drop-list-' + section.orderIndex]"
                  cdkDrag
-                 (dblclick)="viewTask(task, section.orderIndex)">
+                 (cdkDragStarted)="onDragStarted()"
+                 (cdkDragEnded)="onDragEnded()"
+                 (click)="onCardClick(task, section.orderIndex)">
 
               <div class="task-card__top">
                 <span class="task-card__title"

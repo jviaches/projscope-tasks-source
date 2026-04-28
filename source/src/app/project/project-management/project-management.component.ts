@@ -250,6 +250,22 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     this.electronService.createTask(sectionIndex);
   }
 
+  /* ── Drag-vs-click guard ───────────────────────────────────────────────── */
+  private _dragging = false;
+
+  onDragStarted() { this._dragging = true; }
+
+  onDragEnded() {
+    // defer reset so the (click) handler fires before the flag clears
+    setTimeout(() => this._dragging = false, 0);
+  }
+
+  onCardClick(task: Task, sectionIndex: number) {
+    if (!this._dragging) {
+      this.viewTask(task, sectionIndex);
+    }
+  }
+
   onContentChanged = (event: { html: string }) => {
     this.project.notes = event.html;
     this.electronService.setDataChange();
