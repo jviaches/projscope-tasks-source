@@ -6,6 +6,28 @@
   min-width: 200px;
 }
 
+/* ── Caption input ────────────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--col-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus {
+    border-color: var(--accent);
+  }
+}
+
 .tags-section {
   margin-bottom: 12px;
 }

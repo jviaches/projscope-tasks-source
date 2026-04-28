@@ -246,8 +246,8 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     this.electronService.deleteTask(taskId, sectionIndex);
   }
 
-  createTask() {
-    this.electronService.createTask();
+  createTask(sectionIndex: number = 0) {
+    this.electronService.createTask(sectionIndex);
   }
 
   onContentChanged = (event: { html: string }) => {

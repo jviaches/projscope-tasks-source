@@ -389,9 +389,9 @@ export class ElectronService {
     });
   }
 
-  createTask() {
+  createTask(sectionIndex: number = 0) {
     this.notificationService
-      .showModalComponent(TaskViewComponent, "", {})
+      .showModalComponent(TaskViewComponent, "", { sectionIndex })
       .subscribe((result) => {
         if (result !== "FAIL") {
           const task: Task = {

@@ -25,7 +25,7 @@
 }
 .ql-editor {
   color: var(--text-primary);
-  &.ql-blank::before { color: var(--text-quaternary); font-style: normal; }
+  &.ql-blank::before { color: var(--text-tertiary); font-style: normal; }
 }
 
 /* ── Material autocomplete ────────────────────────────────────────────── */
@@ -61,6 +61,23 @@
     line-height: 34px;
     &:hover { background: var(--chip-bg) !important; color: var(--text-primary) !important; }
     i { color: var(--text-tertiary); margin-right: 8px; font-size: 12px; }
+  }
+}
+
+/* ── Material select panel (dropdown list) ───────────────────────────── */
+.mat-select-panel {
+  background: var(--surface-1) !important;
+  border: 1px solid var(--col-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--modal-shadow) !important;
+
+  .mat-option {
+    color: var(--text-primary) !important;
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    &:hover:not(.mat-option-disabled),
+    &.mat-active { background: var(--chip-bg) !important; }
+    &.mat-selected:not(.mat-option-multiple) { background: var(--accent-soft) !important; }
   }
 }
 

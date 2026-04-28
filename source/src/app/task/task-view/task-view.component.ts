@@ -54,7 +54,7 @@ export class TaskViewComponent implements OnInit {
       this.selectedTags = [...(this.data.task.tags ?? [])];
     } else {
       this.selectedPriority = this.utilsService.priorities[1];
-      this.selectedSection = this.utilsService.sections[0];
+      this.selectedSection = this.utilsService.sections[this.data.sectionIndex ?? 0];
       this.selectedTags = [];
     }
   }
