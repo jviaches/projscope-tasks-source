@@ -192,12 +192,6 @@ source/
 
 ---
 
-## Public Releases
-
-Built installers are published at: https://github.com/jviaches/projscope-tasks
-
----
-
 ## Contributing
 
 **Contributions of any kind are very welcome.** Whether you're fixing a typo or shipping a whole new feature — every bit helps.
