@@ -292,13 +292,18 @@ export class ElectronService {
   saveAsProject(content: string) {
     const encryptedContent = this.encrypt(content);
 
-    const filepath = this.dialog.showSaveDialogSync(null, {
+    let filepath = this.dialog.showSaveDialogSync(null, {
       properties: ["createDirectory"],
       filters: [{ name: "Project", extensions: ["prj"] }],
     });
 
     if (filepath === undefined) {
       return;
+    }
+
+    // Linux GTK dialogs do not auto-append the extension from the filter
+    if (!filepath.endsWith(".prj")) {
+      filepath += ".prj";
     }
 
     this.filePath = filepath;
