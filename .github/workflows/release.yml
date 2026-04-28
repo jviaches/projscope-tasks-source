@@ -6,6 +6,11 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
+# Opt into Node.js 24 for all actions (avoids Node.js 20 deprecation warning;
+# mandatory from June 2 2026 / runner removal September 16 2026)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ── Windows build → NSIS installer (x64 + ia32) ─────────────────────────
   release-windows:
