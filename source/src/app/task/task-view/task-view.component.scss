@@ -2,6 +2,11 @@
   height: 400px;
 }
 
+/* Ensure all text in the dialog wrapper inherits the theme colour */
+:host, .center {
+  color: var(--text-primary);
+}
+
 * {
   min-width: 200px;
 }
