@@ -14,7 +14,7 @@ import {
 import { Project, Tag, Task } from "../../core/models/project.model";
 import { NotificationService } from "../../core/services/notification.service";
 import { TaskViewComponent } from "../../task/task-view/task-view.component";
-import { ElectronService } from "../../core/services";
+import { ElectronService, ProjectEntry } from "../../core/services/electron/electron.service";
 import { Priority, PriorityColor } from "../../core/models/priority.model";
 import { UtilsService } from "../../core/services/utils.service";
 import { FormControl } from "@angular/forms";
@@ -57,6 +57,9 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   ];
   public isLightTheme = this.electronService.getActiveThemeId() === 1;
 
+  /** Drives the project tab bar. */
+  openProjects$: Observable<ProjectEntry[]>;
+
   searchTasksCtrl = new FormControl();
   taskSections: TaskSection[] = [];
   filteredTasks: Observable<TaskSection[]>;
@@ -86,6 +89,12 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
       debounceTime(300),
       map((task) => (task ? this._filterTasks(task) : this.taskSections.slice()))
     );
+    this.openProjects$ = this.electronService.openProjectsList$;
+  }
+
+  // ── Getters for tab bar ─────────────────────────────────────────────────
+  get activeProjectPath(): string {
+    return this.electronService.activeProjectPath;
   }
 
   ngOnInit(): void {
@@ -104,6 +113,20 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
 
   changedTheme() {
     this.electronService.updateTheme(this.isLightTheme ? 1 : 2);
+  }
+
+  // ── Tab bar actions ─────────────────────────────────────────────────────
+  switchProject(path: string) {
+    this.electronService.switchProject(path);
+  }
+
+  closeProjectTab(path: string, e: MouseEvent) {
+    e.stopPropagation();
+    this.electronService.closeProjectTab(path);
+  }
+
+  openAnotherProject() {
+    this.electronService.addProject();
   }
 
   public get sectiondIds(): string[] {

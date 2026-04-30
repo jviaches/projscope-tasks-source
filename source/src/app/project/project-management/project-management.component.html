@@ -9,17 +9,53 @@
       </div>
       <div class="divider-v"></div>
 
-      <div class="project-name-wrap" *ngIf="!editProjectName" (click)="setProjectNameEditMode()">
-        <span>{{ project.name }}</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
-      <div class="project-name-edit" *ngIf="editProjectName">
-        <input class="project-name-input" [(ngModel)]="project.name"
-               (keyup.enter)="setProjectNameEditMode()" autofocus />
-        <button class="icon-btn" (click)="setProjectNameEditMode()">
-          <i class="fas fa-check"></i>
+      <!-- ── Project tabs ──────────────────────────────────────────── -->
+      <div class="project-tabs" role="tablist">
+
+        <ng-container *ngFor="let proj of openProjects$ | async">
+
+          <!-- Active tab – name is editable inline -->
+          <div class="project-tab project-tab--active"
+               *ngIf="proj.path === activeProjectPath"
+               role="tab" aria-selected="true">
+            <span class="project-tab__dirty" *ngIf="proj.dirty" title="Unsaved changes">●</span>
+            <span class="project-tab__name"
+                  *ngIf="!editProjectName"
+                  (click)="setProjectNameEditMode()"
+                  title="Click to rename">{{ proj.name }}</span>
+            <input class="project-tab__input"
+                   *ngIf="editProjectName"
+                   [(ngModel)]="project.name"
+                   (keyup.enter)="setProjectNameEditMode()"
+                   (blur)="setProjectNameEditMode()"
+                   autofocus />
+            <button class="project-tab__close"
+                    (click)="closeProjectTab(proj.path, $event)"
+                    title="Close project">×</button>
+          </div>
+
+          <!-- Inactive tab -->
+          <div class="project-tab"
+               *ngIf="proj.path !== activeProjectPath"
+               role="tab" aria-selected="false"
+               (click)="switchProject(proj.path)"
+               [title]="proj.path">
+            <span class="project-tab__dirty" *ngIf="proj.dirty" title="Unsaved changes">●</span>
+            <span class="project-tab__name">{{ proj.name }}</span>
+            <button class="project-tab__close"
+                    (click)="closeProjectTab(proj.path, $event)"
+                    title="Close project">×</button>
+          </div>
+
+        </ng-container>
+
+        <!-- Open another project -->
+        <button class="project-tab__add-btn" (click)="openAnotherProject()" title="Open another project">
+          <i class="fas fa-plus"></i>
         </button>
       </div>
+      <!-- ─────────────────────────────────────────────────────────── -->
+
     </div>
 
     <div class="topbar__center">
