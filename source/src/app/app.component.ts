@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe((update) => {
         if (update?.releaseName) {
           this.updateName = update.releaseName;
-          const el = document.getElementById("notification");
+          const el = document.getElementById("update-toast");
           if (el) el.classList.remove("hidden");
         }
       });
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   closeNotification() {
-    const el = document.getElementById("notification");
+    const el = document.getElementById("update-toast");
     if (el) el.classList.add("hidden");
   }
 

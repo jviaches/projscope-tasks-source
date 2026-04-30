@@ -2,7 +2,7 @@
   <article>
     <div style="display: flex; justify-content: space-between">
       <img src="assets/img/brand-logo-color.png" alt="branding image"/>
-      <span style="font-size: small;">Ver: {{electronService.appSettings?.version || 'DEBUG'}}</span>
+      <span style="font-size: small;">Ver: {{ electronService.appVersion }}</span>
     </div>
     <div style="display: flex; flex-direction: column; justify-content: flex-start;">
       <br/>
@@ -16,7 +16,28 @@
         This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
       </div>
     </div>
-    <div style="margin-top: 20px;">
+
+    <!-- Update check area -->
+    <div class="update-section">
+      <button mat-stroked-button class="check-btn"
+              [disabled]="checkState === 'checking'"
+              (click)="checkForUpdates()">
+        <span *ngIf="checkState !== 'checking'">Check for updates</span>
+        <span *ngIf="checkState === 'checking'">Checking…</span>
+      </button>
+
+      <span class="update-status update-status--ok"    *ngIf="checkState === 'up-to-date'">
+        ✓ You are on the latest version
+      </span>
+      <span class="update-status update-status--new"   *ngIf="checkState === 'available'">
+        ↓ Version {{ availableVersion }} is downloading — restart when prompted
+      </span>
+      <span class="update-status update-status--error" *ngIf="checkState === 'error'">
+        ✕ {{ errorMessage }}
+      </span>
+    </div>
+
+    <div style="margin-top: 16px;">
       <button mat-raised-button (click)="cancel()">OK</button>
     </div>
   </article>

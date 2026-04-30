@@ -8,7 +8,7 @@ import { ProgramUpdate } from "../../models/update.model";
 import { AppSettings } from "../../models/appsettings.model";
 import { NotificationService } from "../notification.service";
 import { Router } from "@angular/router";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { AboutComponent } from "../../../about/about.component";
 import { TaskViewComponent } from "../../../task/task-view/task-view.component";
@@ -73,6 +73,9 @@ export class ElectronService {
   appSettings: AppSettings;
   project: BehaviorSubject<Project> = new BehaviorSubject(null);
   systemUpdateMessage: BehaviorSubject<ProgramUpdate> = new BehaviorSubject(null);
+
+  /** Emits update check state: 'checking' | 'available:<version>' | 'not-available' | 'error:<msg>' */
+  updateCheckState$ = new Subject<string>();
   filePath: string = "";
   dataChangeDetected = false;
   lastTaskId: number = 0;
@@ -195,6 +198,23 @@ export class ElectronService {
           releaseNotes: (releaseNotes as string) ?? null,
           releaseName: (releaseName as string) ?? "",
         });
+        this.ngZone.run(() => this.updateCheckState$.next(`available:${releaseName}`));
+      });
+
+      this.ipcRenderer.on("checking-for-update", () => {
+        this.ngZone.run(() => this.updateCheckState$.next('checking'));
+      });
+
+      this.ipcRenderer.on("update-available", (_e, version: string) => {
+        this.ngZone.run(() => this.updateCheckState$.next(`available:${version}`));
+      });
+
+      this.ipcRenderer.on("update-not-available", () => {
+        this.ngZone.run(() => this.updateCheckState$.next('not-available'));
+      });
+
+      this.ipcRenderer.on("update-error", (_e, msg: string) => {
+        this.ngZone.run(() => this.updateCheckState$.next(`error:${msg}`));
       });
     }
   }
@@ -557,5 +577,20 @@ export class ElectronService {
 
   getActiveThemeId(): number {
     return this.themeService.getActiveTheme().id;
+  }
+
+  /** Always returns the live version from package.json via Electron */
+  get appVersion(): string {
+    if (this.remote?.app) {
+      return this.remote.app.getVersion();
+    }
+    return this.appSettings?.version ?? 'DEBUG';
+  }
+
+  /** Triggers a manual update check — main process handles the rest via IPC events */
+  checkForUpdates(): void {
+    if (this.ipcRenderer) {
+      this.ipcRenderer.send('check-for-updates');
+    }
   }
 }

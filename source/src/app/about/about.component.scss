@@ -1,0 +1,20 @@
+.update-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.check-btn {
+  white-space: nowrap;
+}
+
+.update-status {
+  font-size: 0.82rem;
+  font-weight: 500;
+
+  &--ok    { color: #4caf50; }
+  &--new   { color: var(--accent, #1976d2); }
+  &--error { color: #f44336; }
+}

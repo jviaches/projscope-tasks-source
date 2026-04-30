@@ -153,11 +153,21 @@ function createWindow(): BrowserWindow {
   });
 
   win.once("ready-to-show", () => {
-    setInterval(() => {
-      autoUpdater.checkForUpdates().catch( ()=> {
+    // Initial check 10 s after the window is ready
+    setTimeout(() => {
+      autoUpdater.checkForUpdates().catch(() => {});
+    }, 10_000);
 
-      });
-    }, 10009*60*60*24) // once a day
+    // Then re-check every 4 hours
+    setInterval(() => {
+      autoUpdater.checkForUpdates().catch(() => {});
+    }, 1_000 * 60 * 60 * 4);
+  });
+
+  ipcMain.on('check-for-updates', () => {
+    autoUpdater.checkForUpdates().catch((err) => {
+      win.webContents.send('update-error', err?.message ?? 'Unknown error');
+    });
   });
 
   ipcMain.on('restart_app', () => {
@@ -172,32 +182,26 @@ function createWindow(): BrowserWindow {
 
 
   autoUpdater.on('checking-for-update', () => {
-    //Start checking for new version
-    //Here you can remind users that they are looking for a new version
-    //win.webContents.send("checking-for-update", "");
+    win.webContents.send('checking-for-update');
   });
 
   autoUpdater.on('update-available', (info) => {
-    //New version detected
-    //Remind users that a new version has been found
-    //win.webContents.send("update-available", "");
+    win.webContents.send('update-available', info.version);
   });
 
-  autoUpdater.on('update-not-available', (info) => {
-    //No new version detected
-    //Remind the user that the current version is the latest version and does not need to be updated
-    //win.webContents.send('update-not-available', "");
+  autoUpdater.on('update-not-available', () => {
+    win.webContents.send('update-not-available');
   });
 
   autoUpdater.on('error', (err) => {
-    //Automatic upgrade encountered an error
-    //Execute the original upgrade logic
-    //win.webContents.send("update-error", "");
+    console.error('Auto-updater error:', err?.message ?? err);
+    win.webContents.send('update-error', err?.message ?? 'Unknown error');
   });
 
-  autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-    win.webContents.send("update-downloaded", releaseNotes, releaseName);
-  })
+  // electron-updater passes a single UpdateInfo object (not positional args)
+  autoUpdater.on('update-downloaded', (info) => {
+    win.webContents.send("update-downloaded", info.releaseNotes ?? null, info.version);
+  });
 
 
   win.webContents.on("ipc-message", (event, input, args) => {
