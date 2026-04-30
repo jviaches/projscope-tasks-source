@@ -60,6 +60,9 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   /** Drives the project tab bar. */
   openProjects$: Observable<ProjectEntry[]>;
 
+  /** Per-column sort state. Key = section.orderIndex. */
+  sectionSort = new Map<number, { field: 'name' | 'date'; dir: 'asc' | 'desc' }>();
+
   searchTasksCtrl = new FormControl();
   taskSections: TaskSection[] = [];
   filteredTasks: Observable<TaskSection[]>;
@@ -127,6 +130,10 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
 
   openAnotherProject() {
     this.electronService.addProject();
+  }
+
+  createNewProject() {
+    this.electronService.newProject();
   }
 
   public get sectiondIds(): string[] {
@@ -340,6 +347,19 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
           this.sectionsTasks["cdk-drop-list-" + section.orderIndex].push(task);
         });
       });
+
+      // Apply per-column sort
+      this.project.sections.forEach((section) => {
+        const sort = this.sectionSort.get(section.orderIndex);
+        if (!sort) return;
+        const key = "cdk-drop-list-" + section.orderIndex;
+        this.sectionsTasks[key].sort((a, b) => {
+          const cmp = sort.field === 'name'
+            ? a.title.localeCompare(b.title)
+            : new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime();
+          return sort.dir === 'asc' ? cmp : -cmp;
+        });
+      });
     }
 
     this.taskSections = [];
@@ -411,6 +431,37 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  // ── Column sort ─────────────────────────────────────────────────────────
+
+  /**
+   * Toggle sort for a column. First click → ascending; second click on the
+   * same field → descending; clicking again → clears.
+   */
+  setSectionSort(orderIndex: number, field: 'name' | 'date') {
+    const current = this.sectionSort.get(orderIndex);
+    if (current?.field === field) {
+      if (current.dir === 'asc') {
+        this.sectionSort.set(orderIndex, { field, dir: 'desc' });
+      } else {
+        // third state: clear
+        this.sectionSort.delete(orderIndex);
+      }
+    } else {
+      this.sectionSort.set(orderIndex, { field, dir: 'asc' });
+    }
+    this.recalculateData();
+  }
+
+  getSectionSort(orderIndex: number) {
+    return this.sectionSort.get(orderIndex);
+  }
+
+  clearSectionSort(orderIndex: number) {
+    this.sectionSort.delete(orderIndex);
+    this.recalculateData();
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   private getTaskById(taskId: number): Task {
     for (const section of this.project.sections) {

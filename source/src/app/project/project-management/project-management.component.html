@@ -49,10 +49,20 @@
 
         </ng-container>
 
-        <!-- Open another project -->
-        <button class="project-tab__add-btn" (click)="openAnotherProject()" title="Open another project">
+        <!-- New / Open project menu -->
+        <button class="project-tab__add-btn"
+                [matMenuTriggerFor]="addProjectMenu"
+                title="New or open project">
           <i class="fas fa-plus"></i>
         </button>
+        <mat-menu #addProjectMenu="matMenu">
+          <button mat-menu-item (click)="createNewProject()">
+            <i class="far fa-file" style="margin-right:8px;"></i> New project
+          </button>
+          <button mat-menu-item (click)="openAnotherProject()">
+            <i class="far fa-folder-open" style="margin-right:8px;"></i> Open project…
+          </button>
+        </mat-menu>
       </div>
       <!-- ─────────────────────────────────────────────────────────── -->
 
@@ -155,16 +165,51 @@
                      autofocus />
 
               <span class="column__count">{{ sectionId(section.orderIndex) }}</span>
+
+              <!-- Active sort badge -->
+              <span class="column__sort-badge"
+                    *ngIf="getSectionSort(section.orderIndex) as s"
+                    (click)="clearSectionSort(section.orderIndex)"
+                    title="Sorted by {{ s.field }} {{ s.dir }} — click to clear">
+                <i class="fas"
+                   [class.fa-sort-alpha-down]="s.field === 'name' && s.dir === 'asc'"
+                   [class.fa-sort-alpha-up]="s.field === 'name' && s.dir === 'desc'"
+                   [class.fa-sort-numeric-down]="s.field === 'date' && s.dir === 'asc'"
+                   [class.fa-sort-numeric-up]="s.field === 'date' && s.dir === 'desc'"></i>
+              </span>
             </div>
+
             <button class="column__menu" [matMenuTriggerFor]="sectionMenu">
               <i class="fas fa-ellipsis-h"></i>
             </button>
             <mat-menu #sectionMenu="matMenu">
               <button mat-menu-item (click)="setSectionEditMode(section.orderIndex)">
-                <i class="far fa-edit"></i> Rename
+                <i class="far fa-edit" style="margin-right:6px;"></i> Rename
               </button>
               <button mat-menu-item (click)="deleteSection(section.orderIndex)">
-                <i class="far fa-trash-alt"></i> Delete
+                <i class="far fa-trash-alt" style="margin-right:6px;"></i> Delete
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="setSectionSort(section.orderIndex, 'name')">
+                <i class="fas fa-sort-alpha-down" style="margin-right:6px;"
+                   [style.color]="getSectionSort(section.orderIndex)?.field === 'name' ? 'var(--accent)' : 'inherit'"></i>
+                Sort by name
+                <span class="sort-dir-hint" *ngIf="getSectionSort(section.orderIndex)?.field === 'name'">
+                  ({{ getSectionSort(section.orderIndex)?.dir === 'asc' ? 'A → Z' : 'Z → A' }})
+                </span>
+              </button>
+              <button mat-menu-item (click)="setSectionSort(section.orderIndex, 'date')">
+                <i class="far fa-calendar" style="margin-right:6px;"
+                   [style.color]="getSectionSort(section.orderIndex)?.field === 'date' ? 'var(--accent)' : 'inherit'"></i>
+                Sort by date
+                <span class="sort-dir-hint" *ngIf="getSectionSort(section.orderIndex)?.field === 'date'">
+                  ({{ getSectionSort(section.orderIndex)?.dir === 'asc' ? 'oldest first' : 'newest first' }})
+                </span>
+              </button>
+              <button mat-menu-item
+                      *ngIf="getSectionSort(section.orderIndex)"
+                      (click)="clearSectionSort(section.orderIndex)">
+                <i class="fas fa-times" style="margin-right:6px;"></i> Clear sort
               </button>
             </mat-menu>
           </div>

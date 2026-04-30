@@ -392,6 +392,16 @@ input:checked + .toggle-slider {
     font-weight: 500;
   }
 
+  &__sort-badge {
+    display: flex; align-items: center;
+    font-size: 10px;
+    color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+    opacity: 0.8;
+    &:hover { opacity: 1; }
+  }
+
   &__menu {
     background: transparent; border: none;
     color: var(--text-quaternary); cursor: pointer;
@@ -412,6 +422,13 @@ input:checked + .toggle-slider {
   outline: none;
   padding: 1px 2px;
   min-width: 0; flex: 1;
+}
+
+.sort-dir-hint {
+  font-size: 11px;
+  color: var(--accent);
+  margin-left: 4px;
+  font-weight: 400;
 }
 
 .column__body {
