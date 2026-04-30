@@ -15,14 +15,16 @@ import { TaskViewComponent } from "../../../task/task-view/task-view.component";
 import { ThemeService } from "../theme.service";
 
 /**
- * Sentinel key used as the Map key for a project that has not yet been saved
- * to disk (i.e. created via File → New but not yet saved with Save As).
+ * Prefix for the Map key of projects that have not yet been saved to disk.
+ * Each new project gets a unique key: __new__0, __new__1, …
  */
-const UNSAVED_KEY = "__new__";
+const UNSAVED_PREFIX = "__new__";
+
+const isUnsaved = (path: string) => path.startsWith(UNSAVED_PREFIX);
 
 /** Shape of each entry emitted by openProjectsList$ for the tab bar. */
 export interface ProjectEntry {
-  path: string;   // file path, or UNSAVED_KEY for an unsaved project
+  path: string;   // file path, or __new__N key for an unsaved project
   name: string;
   dirty: boolean;
 }
@@ -74,14 +76,17 @@ export class ElectronService {
   appSettings: AppSettings;
 
   // ── Multi-project workspace state ─────────────────────────────────────────
-  /** All loaded projects, keyed by file path (or UNSAVED_KEY). */
+  /** Counter for generating unique keys for new unsaved projects. */
+  private _newProjectCounter = 0;
+
+  /** All loaded projects, keyed by file path or __new__N for unsaved ones. */
   private _loadedProjects = new Map<string, Project>();
   /** Per-project dirty flags. */
   private _projectDirty = new Map<string, boolean>();
   /** Per-project last-used task ID counters. */
   private _lastTaskIdMap = new Map<string, number>();
 
-  /** The key (file path or UNSAVED_KEY) of the currently active project. */
+  /** The key (file path or __new__N) of the currently active project. */
   activeProjectPath = "";
 
   /** Reactive list of all open projects — drives the tab bar. */
@@ -99,7 +104,7 @@ export class ElectronService {
 
   /** Real file path of the active project, or '' for an unsaved project. */
   get filePath(): string {
-    return this.activeProjectPath === UNSAVED_KEY ? "" : this.activeProjectPath;
+    return isUnsaved(this.activeProjectPath) ? "" : this.activeProjectPath;
   }
 
   /** True if the currently active project has unsaved changes. */
@@ -296,19 +301,13 @@ export class ElectronService {
    */
   newProject(): Promise<Project> {
     return new Promise<Project>((resolve) => {
-      // Only one unsaved-project tab is allowed at a time.
-      if (this._loadedProjects.has(UNSAVED_KEY)) {
-        this.switchProject(UNSAVED_KEY);
-        resolve(this._loadedProjects.get(UNSAVED_KEY));
-        return;
-      }
-
+      const key = `${UNSAVED_PREFIX}${this._newProjectCounter++}`;
       const proj = this.defaultProject;
-      this._loadedProjects.set(UNSAVED_KEY, proj);
-      this._projectDirty.set(UNSAVED_KEY, false);
-      this._setLastTaskIdForPath(UNSAVED_KEY, proj);
+      this._loadedProjects.set(key, proj);
+      this._projectDirty.set(key, false);
+      this._setLastTaskIdForPath(key, proj);
       this.ipcRenderer.send("close-project-enable", true);
-      this.switchProject(UNSAVED_KEY);
+      this.switchProject(key);
       this.refreshOpenProjectsList();
       this._syncSettingsOpenPaths();
       resolve(proj);
@@ -379,7 +378,7 @@ export class ElectronService {
     this.setPageTitle(this.dataChangeDetected);
 
     // Persist the active path so it is focused again on next launch.
-    if (this.appSettings && path !== UNSAVED_KEY) {
+    if (this.appSettings && !isUnsaved(path)) {
       this.appSettings.lastProjectPath = path;
       this.saveAppSettings();
     }
@@ -455,7 +454,7 @@ export class ElectronService {
         return;
       }
 
-      // Re-key the map entry if the path changed (e.g. UNSAVED_KEY → real path).
+      // Re-key the map entry if the path changed (e.g. __new__N → real path).
       const oldPath = this.activeProjectPath;
       if (oldPath !== filepath) {
         const proj = this._loadedProjects.get(oldPath);
@@ -689,7 +688,7 @@ export class ElectronService {
   private _syncSettingsOpenPaths() {
     if (!this.appSettings) return;
     this.appSettings.openProjectPaths = Array.from(this._loadedProjects.keys()).filter(
-      (k) => k !== UNSAVED_KEY
+      (k) => !isUnsaved(k)
     );
     this.saveAppSettings();
   }
