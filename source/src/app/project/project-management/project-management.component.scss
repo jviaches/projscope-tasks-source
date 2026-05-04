@@ -493,6 +493,23 @@ input:checked + .toggle-slider {
     display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 8px;
   }
 
+  &__due {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 10.5px; color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    margin-bottom: 6px;
+  }
+
+  /* deadline urgency bottom borders */
+  &.dl-safe    { border-bottom: 2px solid #22c55e; }
+  &.dl-warning { border-bottom: 2px solid #f59e0b; }
+  &.dl-urgent  { border-bottom: 2px solid #f97316; }
+  &.dl-overdue { border-bottom: 2px solid #ef4444; }
+
+  &.dl-warning &__due,
+  &.dl-urgent  &__due { color: #c97040; }
+  &.dl-overdue &__due { color: #e5534b; font-weight: 600; }
+
   &__footer {
     display: flex; align-items: center;
     justify-content: space-between; gap: 4px;

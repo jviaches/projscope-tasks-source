@@ -36,7 +36,7 @@ export class ElectronService {
   public static readonly PAGE_TITLE = "ProjScope Tasks";
 
   // Bump this and add an entry to MIGRATIONS whenever the Project shape changes.
-  private static readonly CURRENT_SCHEMA_VERSION = 1;
+  private static readonly CURRENT_SCHEMA_VERSION = 2;
 
   private static readonly MIGRATIONS: Record<number, (p: any) => any> = {
     0: (p: any) => ({
@@ -59,6 +59,17 @@ export class ElectronService {
           tags: t.tags ?? [],
           orderIndex: t.orderIndex ?? 0,
           creationDate: t.creationDate ?? new Date().toISOString(),
+        })),
+      })),
+    }),
+    1: (p: any) => ({
+      ...p,
+      schemaVersion: 2,
+      sections: (p.sections ?? []).map((s: any) => ({
+        ...s,
+        tasks: (s.tasks ?? []).map((t: any) => ({
+          ...t,
+          dueDate: t.dueDate ?? null,
         })),
       })),
     }),

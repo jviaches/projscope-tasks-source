@@ -68,6 +68,7 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   filteredTasks: Observable<TaskSection[]>;
 
   private destroy$ = new Subject<void>();
+  private deadlineTimer: ReturnType<typeof setInterval> | null = null;
 
   quillConfiguration = {
     toolbar: [
@@ -107,11 +108,17 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
         this.project = project;
         this.recalculateData();
       });
+
+    // Refresh deadline border colours every minute (OnPush won't do it automatically)
+    this.deadlineTimer = setInterval(() => this.cdr.markForCheck(), 60_000);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.deadlineTimer !== null) {
+      clearInterval(this.deadlineTimer);
+    }
   }
 
   changedTheme() {
@@ -261,6 +268,12 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
               const currentTagIds = section.tasks[indexResult]?.tags.map((t) => t.id).sort().join(',') ?? '';
               if (incomingTagIds !== currentTagIds) {
                 section.tasks[indexResult].tags = result.tags;
+                this.electronService.setDataChange();
+                this.recalculateData();
+              }
+
+              if ((section.tasks[indexResult]?.dueDate ?? null) !== (result.dueDate ?? null)) {
+                section.tasks[indexResult].dueDate = result.dueDate ?? null;
                 this.electronService.setDataChange();
                 this.recalculateData();
               }
@@ -430,6 +443,18 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
           this.recalculateData();
         }
       });
+  }
+
+  // ── Deadline helpers ────────────────────────────────────────────────────
+
+  deadlineClass(task: Task, isDoneSection: boolean): string {
+    if (!task.dueDate || isDoneSection) return '';
+    const ms = new Date(task.dueDate).getTime() - Date.now();
+    const day = 86_400_000;
+    if (ms < 0)         return 'dl-overdue';
+    if (ms < day)       return 'dl-urgent';
+    if (ms < 3 * day)   return 'dl-warning';
+    return 'dl-safe';
   }
 
   // ── Column sort ─────────────────────────────────────────────────────────
