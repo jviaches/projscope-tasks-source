@@ -26,6 +26,12 @@
     ],
   "win": {
     "icon": "dist/assets/icons",
+    "extraFiles": [
+      {
+        "from": "node_modules/electron/dist/ffmpeg.dll",
+        "to": "ffmpeg.dll"
+      }
+    ],
     "target": [
       {
         "target": "nsis",
