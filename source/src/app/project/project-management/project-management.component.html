@@ -142,6 +142,33 @@
     </div>
   </div>
 
+  <!-- ══ DATE FILTER BAR ══════════════════════════════════════════════════ -->
+  <div class="date-filter-bar" [class.date-filter-bar--active]="isDateFilterActive">
+    <i class="fas fa-calendar-alt date-filter-bar__icon"></i>
+    <span class="date-filter-bar__label">Due date range</span>
+
+    <div class="date-filter-bar__inputs">
+      <input type="date" class="date-filter-input"
+             [(ngModel)]="dateFrom"
+             (change)="onDateFilterChange()"
+             title="From" />
+      <span class="date-filter-bar__sep">→</span>
+      <input type="date" class="date-filter-input"
+             [(ngModel)]="dateTo"
+             (change)="onDateFilterChange()"
+             title="To" />
+    </div>
+
+    <span class="date-filter-bar__count" *ngIf="isDateFilterActive">
+      <i class="fas fa-filter"></i>
+      {{ filteredTaskCount }} task{{ filteredTaskCount !== 1 ? 's' : '' }} matched
+    </span>
+
+    <button class="ghost-btn date-filter-bar__clear" *ngIf="isDateFilterActive" (click)="clearDateFilter()">
+      <i class="fas fa-times"></i> Clear
+    </button>
+  </div>
+
   <!-- ══ MAIN LAYOUT ════════════════════════════════════════════════════ -->
   <div class="main-layout">
 

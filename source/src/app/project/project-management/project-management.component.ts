@@ -63,6 +63,29 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   /** Per-column sort state. Key = section.orderIndex. */
   sectionSort = new Map<number, { field: 'name' | 'date'; dir: 'asc' | 'desc' }>();
 
+  /** Global due-date range filter (ISO date strings, e.g. "2026-05-10"). */
+  dateFrom: string = '';
+  dateTo: string = '';
+
+  get isDateFilterActive(): boolean {
+    return !!this.dateFrom || !!this.dateTo;
+  }
+
+  /** Total tasks visible across all columns after the date filter is applied. */
+  get filteredTaskCount(): number {
+    return Object.values(this.sectionsTasks).reduce((sum, tasks) => sum + tasks.length, 0);
+  }
+
+  onDateFilterChange() {
+    this.recalculateData();
+  }
+
+  clearDateFilter() {
+    this.dateFrom = '';
+    this.dateTo = '';
+    this.recalculateData();
+  }
+
   searchTasksCtrl = new FormControl();
   taskSections: TaskSection[] = [];
   filteredTasks: Observable<TaskSection[]>;
@@ -373,6 +396,26 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
           return sort.dir === 'asc' ? cmp : -cmp;
         });
       });
+
+      // Apply global due-date range filter across all columns
+      if (this.isDateFilterActive) {
+        const from = this.dateFrom
+          ? new Date(this.dateFrom + 'T00:00:00').getTime()
+          : null;
+        const to = this.dateTo
+          ? new Date(this.dateTo + 'T23:59:59').getTime()
+          : null;
+        this.project.sections.forEach((section) => {
+          const key = "cdk-drop-list-" + section.orderIndex;
+          this.sectionsTasks[key] = this.sectionsTasks[key].filter((task) => {
+            if (!task.dueDate) return false;
+            const due = new Date(task.dueDate).getTime();
+            if (from !== null && due < from) return false;
+            if (to !== null && due > to) return false;
+            return true;
+          });
+        });
+      }
     }
 
     this.taskSections = [];
