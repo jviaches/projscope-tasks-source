@@ -4,17 +4,13 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-  # Allow manual re-trigger from the Actions tab (pick any tag/branch)
   workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: write
 
 jobs:
-  # ── Windows build → NSIS installer (x64 + ia32) + portable ──────────────
+  # ── Windows → NSIS installer (x64 + ia32) + portable (x64) ─────────────
   release-windows:
     name: Windows
     runs-on: windows-latest
@@ -26,10 +22,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js 16
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '16'
           cache: npm
           cache-dependency-path: source/package-lock.json
 
@@ -39,13 +35,23 @@ jobs:
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
 
-      - name: Package and publish
-        run: npm run deploy:win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify build artifacts
+        run: |
+          if (!(Test-Path "main.js"))  { Write-Error "main.js missing"; exit 1 }
+          if (!(Test-Path "dist"))     { Write-Error "dist/ missing";   exit 1 }
+          Write-Host "Build artifacts OK"
 
-  # ── Linux build → AppImage ───────────────────────────────────────────────
-  # Runs AFTER Windows so both jobs don't race to create the same release
+      - name: Package Windows (no auto-publish)
+        run: npx electron-builder build --win --publish never
+
+      - name: Upload Windows installers to release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: source/release/**/*.exe
+
+  # ── Linux → AppImage ─────────────────────────────────────────────────────
+  # Runs after Windows so the release already exists when we upload
   release-linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -58,10 +64,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js 16
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '16'
           cache: npm
           cache-dependency-path: source/package-lock.json
 
@@ -74,7 +80,16 @@ jobs:
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
 
-      - name: Package and publish
-        run: npm run deploy:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify build artifacts
+        run: |
+          test -f main.js || (echo "main.js missing" && exit 1)
+          test -d dist    || (echo "dist/ missing"   && exit 1)
+          echo "Build artifacts OK"
+
+      - name: Package Linux (no auto-publish)
+        run: npx electron-builder build --linux --publish never
+
+      - name: Upload Linux AppImage to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: source/release/**/*.AppImage
