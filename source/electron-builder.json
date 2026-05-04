@@ -26,6 +26,7 @@
     ],
   "win": {
     "icon": "dist/assets/icons",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "extraFiles": [
       {
         "from": "node_modules/electron/dist/ffmpeg.dll",
@@ -45,6 +46,7 @@
   },
   "mac": {
     "icon": "dist/assets/icons",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       "dmg",
       "zip"
@@ -52,6 +54,7 @@
   },
   "linux": {
     "icon": "dist/assets/icons/favicon.512x512.png",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       "AppImage"
     ]
