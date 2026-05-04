@@ -29,4 +29,5 @@ export class Task {
     tags: Tag[] = [];
     orderIndex: number;
     creationDate: Date;
+    dueDate?: string | null;   // ISO-8601 string, null/undefined = no deadline
 }

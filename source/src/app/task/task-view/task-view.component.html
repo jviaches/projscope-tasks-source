@@ -32,6 +32,14 @@
     </mat-form-field>
   </form>
 
+  <mat-form-field appearance="legacy" class="example-full-width" style="width: 100%; margin-bottom: 4px;">
+    <mat-label>Deadline (optional)</mat-label>
+    <input matInput type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
+    <button matSuffix mat-icon-button *ngIf="dueDate" (click)="dueDate = ''" type="button" aria-label="Clear deadline">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </mat-form-field>
+
   <div class="tags-section" *ngIf="availableTags.length > 0">
     <label class="tags-label">Tags</label>
     <mat-chip-list class="tags-chip-list">

@@ -227,6 +227,7 @@
                  [class.p-normal]="task.priority === 1"
                  [class.p-minor]="task.priority === 0"
                  [class.done-card]="i === project.sections.length - 1"
+                 [ngClass]="deadlineClass(task, i === project.sections.length - 1)"
                  *ngFor="let task of sectionsTasks['cdk-drop-list-' + section.orderIndex]"
                  cdkDrag
                  (cdkDragStarted)="onDragStarted()"
@@ -254,6 +255,11 @@
               <div class="task-card__tags" *ngIf="task.tags?.length > 0">
                 <span class="tag-pill" *ngFor="let tag of task.tags"
                       [style.background-color]="tag.color">{{ tag.name }}</span>
+              </div>
+
+              <div class="task-card__due" *ngIf="task.dueDate && i !== project.sections.length - 1">
+                <i class="fas fa-clock"></i>
+                {{ task.dueDate | date:'MMM d · HH:mm' }}
               </div>
 
               <div class="task-card__footer">

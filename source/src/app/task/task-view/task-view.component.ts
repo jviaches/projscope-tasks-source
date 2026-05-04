@@ -18,6 +18,7 @@ export class TaskViewComponent implements OnInit {
   public selectedSection: SelectionItem;
   public availableTags: Tag[] = [];
   public selectedTags: Tag[] = [];
+  public dueDate: string = '';
 
   editorText = "";
   quillConfiguration = {
@@ -52,6 +53,12 @@ export class TaskViewComponent implements OnInit {
       this.taskId = this.data.task.id;
       this.editorText = this.data.task.content;
       this.selectedTags = [...(this.data.task.tags ?? [])];
+      // Convert stored ISO string to datetime-local format (YYYY-MM-DDTHH:mm)
+      if (this.data.task.dueDate) {
+        const d = new Date(this.data.task.dueDate);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        this.dueDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
     } else {
       this.selectedPriority = this.utilsService.priorities[1];
       this.selectedSection = this.utilsService.sections[this.data.sectionIndex ?? 0];
@@ -86,6 +93,7 @@ export class TaskViewComponent implements OnInit {
         priority: this.selectedPriority,
         section: this.selectedSection,
         tags: this.selectedTags,
+        dueDate: this.dueDate ? new Date(this.dueDate).toISOString() : null,
       });
     }
   }
