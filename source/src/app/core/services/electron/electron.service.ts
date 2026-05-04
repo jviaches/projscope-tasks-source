@@ -563,6 +563,7 @@ export class ElectronService {
             tags: result.tags ?? [],
             orderIndex: result.section.value,
             creationDate: new Date(),
+            dueDate: result.dueDate ?? null,
           };
           this.setDataChange();
           this.project.value.sections[result.section.value].tasks.push(task);
