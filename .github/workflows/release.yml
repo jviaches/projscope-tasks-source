@@ -1,22 +1,20 @@
 name: Release
 
-# Triggers when a version tag is pushed: git tag v1.2.3 && git push --tags
 on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
+  # Allow manual re-trigger from the Actions tab (pick any tag/branch)
+  workflow_dispatch:
 
-# Opt into Node.js 24 for all actions (avoids Node.js 20 deprecation warning;
-# mandatory from June 2 2026 / runner removal September 16 2026)
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-# Required for electron-builder to create GitHub Releases and upload assets
 permissions:
   contents: write
 
 jobs:
-  # ── Windows build → NSIS installer (x64 + ia32) ─────────────────────────
+  # ── Windows build → NSIS installer (x64 + ia32) + portable ──────────────
   release-windows:
     name: Windows
     runs-on: windows-latest
@@ -46,43 +44,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ── macOS build → dmg + standalone zip ──────────────────────────────────
-  # release-mac:
-  #   name: macOS
-  #   runs-on: macos-latest
-  #   defaults:
-  #     run:
-  #       working-directory: source
-  #
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 18
-  #         cache: npm
-  #         cache-dependency-path: source/package-lock.json
-  #
-  #     - name: Install dependencies
-  #       run: npm ci --legacy-peer-deps
-  #
-  #     - name: Symlink python3 as python
-  #       run: sudo ln -sf /usr/bin/python3 /usr/local/bin/python
-  #
-  #     - name: Build Angular app + compile main.ts
-  #       run: npm run build:prod
-  #
-  #     - name: Package and publish
-  #       run: npm run deploy:mac
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # ── Linux build → AppImage ───────────────────────────────────────────────
+  # Runs AFTER Windows so both jobs don't race to create the same release
   release-linux:
     name: Linux
     runs-on: ubuntu-latest
+    needs: release-windows
     defaults:
       run:
         working-directory: source
@@ -102,7 +69,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Install Linux packaging deps
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm fakeroot
 
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
@@ -111,5 +78,3 @@ jobs:
         run: npm run deploy:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Needed by electron-builder on headless Linux runners
-          DISPLAY: ':99.0'
