@@ -463,6 +463,20 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  updateTagColor(tag: Tag, event: Event) {
+    const color = (event.target as HTMLInputElement).value;
+    tag.color = color;
+    // Cascade the new colour to all task copies of this tag
+    this.project.sections.forEach((section) =>
+      section.tasks.forEach((task) => {
+        const t = task.tags.find((t) => t.id === tag.id);
+        if (t) t.color = color;
+      })
+    );
+    this.electronService.setDataChange();
+    this.cdr.markForCheck();
+  }
+
   deleteTag(tag: Tag) {
     this.project.tags = this.project.tags.filter((t) => t.id !== tag.id);
     this.project.sections.forEach((section) => {

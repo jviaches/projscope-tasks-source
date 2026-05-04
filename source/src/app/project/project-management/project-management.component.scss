@@ -693,6 +693,20 @@ svg.donut { transform: rotate(-90deg); flex-shrink: 0; }
   i { font-size: 8px; cursor: pointer; opacity: .65;
     &:hover { opacity: 1; } }
 }
+
+.tag-color-btn {
+  display: inline-flex; align-items: center;
+  cursor: pointer; opacity: .65; line-height: 1;
+  &:hover { opacity: 1; }
+  i { font-size: 8px; }
+}
+
+.tag-color-input {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: 0; border: 0;
+  opacity: 0; overflow: hidden;
+}
 .tag-add-row {
   display: flex; align-items: center; gap: 5px; margin-top: 8px;
 }
