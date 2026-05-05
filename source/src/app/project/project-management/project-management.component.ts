@@ -397,7 +397,9 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
         });
       });
 
-      // Apply global due-date range filter across all columns
+      // Apply global date range filter across all columns.
+      // A task matches if its creationDate falls in range,
+      // OR its dueDate (when set) falls in range.
       if (this.isDateFilterActive) {
         const from = this.dateFrom
           ? new Date(this.dateFrom + 'T00:00:00').getTime()
@@ -405,14 +407,20 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
         const to = this.dateTo
           ? new Date(this.dateTo + 'T23:59:59').getTime()
           : null;
+
+        const inRange = (ms: number) =>
+          (from === null || ms >= from) && (to === null || ms <= to);
+
         this.project.sections.forEach((section) => {
           const key = "cdk-drop-list-" + section.orderIndex;
           this.sectionsTasks[key] = this.sectionsTasks[key].filter((task) => {
-            if (!task.dueDate) return false;
-            const due = new Date(task.dueDate).getTime();
-            if (from !== null && due < from) return false;
-            if (to !== null && due > to) return false;
-            return true;
+            const creationMs = new Date(task.creationDate).getTime();
+            if (inRange(creationMs)) return true;
+            if (task.dueDate) {
+              const dueMs = new Date(task.dueDate).getTime();
+              if (inRange(dueMs)) return true;
+            }
+            return false;
           });
         });
       }
