@@ -62,6 +62,6 @@ export class ProjectListComponent implements OnInit {
   }
 
   openCoffee() {
-    this.electronService.openExternal("https://www.buymeacoffee.com/jviaches");
+    this.electronService.openExternal("https://buymeacoffee.com/jviaches");
   }
 }
