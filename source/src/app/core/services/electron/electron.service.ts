@@ -551,7 +551,8 @@ export class ElectronService {
           this._loadedProjects.set(filePath, parsed);
           this._projectDirty.set(filePath, false);
           this._setLastTaskIdForPath(filePath, parsed);
-          this._addToRecent(filePath, parsed);
+          // Wrap in its own guard — a recents failure must never abort a project load.
+          try { this._addToRecent(filePath, parsed); } catch (_) { /* non-critical */ }
 
           if (opts.switchTo !== false) {
             this.switchProject(filePath);
