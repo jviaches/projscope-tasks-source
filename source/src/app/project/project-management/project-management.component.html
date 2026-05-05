@@ -261,6 +261,13 @@
                  (cdkDragEnded)="onDragEnded()"
                  (click)="onCardClick(task, section.orderIndex)">
 
+              <!-- deadline progress bar grows left→right as deadline approaches -->
+              <div class="task-card__deadline-bar"
+                   *ngIf="task.dueDate && i !== project.sections.length - 1"
+                   [ngClass]="deadlineClass(task, false)"
+                   [style.width.%]="deadlineProgressPct(task)">
+              </div>
+
               <div class="task-card__top">
                 <span class="task-card__title"
                       [class.done-title]="i === project.sections.length - 1">
@@ -287,6 +294,7 @@
               <div class="task-card__due" *ngIf="task.dueDate && i !== project.sections.length - 1">
                 <i class="fas fa-clock"></i>
                 {{ task.dueDate | date:'MMM d · HH:mm' }}
+                <span class="task-card__due-countdown">{{ deadlineCountdown(task) }}</span>
               </div>
 
               <div class="task-card__footer">

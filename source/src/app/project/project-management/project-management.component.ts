@@ -522,6 +522,31 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
     return 'dl-safe';
   }
 
+  /** Percentage (0–100) of elapsed time between creationDate and dueDate. */
+  deadlineProgressPct(task: Task): number {
+    if (!task.dueDate) return 0;
+    const created = new Date(task.creationDate).getTime();
+    const due     = new Date(task.dueDate).getTime();
+    const now     = Date.now();
+    if (due <= created) return 100;
+    return Math.min(100, Math.max(0, ((now - created) / (due - created)) * 100));
+  }
+
+  /** Human-readable countdown to (or past) the deadline, e.g. "2d 3h", "45m", "-1h 20m". */
+  deadlineCountdown(task: Task): string {
+    if (!task.dueDate) return '';
+    const ms  = new Date(task.dueDate).getTime() - Date.now();
+    const abs = Math.abs(ms);
+    const totalMin = Math.floor(abs / 60_000);
+    const m   = totalMin % 60;
+    const h   = Math.floor(totalMin / 60) % 24;
+    const d   = Math.floor(totalMin / 1440);
+    const sign = ms < 0 ? '-' : '';
+    if (d > 0)  return `${sign}${d}d ${h}h`;
+    if (h > 0)  return `${sign}${h}h ${m}m`;
+    return `${sign}${m}m`;
+  }
+
   // ── Column sort ─────────────────────────────────────────────────────────
 
   /**

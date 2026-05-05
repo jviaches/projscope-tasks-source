@@ -583,15 +583,33 @@ input:checked + .toggle-slider {
     margin-bottom: 6px;
   }
 
-  /* deadline urgency bottom borders */
-  &.dl-safe    { border-bottom: 2px solid #22c55e; }
-  &.dl-warning { border-bottom: 2px solid #f59e0b; }
-  &.dl-urgent  { border-bottom: 2px solid #f97316; }
-  &.dl-overdue { border-bottom: 2px solid #ef4444; }
+  /* deadline progress bar — grows left→right, sits at bottom of card */
+  &__deadline-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    border-radius: 0 0 0 var(--radius-lg);
+    transition: width 0.6s ease;
+    &.dl-safe    { background: #22c55e; }
+    &.dl-warning { background: #f59e0b; }
+    &.dl-urgent  { background: #f97316; }
+    &.dl-overdue { background: #ef4444; }
+  }
 
   &.dl-warning &__due,
   &.dl-urgent  &__due { color: #c97040; }
   &.dl-overdue &__due { color: #e5534b; font-weight: 600; }
+
+  &__due-countdown {
+    margin-left: auto;
+    font-size: 10px; font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-quaternary);
+    white-space: nowrap;
+  }
+  &.dl-warning &__due-countdown,
+  &.dl-urgent  &__due-countdown { color: #c97040; }
+  &.dl-overdue &__due-countdown { color: #e5534b; }
 
   &__footer {
     display: flex; align-items: center;
