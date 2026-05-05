@@ -57,10 +57,10 @@
         </button>
         <mat-menu #addProjectMenu="matMenu">
           <button mat-menu-item (click)="createNewProject()">
-            <i class="far fa-file" style="margin-right:8px;"></i> New project
+            <i class="far fa-file" style="margin-right:8px;"></i> {{ 'project.newProject' | translate }}
           </button>
           <button mat-menu-item (click)="openAnotherProject()">
-            <i class="far fa-folder-open" style="margin-right:8px;"></i> Open project…
+            <i class="far fa-folder-open" style="margin-right:8px;"></i> {{ 'project.openProject' | translate }}
           </button>
         </mat-menu>
       </div>
@@ -74,7 +74,7 @@
         <input matInput aria-label="search" #autoCompleteInput
                [matAutocomplete]="auto"
                [formControl]="searchTasksCtrl"
-               placeholder="Search tasks…" />
+               [placeholder]="'project.searchPlaceholder' | translate" />
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let ts of filteredTasks | async" [value]="ts.taskName"
                       (click)="viewTaskById(ts.taskId, ts.sectionId)">
@@ -87,8 +87,9 @@
     </div>
 
     <div class="topbar__right">
+      <app-language-selector></app-language-selector>
       <button class="primary-btn" (click)="createTask()">
-        <i class="fas fa-plus"></i> Add Task
+        <i class="fas fa-plus"></i> {{ 'project.addTask' | translate }}
       </button>
       <div class="theme-toggle-wrap">
         <i class="fas fa-sun"></i>
@@ -107,32 +108,32 @@
       <div class="stat-card__icon stat-card__icon--purple"><i class="fas fa-layer-group"></i></div>
       <div class="stat-card__info">
         <div class="stat-card__value">{{ totalTaskCount }}</div>
-        <div class="stat-card__label">Total Tasks</div>
+        <div class="stat-card__label">{{ 'project.totalTasks' | translate }}</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--blue"><i class="fas fa-spinner"></i></div>
       <div class="stat-card__info">
         <div class="stat-card__value">{{ inProgressTaskCount }}</div>
-        <div class="stat-card__label">In Progress</div>
+        <div class="stat-card__label">{{ 'project.inProgress' | translate }}</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--green"><i class="fas fa-check-circle"></i></div>
       <div class="stat-card__info">
         <div class="stat-card__value">{{ doneTaskCount }}</div>
-        <div class="stat-card__label">Done</div>
+        <div class="stat-card__label">{{ 'project.done' | translate }}</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--orange"><i class="fas fa-exclamation-triangle"></i></div>
       <div class="stat-card__info">
         <div class="stat-card__value">{{ highPriorityTaskCount }}</div>
-        <div class="stat-card__label">High Priority</div>
+        <div class="stat-card__label">{{ 'project.highPriority' | translate }}</div>
       </div>
     </div>
     <div class="stat-card stat-card--progress">
-      <div class="stat-card__label">Progress</div>
+      <div class="stat-card__label">{{ 'project.progress' | translate }}</div>
       <div class="progress-bar-wrap">
         <div class="progress-bar-track">
           <div class="progress-bar-fill" [style.width.%]="projectCopletionPercentage"></div>
@@ -145,7 +146,7 @@
   <!-- ══ DATE FILTER BAR ══════════════════════════════════════════════════ -->
   <div class="date-filter-bar" [class.date-filter-bar--active]="isDateFilterActive">
     <i class="fas fa-calendar-alt date-filter-bar__icon"></i>
-    <span class="date-filter-bar__label">Date range</span>
+    <span class="date-filter-bar__label">{{ 'project.dateRange' | translate }}</span>
 
     <div class="date-filter-bar__inputs">
       <input type="date" class="date-filter-input"
@@ -161,11 +162,11 @@
 
     <span class="date-filter-bar__count" *ngIf="isDateFilterActive">
       <i class="fas fa-filter"></i>
-      {{ filteredTaskCount }} task{{ filteredTaskCount !== 1 ? 's' : '' }} matched
+      {{ filteredTaskCount }} {{ filteredTaskCount === 1 ? ('project.taskMatch' | translate) : ('project.tasksMatch' | translate) }}
     </span>
 
     <button class="ghost-btn date-filter-bar__clear" *ngIf="isDateFilterActive" (click)="clearDateFilter()">
-      <i class="fas fa-times"></i> Clear
+      <i class="fas fa-times"></i> {{ 'project.clear' | translate }}
     </button>
   </div>
 
@@ -211,16 +212,16 @@
             </button>
             <mat-menu #sectionMenu="matMenu">
               <button mat-menu-item (click)="setSectionEditMode(section.orderIndex)">
-                <i class="far fa-edit" style="margin-right:6px;"></i> Rename
+                <i class="far fa-edit" style="margin-right:6px;"></i> {{ 'project.rename' | translate }}
               </button>
               <button mat-menu-item (click)="deleteSection(section.orderIndex)">
-                <i class="far fa-trash-alt" style="margin-right:6px;"></i> Delete
+                <i class="far fa-trash-alt" style="margin-right:6px;"></i> {{ 'project.delete' | translate }}
               </button>
               <mat-divider></mat-divider>
               <button mat-menu-item (click)="setSectionSort(section.orderIndex, 'name')">
                 <i class="fas fa-sort-alpha-down" style="margin-right:6px;"
                    [style.color]="getSectionSort(section.orderIndex)?.field === 'name' ? 'var(--accent)' : 'inherit'"></i>
-                Sort by name
+                {{ 'project.sortByName' | translate }}
                 <span class="sort-dir-hint" *ngIf="getSectionSort(section.orderIndex)?.field === 'name'">
                   ({{ getSectionSort(section.orderIndex)?.dir === 'asc' ? 'A → Z' : 'Z → A' }})
                 </span>
@@ -228,15 +229,15 @@
               <button mat-menu-item (click)="setSectionSort(section.orderIndex, 'date')">
                 <i class="far fa-calendar" style="margin-right:6px;"
                    [style.color]="getSectionSort(section.orderIndex)?.field === 'date' ? 'var(--accent)' : 'inherit'"></i>
-                Sort by date
+                {{ 'project.sortByDate' | translate }}
                 <span class="sort-dir-hint" *ngIf="getSectionSort(section.orderIndex)?.field === 'date'">
-                  ({{ getSectionSort(section.orderIndex)?.dir === 'asc' ? 'oldest first' : 'newest first' }})
+                  ({{ getSectionSort(section.orderIndex)?.dir === 'asc' ? ('project.oldestFirst' | translate) : ('project.newestFirst' | translate) }})
                 </span>
               </button>
               <button mat-menu-item
                       *ngIf="getSectionSort(section.orderIndex)"
                       (click)="clearSectionSort(section.orderIndex)">
-                <i class="fas fa-times" style="margin-right:6px;"></i> Clear sort
+                <i class="fas fa-times" style="margin-right:6px;"></i> {{ 'project.clearSort' | translate }}
               </button>
             </mat-menu>
           </div>
@@ -278,10 +279,10 @@
                 </button>
                 <mat-menu #taskMenu="matMenu">
                   <button mat-menu-item (click)="viewTask(task, section.orderIndex)">
-                    <i class="far fa-clipboard"></i> Details
+                    <i class="far fa-clipboard"></i> {{ 'project.details' | translate }}
                   </button>
                   <button mat-menu-item (click)="deleteTask(task.id, section.orderIndex)">
-                    <i class="far fa-trash-alt"></i> Delete
+                    <i class="far fa-trash-alt"></i> {{ 'project.delete' | translate }}
                   </button>
                 </mat-menu>
               </div>
@@ -308,16 +309,16 @@
                       [class.p-normal]="task.priority === 1"
                       [class.p-minor]="task.priority === 0">
                   <i class="fas fa-circle" style="font-size:4px;"></i>
-                  <span *ngIf="task.priority === 3">Critical</span>
-                  <span *ngIf="task.priority === 2">High</span>
-                  <span *ngIf="task.priority === 1">Normal</span>
-                  <span *ngIf="task.priority === 0">Minor</span>
+                  <span *ngIf="task.priority === 3">{{ 'project.critical' | translate }}</span>
+                  <span *ngIf="task.priority === 2">{{ 'project.high' | translate }}</span>
+                  <span *ngIf="task.priority === 1">{{ 'project.normal' | translate }}</span>
+                  <span *ngIf="task.priority === 0">{{ 'project.minor' | translate }}</span>
                 </span>
               </div>
             </div>
 
             <div class="task-card task-card--add" (click)="createTask(i)">
-              <i class="fas fa-plus" style="font-size:10px;"></i> Add task
+              <i class="fas fa-plus" style="font-size:10px;"></i> {{ 'project.addTaskInline' | translate }}
             </div>
           </div>
         </div>
@@ -329,7 +330,7 @@
     <aside class="sidebar">
 
       <div class="sidebar-section">
-        <div class="sidebar-section__title">Progress</div>
+        <div class="sidebar-section__title">{{ 'project.progress' | translate }}</div>
         <div class="donut-wrap">
           <svg class="donut" width="68" height="68" viewBox="0 0 70 70">
             <circle cx="35" cy="35" r="28" fill="none"
@@ -344,7 +345,7 @@
           </svg>
           <div class="donut-info">
             <span class="donut-pct">{{ projectCopletionPercentage }}%</span>
-            <span class="donut-sub">{{ doneTaskCount }} of {{ totalTaskCount }} done</span>
+            <span class="donut-sub">{{ 'project.doneOf' | translate: { done: doneTaskCount, total: totalTaskCount } }}</span>
           </div>
         </div>
         <div class="col-progress-list">
@@ -364,7 +365,7 @@
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-section__title">Tags</div>
+        <div class="sidebar-section__title">{{ 'project.tags' | translate }}</div>
         <div class="tags-list">
           <span class="tag-badge" *ngFor="let tag of project.tags"
                 [style.background-color]="tag.color">
@@ -379,7 +380,7 @@
           </span>
         </div>
         <div class="tag-add-row">
-          <input class="tag-add-input" placeholder="New tag…"
+          <input class="tag-add-input" [placeholder]="'project.newTag' | translate"
                  [(ngModel)]="newTagName" (keyup.enter)="createTag()" />
           <button class="icon-btn" (click)="createTag()" [disabled]="!newTagName.trim()">
             <i class="fas fa-plus"></i>
@@ -388,29 +389,29 @@
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-section__title">Priority</div>
+        <div class="sidebar-section__title">{{ 'project.priority' | translate }}</div>
         <div class="priority-legend">
           <div class="priority-legend-item">
             <div class="priority-dot" style="background:#e5534b;"></div>
-            <span>Critical</span>
+            <span>{{ 'project.critical' | translate }}</span>
           </div>
           <div class="priority-legend-item">
             <div class="priority-dot" style="background:#e8936a;"></div>
-            <span>High</span>
+            <span>{{ 'project.high' | translate }}</span>
           </div>
           <div class="priority-legend-item">
             <div class="priority-dot" style="background:var(--col-border);"></div>
-            <span>Normal</span>
+            <span>{{ 'project.normal' | translate }}</span>
           </div>
           <div class="priority-legend-item">
             <div class="priority-dot" style="background:var(--chip-bg);"></div>
-            <span>Minor</span>
+            <span>{{ 'project.minor' | translate }}</span>
           </div>
         </div>
       </div>
 
       <div class="sidebar-section notes-quill-wrap">
-        <div class="sidebar-section__title">Notes</div>
+        <div class="sidebar-section__title">{{ 'project.notes' | translate }}</div>
         <quill-editor [styles]="editorStyle" [modules]="quillConfiguration"
                       (onContentChanged)="onContentChanged($event)"
                       [(ngModel)]="project.notes"></quill-editor>

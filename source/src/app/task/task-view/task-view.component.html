@@ -2,17 +2,19 @@
   <div style="padding-bottom: 20px">
     <h1>
       <div>
-        <span>Task Details</span>
+        <span>{{ 'task.details' | translate }}</span>
         <span *ngIf="taskId !== 0"> - #{{taskId}}</span>
       </div>
     </h1>
   </div>
 
-  <input [(ngModel)]="caption" class="input" type="text" placeholder="Caption" style="margin-bottom: 5px"/>
+  <input [(ngModel)]="caption" class="input" type="text"
+         [placeholder]="'task.caption' | translate"
+         style="margin-bottom: 5px"/>
 
   <form style="display: flex; justify-content: space-between">
     <mat-form-field appearance="legacy" style="width: 48%">
-      <mat-label>Priority</mat-label>
+      <mat-label>{{ 'task.priority' | translate }}</mat-label>
       <mat-select [(ngModel)]="selectedPriority" name="priority">
         <mat-option *ngFor="let priority of utilsService.priorities" [value]="priority"
                     [ngStyle]="{'border-color': this.utilsService.getColorByPriority(priority.viewValue)}"
@@ -23,7 +25,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="legacy" style="width: 48%">
-      <mat-label>Section</mat-label>
+      <mat-label>{{ 'task.section' | translate }}</mat-label>
       <mat-select [(ngModel)]="selectedSection" name="section">
         <mat-option *ngFor="let section of utilsService.sections" [value]="section">
           {{ section.viewValue }}
@@ -33,15 +35,16 @@
   </form>
 
   <mat-form-field appearance="legacy" class="example-full-width" style="width: 100%; margin-bottom: 4px;">
-    <mat-label>Deadline (optional)</mat-label>
+    <mat-label>{{ 'task.deadline' | translate }}</mat-label>
     <input matInput type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
-    <button matSuffix mat-icon-button *ngIf="dueDate" (click)="dueDate = ''" type="button" aria-label="Clear deadline">
+    <button matSuffix mat-icon-button *ngIf="dueDate" (click)="dueDate = ''" type="button"
+            [attr.aria-label]="'task.clearDeadline' | translate">
       <mat-icon>clear</mat-icon>
     </button>
   </mat-form-field>
 
   <div class="tags-section" *ngIf="availableTags.length > 0">
-    <label class="tags-label">Tags</label>
+    <label class="tags-label">{{ 'task.tags' | translate }}</label>
     <mat-chip-list class="tags-chip-list">
       <mat-chip *ngFor="let tag of availableTags"
                 [class.tag-selected]="isTagSelected(tag)"
@@ -57,8 +60,8 @@
 
   <div style="margin-top: 20px">
     <button mat-raised-button (click)="updateTask()" style="margin-right: 10px" [disabled]="caption === ''">
-      Update
+      {{ 'task.update' | translate }}
     </button>
-    <button mat-raised-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button (click)="cancel()">{{ 'task.cancel' | translate }}</button>
   </div>
 </div>

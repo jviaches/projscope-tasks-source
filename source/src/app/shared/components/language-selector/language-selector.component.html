@@ -1,0 +1,64 @@
+<div class="lang-selector">
+
+  <button class="lang-trigger" (click)="toggle()" [title]="'lang.label' | translate">
+    <span class="lang-name">{{ current.name }}</span>
+    <svg class="lang-chevron" [class.lang-chevron--open]="open"
+         width="10" height="10" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </button>
+
+  <!-- backdrop closes the dropdown on outside-click -->
+  <div class="lang-backdrop" *ngIf="open" (click)="close()"></div>
+
+  <div class="lang-dropdown" *ngIf="open">
+
+    <div class="lang-dropdown__header">{{ 'lang.label' | translate }}</div>
+
+    <button class="lang-option"
+            *ngFor="let lang of langService.languages"
+            [class.lang-option--active]="lang.code === langService.currentLang"
+            (click)="select(lang.code)">
+      <span class="lang-option__flag">{{ lang.flag }}</span>
+      <span class="lang-option__name">{{ lang.name }}</span>
+      <svg *ngIf="lang.code === langService.currentLang"
+           width="12" height="12" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+           class="lang-option__check">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </button>
+
+    <div class="lang-dropdown__divider"></div>
+
+    <button class="lang-option lang-option--action" (click)="loadCustom()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <line x1="9"  y1="15" x2="15" y2="15"/>
+      </svg>
+      {{ 'lang.loadCustom' | translate }}
+    </button>
+
+    <button class="lang-option lang-option--action lang-option--warn"
+            *ngIf="langService.hasCustomOverride"
+            (click)="clearCustom()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6"/><path d="M14 11v6"/>
+      </svg>
+      {{ 'lang.clearCustom' | translate }}
+    </button>
+
+    <div class="lang-custom-badge" *ngIf="langService.hasCustomOverride">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ 'lang.customActive' | translate }}
+    </div>
+
+  </div>
+</div>

@@ -10,7 +10,6 @@ import { NotificationService } from "../notification.service";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Title } from "@angular/platform-browser";
-import { AboutComponent } from "../../../about/about.component";
 import { TaskViewComponent } from "../../../task/task-view/task-view.component";
 import { ThemeService } from "../theme.service";
 
@@ -110,6 +109,9 @@ export class ElectronService {
 
   /** Emits update-check state strings to interested subscribers (e.g. About dialog). */
   updateCheckState$ = new Subject<string>();
+
+  /** Fires once when app settings have been read from disk and applied. */
+  readonly settingsLoaded$ = new Subject<AppSettings>();
 
   // ── Computed / backward-compat properties ────────────────────────────────
 
@@ -281,7 +283,7 @@ export class ElectronService {
 
       this.ipcRenderer.on("about", (event, arg) => {
         this.ngZone.run(() => {
-          this.notificationService.showModalComponent(AboutComponent, "About", "");
+          this.router.navigateByUrl("/about");
         });
       });
 
@@ -530,49 +532,51 @@ export class ElectronService {
       }
 
       this.fs.readFile(filePath, "utf-8", (err, data) => {
-        if (err) {
-          if (!opts.silent) {
-            this.notificationService.showModalMessage(
-              "Load Error",
-              `Failed to read file: ${err.message}`
-            );
+        this.ngZone.run(() => {
+          if (err) {
+            if (!opts.silent) {
+              this.notificationService.showModalMessage(
+                "Load Error",
+                `Failed to read file: ${err.message}`
+              );
+            }
+            resolve(null);
+            return;
           }
-          resolve(null);
-          return;
-        }
-        try {
-          const decryptedContent = this.decrypt(data);
-          const raw = JSON.parse(decryptedContent);
-          if (!this.isValidProject(raw)) {
-            throw new Error("Invalid project structure");
-          }
-          const parsed = this.migrateProject(raw);
+          try {
+            const decryptedContent = this.decrypt(data);
+            const raw = JSON.parse(decryptedContent);
+            if (!this.isValidProject(raw)) {
+              throw new Error("Invalid project structure");
+            }
+            const parsed = this.migrateProject(raw);
 
-          this._loadedProjects.set(filePath, parsed);
-          this._projectDirty.set(filePath, false);
-          this._setLastTaskIdForPath(filePath, parsed);
-          // Wrap in its own guard — a recents failure must never abort a project load.
-          try { this._addToRecent(filePath, parsed); } catch (_) { /* non-critical */ }
+            this._loadedProjects.set(filePath, parsed);
+            this._projectDirty.set(filePath, false);
+            this._setLastTaskIdForPath(filePath, parsed);
+            // Wrap in its own guard — a recents failure must never abort a project load.
+            try { this._addToRecent(filePath, parsed); } catch (_) { /* non-critical */ }
 
-          if (opts.switchTo !== false) {
-            this.switchProject(filePath);
-          }
+            if (opts.switchTo !== false) {
+              this.switchProject(filePath);
+            }
 
-          if (this.appSettings) {
-            this.appSettings.lastProjectPath = filePath;
+            if (this.appSettings) {
+              this.appSettings.lastProjectPath = filePath;
+            }
+            this._syncSettingsOpenPaths();
+            this.refreshOpenProjectsList();
+            resolve(parsed);
+          } catch (error) {
+            if (!opts.silent) {
+              this.notificationService.showModalMessage(
+                "Error",
+                "Incorrect or corrupted projscope file!"
+              );
+            }
+            resolve(null);
           }
-          this._syncSettingsOpenPaths();
-          this.refreshOpenProjectsList();
-          resolve(parsed);
-        } catch (error) {
-          if (!opts.silent) {
-            this.notificationService.showModalMessage(
-              "Error",
-              "Incorrect or corrupted projscope file!"
-            );
-          }
-          resolve(null);
-        }
+        });
       });
     });
   }
@@ -833,6 +837,42 @@ export class ElectronService {
       }
 
       this.themeService.setActiveThemeById(this.appSettings.themeId);
+      this.ngZone.run(() => this.settingsLoaded$.next(this.appSettings));
     });
+  }
+
+  // ── Language helpers (called by LanguageService) ──────────────────────────
+
+  /** Persist a language code change to settings.json. */
+  updateLanguageSetting(code: string): void {
+    if (this.appSettings) {
+      this.appSettings.language = code;
+      this.saveAppSettings();
+    }
+  }
+
+  /** Persist a custom language-override path change to settings.json. */
+  updateCustomLangPath(path: string | null): void {
+    if (this.appSettings) {
+      this.appSettings.customLangPath = path;
+      this.saveAppSettings();
+    }
+  }
+
+  /** Read a UTF-8 file from disk (Promise-based, for use outside of components). */
+  readFileAsync(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.fs.readFile(filePath, 'utf-8', (err: any, data: string) => {
+        if (err) reject(err); else resolve(data);
+      });
+    });
+  }
+
+  /** Open a native file-open dialog synchronously and return the chosen paths. */
+  showOpenDialog(options: any): string[] | undefined {
+    return this.remote?.dialog?.showOpenDialogSync(
+      this.remote.getCurrentWindow(),
+      options
+    );
   }
 }

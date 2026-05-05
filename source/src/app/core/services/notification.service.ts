@@ -55,7 +55,8 @@ export class NotificationService {
   public showModalComponent<T>(
     component: Type<T>,
     textCaption: string,
-    data: unknown
+    data: unknown,
+    extraConfig?: Partial<MatDialogConfig>
   ): Observable<any> {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -67,6 +68,11 @@ export class NotificationService {
     }
 
     dialogConfig.data.caption = textCaption;
+
+    if (extraConfig) {
+      Object.assign(dialogConfig, extraConfig);
+    }
+
     const dialogRef = this.dialog.open(component, dialogConfig);
     return dialogRef.afterClosed();
   }

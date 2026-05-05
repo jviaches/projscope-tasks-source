@@ -16,4 +16,8 @@ export class AppSettings {
     openProjectPaths: string[] = [];
     /** Last 5 opened project files for the welcome screen */
     recentProjects: RecentProject[] = [];
+    /** BCP-47 language code for the UI, e.g. "en", "de", "fr" */
+    language = 'en';
+    /** Absolute path to a user-supplied JSON translation override, or null */
+    customLangPath: string | null = null;
 }

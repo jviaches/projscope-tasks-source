@@ -1,0 +1,130 @@
+.lang-selector {
+  position: relative;
+  display: inline-flex;
+  margin: 0 8px;
+}
+
+// Invisible full-screen layer that catches outside clicks
+.lang-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+// ── Trigger button ─────────────────────────────────────────────────────────
+.lang-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #645f5a);
+  transition: background 120ms, border-color 120ms, color 120ms;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--chip-bg, #f1eee9);
+    color: var(--text-primary, #2d2926);
+  }
+}
+
+.lang-name { font-size: 12px; font-weight: 500; }
+
+.lang-chevron {
+  transition: transform 180ms ease;
+  color: var(--text-tertiary, #908b86);
+  flex-shrink: 0;
+
+  &--open { transform: rotate(180deg); }
+}
+
+// ── Dropdown ───────────────────────────────────────────────────────────────
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px -4px rgba(80,60,40,0.14), 0 2px 6px -2px rgba(80,60,40,0.08);
+  padding: 6px;
+  z-index: 1000;
+  animation: langDropIn 140ms ease;
+}
+
+@keyframes langDropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lang-dropdown__header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #908b86);
+  padding: 4px 8px 6px;
+}
+
+.lang-dropdown__divider {
+  height: 1px;
+  background: var(--col-border, #e8e4de);
+  margin: 4px 0;
+}
+
+// ── Options ────────────────────────────────────────────────────────────────
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--text-primary, #2d2926);
+  text-align: left;
+  transition: background 100ms;
+
+  &:hover { background: var(--surface-2, #f7f5f2); }
+
+  &--active {
+    background: var(--accent-soft, #eeeaff);
+    color: var(--accent, #6550d6);
+    font-weight: 600;
+  }
+
+  &--action {
+    color: var(--text-secondary, #645f5a);
+    font-size: 12px;
+  }
+
+  &--warn { color: #dc2626; }
+  &--warn:hover { background: #fff0f0; }
+}
+
+.lang-option__flag { font-size: 15px; flex-shrink: 0; }
+.lang-option__name { flex: 1; }
+.lang-option__check { margin-left: auto; color: var(--accent, #6550d6); flex-shrink: 0; }
+
+// ── Custom-active badge ────────────────────────────────────────────────────
+.lang-custom-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #16a34a;
+  letter-spacing: 0.01em;
+}

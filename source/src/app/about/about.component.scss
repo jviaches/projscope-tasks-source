@@ -1,20 +1,392 @@
-.update-section {
+// ── Root container ────────────────────────────────────────────────────────────
+.about-root {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--surface-1, #ffffff);
+  color: var(--text-primary, #2d2926);
+  font-family: var(--font-ui, 'Inter', system-ui, sans-serif);
+  overflow: hidden;
 }
 
-.check-btn {
+// ── Top bar ───────────────────────────────────────────────────────────────────
+.about-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--col-border, #e8e4de);
+  background: var(--surface-2, #f7f5f2);
+  flex-shrink: 0;
+}
+
+.about-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #645f5a);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface-1, #ffffff);
+    color: var(--text-primary, #2d2926);
+  }
+}
+
+.about-topbar-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #2d2926);
+}
+
+.about-topbar-version {
+  font-size: 12px;
+  color: var(--text-tertiary, #908b86);
+  font-weight: 500;
+}
+
+// ── Update banner ─────────────────────────────────────────────────────────────
+.about-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  background: #4338ca;
+  color: #ffffff;
+
+  .ab-banner-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ab-banner-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    strong {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    span {
+      font-size: 12px;
+      opacity: 0.82;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .ab-banner-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #ffffff;
+    color: #4338ca;
+    border: none;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover { background: #f0f0ff; }
+  }
+}
+
+// ── Two-column body ───────────────────────────────────────────────────────────
+.about-body {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// ── Left panel ────────────────────────────────────────────────────────────────
+.ab-left {
+  flex: 1 1 52%;
+  padding: 20px 24px 20px 24px;
+  border-right: 1px solid var(--col-border, #e8e4de);
+  overflow-y: auto;
+  min-width: 0;
+}
+
+// ── Right panel ───────────────────────────────────────────────────────────────
+.ab-right {
+  flex: 1 1 48%;
+  padding: 20px 22px 20px 22px;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+// ── Section label ─────────────────────────────────────────────────────────────
+.ab-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary, #908b86);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+
+  &--inline {
+    margin-bottom: 0;
+  }
+}
+
+.ab-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ab-see-all {
+  font-size: 11.5px;
+  color: var(--accent, #6550d6);
+  cursor: pointer;
+  font-weight: 500;
+  &:hover { text-decoration: underline; }
+}
+
+// ── Join-the-project cards ─────────────────────────────────────────────────────
+.ab-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ab-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms;
+  background: var(--surface-1, #ffffff);
+
+  &:hover {
+    background: var(--surface-2, #f7f5f2);
+    border-color: var(--accent, #6550d6);
+
+    .ab-card-link { color: var(--accent, #6550d6); }
+  }
+}
+
+.ab-card-icon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.ab-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ab-card-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary, #2d2926);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ab-card-desc {
+  font-size: 11.5px;
+  color: var(--text-secondary, #645f5a);
+  line-height: 1.5;
+}
+
+.ab-card-link {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-tertiary, #908b86);
+  margin-top: 2px;
+  transition: color 120ms;
+}
+
+// ── Built with ─────────────────────────────────────────────────────────────────
+.ab-builtwith {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.ab-bw-item {
+  padding: 9px 12px;
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 8px;
+  background: var(--surface-2, #f7f5f2);
+}
+
+.ab-bw-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary, #2d2926);
+  margin-bottom: 2px;
+}
+
+.ab-bw-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary, #908b86);
+  text-transform: uppercase;
+}
+
+// ── Contributor avatars ────────────────────────────────────────────────────────
+.ab-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.ab-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+  cursor: default;
+  letter-spacing: 0.02em;
+  box-shadow: 0 0 0 2px var(--surface-1, #fff);
+}
+
+.ab-contrib-text {
+  font-size: 11.5px;
+  color: var(--text-secondary, #645f5a);
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+
+.ab-contrib-link {
+  color: var(--accent, #6550d6);
+  font-weight: 600;
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
+}
+
+// ── License & Build ───────────────────────────────────────────────────────────
+.ab-license {
+  display: flex;
+  flex-direction: column;
+}
+
+.ab-lic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--col-border, #e8e4de);
+  gap: 8px;
+
+  &:last-child { border-bottom: none; }
+}
+
+.ab-lic-key {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary, #645f5a);
   white-space: nowrap;
 }
 
-.update-status {
-  font-size: 0.82rem;
-  font-weight: 500;
+.ab-lic-val {
+  font-size: 11.5px;
+  color: var(--text-primary, #2d2926);
+  text-align: right;
 
-  &--ok    { color: #4caf50; }
-  &--new   { color: var(--accent, #1976d2); }
-  &--error { color: #f44336; }
+  &--good {
+    color: #16a34a;
+    font-weight: 500;
+  }
+}
+
+// Update check states inline
+.ab-check-btn {
+  background: none;
+  border: 1px solid var(--col-border, #e8e4de);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary, #645f5a);
+  cursor: pointer;
+  &:hover { background: var(--surface-2, #f7f5f2); }
+}
+
+.ab-update-checking { font-size: 11.5px; color: var(--text-tertiary, #908b86); }
+.ab-update-ok       { font-size: 11.5px; color: #16a34a; font-weight: 500; }
+.ab-update-new      { font-size: 11.5px; color: var(--accent, #6550d6); font-weight: 500; }
+.ab-update-err      { font-size: 11px;   color: #e05252; }
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.about-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-top: 1px solid var(--col-border, #e8e4de);
+  background: var(--surface-2, #f7f5f2);
+  font-size: 11.5px;
+  color: var(--text-tertiary, #908b86);
+  flex-shrink: 0;
+}
+
+.af-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.af-link {
+  cursor: pointer;
+  color: var(--text-tertiary, #908b86);
+  text-decoration: none;
+  transition: color 120ms;
+
+  &:hover { color: var(--accent, #6550d6); }
+}
+
+.af-right {
+  font-size: 11.5px;
+  color: var(--text-tertiary, #908b86);
 }

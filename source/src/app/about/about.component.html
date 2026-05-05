@@ -1,44 +1,245 @@
-<div class="center">
-  <article>
-    <div style="display: flex; justify-content: space-between">
-      <img src="assets/img/brand-logo-color.png" alt="branding image"/>
-      <span style="font-size: small;">Ver: {{ electronService.appVersion }}</span>
+<div class="about-root">
+
+  <!-- ══ Top bar ══════════════════════════════════════════════════════════════ -->
+  <div class="about-topbar">
+    <button class="about-back-btn" (click)="goBack()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      {{ 'about.back' | translate }}
+    </button>
+    <span class="about-topbar-title">{{ 'about.title' | translate }}</span>
+    <span class="about-topbar-version">v{{ electronService.appVersion }}</span>
+  </div>
+
+  <!-- ══ Update banner ══════════════════════════════════════════════════════ -->
+  <div class="about-banner" *ngIf="checkState === 'available'">
+    <div class="ab-banner-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
     </div>
-    <div style="display: flex; flex-direction: column; justify-content: flex-start;">
-      <br/>
-      <span style="align-self: flex-start;">Website: <span style="font-size: small;">www.projscope.com</span></span>
-      <span style="align-self: flex-start;">Support: <span style="font-size: small;">support@projscope.com</span></span>
+    <div class="ab-banner-text">
+      <strong>v{{ availableVersion }} {{ 'about.updateBannerSubtitle' | translate }}</strong>
+      <span *ngIf="releaseNotes">{{ releaseNotes }}</span>
     </div>
-    <div style="width: 400px; display: flex;">
-      <div>License:</div>
-      <div style="font-size: small; text-align: left;">
-        This program is free software; you can redistribute it.
-        This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    <button class="ab-banner-btn" (click)="installUpdate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      {{ 'about.updateNow' | translate }}
+    </button>
+  </div>
+
+  <!-- ══ Main two-column body ════════════════════════════════════════════════ -->
+  <div class="about-body">
+
+    <!-- ── Left: Join the project ─────────────────────────────────────────── -->
+    <div class="ab-left">
+      <div class="ab-section-label">{{ 'about.joinProject' | translate }}</div>
+
+      <div class="ab-cards">
+
+        <!-- Request a feature -->
+        <div class="ab-card" (click)="open(githubUrl + '/issues/new?template=feature_request.md')">
+          <div class="ab-card-icon" style="background:#f0ecff; color:#6E56CF">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.requestFeature' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.requestFeatureDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.requestFeatureLink' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Report a bug -->
+        <div class="ab-card" (click)="open(githubUrl + '/issues/new?template=bug_report.md')">
+          <div class="ab-card-icon" style="background:#fff0f0; color:#e05252">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 2l1.88 1.88"/>
+              <path d="M14.12 3.88L16 2"/>
+              <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+              <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/>
+              <path d="M12 20v-9"/>
+              <path d="M6.53 9C4.6 8.8 3 7.1 3 5"/>
+              <path d="M6 13H2"/>
+              <path d="M3 21c0-2.1 1.7-3.9 3.8-4"/>
+              <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/>
+              <path d="M22 13h-4"/>
+              <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.reportBug' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.reportBugDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.reportBugLink' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Translate the UI -->
+        <div class="ab-card" (click)="open(githubUrl)">
+          <div class="ab-card-icon" style="background:#e8f4ff; color:#2b7de9">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.translateUI' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.translateUIDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.translateUILink' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Spread the word -->
+        <div class="ab-card" (click)="open(githubUrl)">
+          <div class="ab-card-icon" style="background:#fff8e8; color:#d97706">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.spreadWord' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.spreadWordDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.spreadWordLink' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Send a pull request -->
+        <div class="ab-card" (click)="open(githubUrl + '/contribute')">
+          <div class="ab-card-icon" style="background:#edfdf5; color:#16a34a">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="3"/>
+              <circle cx="6" cy="6" r="3"/>
+              <path d="M13 6h3a2 2 0 0 1 2 2v7"/>
+              <line x1="6" y1="9" x2="6" y2="21"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.sendPR' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.sendPRDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.sendPRLink' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Sponsor the work -->
+        <div class="ab-card" (click)="open('https://buymeacoffee.com/jviaches')">
+          <div class="ab-card-icon" style="background:#fff0f8; color:#db2777">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <div class="ab-card-body">
+            <div class="ab-card-title">{{ 'about.sponsorWork' | translate }}</div>
+            <p class="ab-card-desc">{{ 'about.sponsorWorkDesc' | translate }}</p>
+            <span class="ab-card-link">{{ 'about.sponsorWorkLink' | translate }}</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Update check area -->
-    <div class="update-section">
-      <button mat-stroked-button class="check-btn"
-              [disabled]="checkState === 'checking'"
-              (click)="checkForUpdates()">
-        <span *ngIf="checkState !== 'checking'">Check for updates</span>
-        <span *ngIf="checkState === 'checking'">Checking…</span>
-      </button>
+    <!-- ── Right: Stats ────────────────────────────────────────────────────── -->
+    <div class="ab-right">
 
-      <span class="update-status update-status--ok"    *ngIf="checkState === 'up-to-date'">
-        ✓ You are on the latest version
-      </span>
-      <span class="update-status update-status--new"   *ngIf="checkState === 'available'">
-        ↓ Version {{ availableVersion }} is downloading — restart when prompted
-      </span>
-      <span class="update-status update-status--error" *ngIf="checkState === 'error'">
-        ✕ {{ errorMessage }}
-      </span>
-    </div>
+      <!-- Built with -->
+      <div class="ab-section-label">{{ 'about.builtWith' | translate }}</div>
+      <div class="ab-builtwith">
+        <div class="ab-bw-item">
+          <div class="ab-bw-name">Electron</div>
+          <div class="ab-bw-role">SHELL</div>
+        </div>
+        <div class="ab-bw-item">
+          <div class="ab-bw-name">Angular 13</div>
+          <div class="ab-bw-role">UI</div>
+        </div>
+        <div class="ab-bw-item">
+          <div class="ab-bw-name">JSON</div>
+          <div class="ab-bw-role">LOCAL STORE</div>
+        </div>
+        <div class="ab-bw-item">
+          <div class="ab-bw-name">TypeScript</div>
+          <div class="ab-bw-role">TYPE-SAFE</div>
+        </div>
+      </div>
 
-    <div style="margin-top: 16px;">
-      <button mat-raised-button (click)="cancel()">OK</button>
+      <!-- Contributors -->
+      <div class="ab-section-header">
+        <div class="ab-section-label ab-section-label--inline">{{ contributorCount }} {{ 'about.contributors' | translate }}</div>
+        <a class="ab-see-all" (click)="open(githubUrl + '/graphs/contributors')">{{ 'about.seeAll' | translate }}</a>
+      </div>
+      <div class="ab-avatars" *ngIf="contributors.length > 0">
+        <div class="ab-avatar"
+             *ngFor="let c of contributors"
+             [style.background]="c.color"
+             [title]="c.login">{{ c.initials }}</div>
+      </div>
+      <p class="ab-contrib-text">
+        {{ 'about.maintainedBy' | translate }}
+        <a class="ab-contrib-link" (click)="open(githubUrl)">@jviaches</a>
+        {{ 'about.communityHelp' | translate: { count: contributorCount } }}
+      </p>
+
+      <!-- License & Build -->
+      <div class="ab-section-label">{{ 'about.licenseAndBuild' | translate }}</div>
+      <div class="ab-license">
+        <div class="ab-lic-row">
+          <span class="ab-lic-key">{{ 'about.license' | translate }}</span>
+          <span class="ab-lic-val">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+            {{ 'about.licenseValue' | translate }}
+          </span>
+        </div>
+        <div class="ab-lic-row">
+          <span class="ab-lic-key">{{ 'about.version' | translate }}</span>
+          <span class="ab-lic-val">{{ electronService.appVersion }}</span>
+        </div>
+        <div class="ab-lic-row">
+          <span class="ab-lic-key">{{ 'about.released' | translate }}</span>
+          <span class="ab-lic-val">{{ currentYear }}</span>
+        </div>
+        <div class="ab-lic-row">
+          <span class="ab-lic-key">{{ 'about.telemetry' | translate }}</span>
+          <span class="ab-lic-val ab-lic-val--good">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ 'about.telemetryValue' | translate }}
+          </span>
+        </div>
+        <div class="ab-lic-row">
+          <span class="ab-lic-key">{{ 'about.updates' | translate }}</span>
+          <span class="ab-lic-val">
+            <button class="ab-check-btn"
+                    *ngIf="checkState === 'idle' || checkState === 'error'"
+                    (click)="checkForUpdates()">{{ 'about.checkForUpdates' | translate }}</button>
+            <span class="ab-update-checking" *ngIf="checkState === 'checking'">{{ 'about.checking' | translate }}</span>
+            <span class="ab-update-ok"       *ngIf="checkState === 'up-to-date'">{{ 'about.upToDate' | translate }}</span>
+            <span class="ab-update-new"      *ngIf="checkState === 'available'">{{ 'about.updateReady' | translate: { version: availableVersion } }}</span>
+            <span class="ab-update-err"      *ngIf="checkState === 'error'">{{ errorMessage }}</span>
+          </span>
+        </div>
+      </div>
+
     </div>
-  </article>
+  </div>
+
+  <!-- ══ Footer ══════════════════════════════════════════════════════════════ -->
+  <div class="about-footer">
+    <div class="af-left">
+      <span>{{ 'welcome.license' | translate: { year: currentYear } }}</span>
+      <a class="af-link" (click)="open(githubUrl + '/wiki')">{{ 'welcome.docs' | translate }}</a>
+      <a class="af-link" (click)="open(githubUrl + '/releases')">{{ 'welcome.changelog' | translate }}</a>
+      <a class="af-link">{{ 'welcome.shortcuts' | translate }}</a>
+    </div>
+    <div class="af-right">{{ 'welcome.builtWith' | translate }}</div>
+  </div>
+
 </div>
