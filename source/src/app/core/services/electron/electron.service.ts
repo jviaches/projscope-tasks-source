@@ -5,7 +5,7 @@ import * as fs from "fs";
 
 import { Project, Task } from "../../models/project.model";
 import { ProgramUpdate } from "../../models/update.model";
-import { AppSettings } from "../../models/appsettings.model";
+import { AppSettings, RecentProject } from "../../models/appsettings.model";
 import { NotificationService } from "../notification.service";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -551,6 +551,7 @@ export class ElectronService {
           this._loadedProjects.set(filePath, parsed);
           this._projectDirty.set(filePath, false);
           this._setLastTaskIdForPath(filePath, parsed);
+          this._addToRecent(filePath, parsed);
 
           if (opts.switchTo !== false) {
             this.switchProject(filePath);
@@ -730,6 +731,35 @@ export class ElectronService {
       (k) => !isUnsaved(k)
     );
     this.saveAppSettings();
+  }
+
+  /** Track recently-opened projects for the welcome screen (up to 5 entries). */
+  private _addToRecent(filePath: string, project: Project) {
+    if (!this.appSettings || isUnsaved(filePath)) return;
+    if (!Array.isArray(this.appSettings.recentProjects)) {
+      this.appSettings.recentProjects = [];
+    }
+    const taskCount = project.sections.reduce((acc, s) => acc + s.tasks.length, 0);
+    const entry: RecentProject = {
+      path: filePath,
+      name: project.name,
+      taskCount,
+      openedAt: new Date().toISOString(),
+    };
+    this.appSettings.recentProjects = [
+      entry,
+      ...this.appSettings.recentProjects.filter((r) => r.path !== filePath),
+    ].slice(0, 5);
+    this.saveAppSettings();
+  }
+
+  /** Open a URL in the system's default browser (Electron only). */
+  openExternal(url: string) {
+    if (this.isElectron) {
+      try {
+        window.require('electron').shell.openExternal(url);
+      } catch (_) { /* non-Electron / tests */ }
+    }
   }
 
   private _setLastTaskIdForPath(path: string, project: Project) {

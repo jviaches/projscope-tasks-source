@@ -1,113 +1,276 @@
-.centerall {
-  height: 100vh;
-  padding: 0;
+// ── ProjScope Welcome Screen ─────────────────────────────────────────────────
+// Compatible with Electron 12 / Chromium 89. No oklch(), no :has().
+
+// Light-mode token defaults (overridden by .dark)
+$accent:          #6E56CF;
+$accent-faint:    rgba(110, 86, 207, 0.08);
+$accent-border:   rgba(110, 86, 207, 0.18);
+$accent-shadow:   rgba(110, 86, 207, 0.18);
+
+.welcome-root {
+  --w-bg:           #f5f3ef;
+  --w-card-bg:      #ffffff;
+  --w-text:         #1c1b22;
+  --w-text-muted:   #6b6a84;
+  --w-border:       rgba(110, 86, 207, 0.14);
+  --w-tile-bg:      #faf9f6;
+  --w-tile-hover:   #f3f0fb;
+  --w-icon-bg:      rgba(110, 86, 207, 0.08);
+  --w-recent-hover: #f5f3fb;
+  --w-kbd-bg:       #f0eefb;
+
+  &.dark {
+    --w-bg:           #1c1b22;
+    --w-card-bg:      #27263b;
+    --w-text:         #e8e6f0;
+    --w-text-muted:   #9896b4;
+    --w-border:       rgba(110, 86, 207, 0.22);
+    --w-tile-bg:      #2e2d44;
+    --w-tile-hover:   #38365a;
+    --w-icon-bg:      rgba(110, 86, 207, 0.16);
+    --w-recent-hover: #2e2d44;
+    --w-kbd-bg:       #312f4c;
+  }
+
+  min-height: 100vh;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
   align-items: center;
-  background: var(--bg);
+  justify-content: center;
+  background: var(--w-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 24px;
 }
 
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  color: rgba(152, 152, 152, 0.43); /*IconColor*/
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  font-size: 40px;
-  border-radius: 50%;
+// ── Card ─────────────────────────────────────────────────────────────────────
+.welcome-card {
+  background: var(--w-card-bg);
+  border: 1px solid var(--w-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px $accent-shadow, 0 1px 4px rgba(0,0,0,0.06);
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.welcome-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-logo {
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.welcome-titles {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.welcome-app-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--w-text);
+  letter-spacing: -0.3px;
+}
+
+.welcome-tagline {
+  font-size: 11.5px;
+  color: var(--w-text-muted);
+}
+
+.welcome-version-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: $accent;
+  background: $accent-faint;
+  border: 1px solid $accent-border;
+  border-radius: 20px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+// ── Action tiles ─────────────────────────────────────────────────────────────
+.welcome-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px 14px;
+  background: var(--w-tile-bg);
+  border: 1px solid var(--w-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  color: var(--w-text);
   text-align: center;
-  vertical-align: middle;
+
+  &:hover {
+    background: var(--w-tile-hover);
+    box-shadow: 0 2px 10px $accent-shadow;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &--exit {
+    .tile-icon { color: #c0392b; background: rgba(192, 57, 43, 0.08); }
+  }
+}
+
+.tile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--w-icon-bg);
+  color: $accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--w-text);
+  white-space: nowrap;
+}
+
+.tile-hint {
+  font-size: 10.5px;
+  color: var(--w-text-muted);
+  white-space: nowrap;
+}
+
+// ── Recent files ─────────────────────────────────────────────────────────────
+.welcome-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recent-heading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--w-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-bottom: 2px;
+}
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+  color: var(--w-text);
+  width: 100%;
+
+  &:hover {
+    background: var(--w-recent-hover);
+  }
+}
+
+.recent-item-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--w-text);
+  white-space: nowrap;
   overflow: hidden;
-  font-weight: bold;
-  background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
-  background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
-  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    0 2px 2px rgba(0, 0, 0, 0.19);
-  border-bottom: solid 2px #b5b5b5;
-}
-.btn .fa {
-  line-height: 80px;
-}
-.btn:active {
-  /*onClick*/
-  background-image: -webkit-linear-gradient(#efefef 0%, #d6d6d6 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 2px 2px rgba(0, 0, 0, 0.19);
-  border-bottom: none;
+  text-overflow: ellipsis;
 }
 
-// ul {
-//   list-style-type: none;
-// }
-a {
-   text-decoration: none;
-   outline: none;
+.recent-path {
+  font-size: 11px;
+  color: var(--w-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-// /*main menu*/
-// .main-menu {
-//   float: left;
-//   position: absolute;
-//   min-height: 100%;
-//   width: 590px;
-// }
+.recent-item-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
 
-// .main-menu.open .main-menu-form:after {
-//   content: '';
-//   position: absolute;
-//   top: 0;
-//   right: 0;
-//   width: 1px;
-//   height: 100%;
-//   background-color: #ebf0f7;
-//   box-shadow: 0px 0px 6px 1px rgba(93, 173, 226, 0.7);
-// }
-// .main-menu-form {
-//   position: absolute;
-//   top: 20%;
-//   left: 0;
-//   width: 300px;
-//   height: 20%;
-//   background: #283747;
-// }
+.recent-tasks {
+  font-size: 11px;
+  font-weight: 600;
+  color: $accent;
+}
 
-/*main menu content*/
-// .main-menu-content {
-//   position: relative;
-//   padding: 35px 55px 35px 25px;
-//   font: normal 16px/1.25 'Open Sans';
-// }
-// .main-menu.open .main-menu-content {
-//   z-index: 1002;
-// }
-// .main-menu-logo h2 {
-//   font-size: 28px;
-//   opacity: 0;
-// }
+.recent-date {
+  font-size: 10.5px;
+  color: var(--w-text-muted);
+}
 
-// .main-menu-nav {
-//   margin-top: 40%;
-// }
+// ── Support strip ─────────────────────────────────────────────────────────────
+.welcome-support {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--w-border);
+}
 
-// .main-menu-nav a {
-//   display: inline-block;
-//   padding: 10px 15px;
-//   font-size: 20px;
-//   color: #5DADE2;
-// }
+.support-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--w-border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--w-text-muted);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
 
-// .main-menu.open .main-menu-nav a:hover {
-//   color: #3498DB;
-// }
-
-// .main-content {
-//   padding: 35px 55px 35px 350px;
-//   padding-top: 10%;
-// }
-
-// .main-content .posts li {
-//   margin: 10px 0;
-// }
+  &:hover {
+    color: $accent;
+    border-color: $accent;
+    background: $accent-faint;
+  }
+}
