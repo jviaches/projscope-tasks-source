@@ -454,16 +454,18 @@ export class ElectronService {
     } else {
       const encryptedContent = this.encrypt(content);
       this.fs.writeFile(this.filePath, encryptedContent, (err) => {
-        if (err) {
-          this.notificationService.showModalMessage(
-            "Save Error",
-            `Failed to save project: ${err.message}`
-          );
-          return;
-        }
-        this.dataChangeDetected = false;
-        this.setPageTitle(false);
-        this.refreshOpenProjectsList();
+        this.ngZone.run(() => {
+          if (err) {
+            this.notificationService.showModalMessage(
+              "Save Error",
+              `Failed to save project: ${err.message}`
+            );
+            return;
+          }
+          this.dataChangeDetected = false;
+          this.setPageTitle(false);
+          this.refreshOpenProjectsList();
+        });
       });
     }
   }
@@ -482,36 +484,40 @@ export class ElectronService {
     if (!filepath.endsWith(".prj")) filepath += ".prj";
 
     this.fs.writeFile(filepath, encryptedContent, (err) => {
-      if (err) {
-        this.notificationService.showModalMessage(
-          "Save Error",
-          `Failed to save project: ${err.message}`
-        );
-        return;
-      }
+      this.ngZone.run(() => {
+        if (err) {
+          this.notificationService.showModalMessage(
+            "Save Error",
+            `Failed to save project: ${err.message}`
+          );
+          return;
+        }
 
-      // Re-key the map entry if the path changed (e.g. __new__N → real path).
-      const oldPath = this.activeProjectPath;
-      if (oldPath !== filepath) {
-        const proj = this._loadedProjects.get(oldPath);
-        const lastId = this._lastTaskIdMap.get(oldPath) ?? 0;
-        this._loadedProjects.delete(oldPath);
-        this._loadedProjects.set(filepath, proj);
-        this._lastTaskIdMap.delete(oldPath);
-        this._lastTaskIdMap.set(filepath, lastId);
-        this._projectDirty.delete(oldPath);
-        this.activeProjectPath = filepath;
-      }
+        // Re-key the map entry if the path changed (e.g. __new__N → real path).
+        const oldPath = this.activeProjectPath;
+        if (oldPath !== filepath) {
+          const proj = this._loadedProjects.get(oldPath);
+          const lastId = this._lastTaskIdMap.get(oldPath) ?? 0;
+          this._loadedProjects.delete(oldPath);
+          this._loadedProjects.set(filepath, proj);
+          this._lastTaskIdMap.delete(oldPath);
+          this._lastTaskIdMap.set(filepath, lastId);
+          this._projectDirty.delete(oldPath);
+          this.activeProjectPath = filepath;
+        }
 
-      this._projectDirty.set(filepath, false);
-      this.ipcRenderer.send("close-project-enable", true);
-      this.setPageTitle(false);
-      if (this.appSettings) {
-        this.appSettings.lastProjectPath = filepath;
-        this._syncSettingsOpenPaths();
-      }
-      this.refreshOpenProjectsList();
-      this.notificationService.showActionConfirmationSuccess("Project has been saved.");
+        this._projectDirty.set(filepath, false);
+        this.ipcRenderer.send("close-project-enable", true);
+        this.setPageTitle(false);
+        // Update recents with the final path + current project name.
+        try { this._addToRecent(filepath, this._loadedProjects.get(filepath)); } catch (_) {}
+        if (this.appSettings) {
+          this.appSettings.lastProjectPath = filepath;
+          this._syncSettingsOpenPaths();
+        }
+        this.refreshOpenProjectsList();
+        this.notificationService.showActionConfirmationSuccess("Project has been saved.");
+      });
     });
   }
 
@@ -532,6 +538,8 @@ export class ElectronService {
       }
 
       this.fs.readFile(filePath, "utf-8", (err, data) => {
+        // fs callbacks fire outside Angular's NgZone — run everything inside it
+        // so that MatDialog buttons (and all other UI) respond correctly.
         this.ngZone.run(() => {
           if (err) {
             if (!opts.silent) {
