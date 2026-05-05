@@ -15,7 +15,6 @@ Available for **Windows**, **macOS**, and **Linux** — no account, no cloud, no
 
 ![Dashboard Bright](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-bright.png)
 
-
 ![Dashboard Dark](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-dark.png)
 
 ProjScope Tasks is designed for solopreneurs, indie developers, and small teams who want a clean, fast, local-first task board with zero cloud dependency. Every project lives in a single encrypted `.prj` file on your machine — no accounts, no subscriptions, no data leaving your computer.
@@ -34,6 +33,7 @@ The app is built with **Angular 13** + **Electron 12** and ships as a self-conta
 | **Sections** | Create and delete columns to match your workflow |
 | **Tasks** | Rich task detail view with title, body (rich text via Quill), priority, and tags |
 | **Task priority** | Four levels — Critical, High, Normal, Minor — colour-coded with a left-edge stripe on each card |
+| **Due dates** | Optional deadline (date + time) on any task; cards show a clock icon and a colour-coded bottom border that shifts green → amber → orange → red as the deadline approaches; hidden on Done-column cards |
 | **Project files** | Projects are saved as `.prj` files (AES-256 encrypted JSON) |
 | **Light / Dark theme** | Toggle between themes; preference is persisted across sessions |
 | **Auto-updater** | App checks for new releases once per day and prompts to install |
@@ -44,18 +44,26 @@ The app is built with **Angular 13** + **Electron 12** and ships as a self-conta
 |---|---|
 | **New / Open / Save / Save As** | Full file lifecycle via the File menu |
 | **Close project** | Closes the current board without exiting |
-| **Unsaved-changes guard** | Confirmation dialog before any destructive action (exit, new, open, close) when there are unsaved changes; no unnecessary dialog when the project is already saved |
+| **Unsaved-changes guard** | Confirmation dialog before any destructive action when there are unsaved changes |
 | **Auto-save** | Changes are written to disk automatically whenever a file path is already known |
-| **Section renaming** | Click the pencil icon or use the section menu to rename a column inline; changes are saved immediately |
+| **Section renaming** | Click the pencil icon or use the section menu to rename a column inline |
 
 ### Tags
 
 | Feature | Description |
 |---|---|
 | **Project-level tags** | Create named tags with auto-assigned colours from a curated palette |
+| **Custom tag colours** | Click the palette icon on any tag badge to open a native colour picker; the new colour is applied instantly to all task cards that use the tag |
 | **Tag assignment** | Assign or remove any number of tags from a task in the task detail view |
 | **Tags on cards** | Assigned tags appear as small colour pills directly on the Kanban card |
 | **Delete tag** | Removing a tag from the project automatically removes it from every task (cascade delete) |
+
+### Filtering & Sorting
+
+| Feature | Description |
+|---|---|
+| **Global date range filter** | A filter bar above the board lets you pick a From / To date; all columns are filtered simultaneously to show only tasks whose creation date (or due date, if set) falls within the range. A live counter shows how many tasks match; one click clears the filter |
+| **Per-column sort** | Sort any column by task name or creation date, ascending or descending, via the column context menu. An active-sort badge shows the current sort; click it to clear |
 
 ### Startup & File Handling
 
@@ -64,6 +72,7 @@ The app is built with **Angular 13** + **Electron 12** and ships as a self-conta
 | **Auto-load last project** | The previously opened project is re-opened automatically on next launch |
 | **CLI file argument** | Launch with `-o <path>` or `--open <path>` (or pass a `.prj` path as a bare argument) to open a specific file on startup |
 | **File association** | `.prj` files can be double-clicked to open the app directly into that project |
+| **Multi-project workspace** | Open multiple projects simultaneously as tabs; switch between them instantly |
 
 ### Dashboard UI
 
@@ -71,30 +80,41 @@ The dashboard was redesigned from the ground up:
 
 | Element | Description |
 |---|---|
-| **Top bar** | Logo, inline project-name edit, global task search with autocomplete, Add Task button, theme toggle |
+| **Top bar** | Logo, project tabs, inline project-name edit, global task search with autocomplete, Add Task button, theme toggle |
 | **Stats strip** | Live counters for Total Tasks, In Progress, Done, and High Priority; overall progress bar |
-| **Kanban columns** | Section colour dot, task count badge, inline rename input, contextual menu (Rename / Delete) |
-| **Task cards** | Priority left-stripe, tag pills, creation date, priority badge; done-column cards are dimmed with strikethrough titles |
+| **Date range filter bar** | Global date filter between the stats strip and the board; highlights with accent colour when active |
+| **Kanban columns** | Section colour dot, task count badge, inline rename input, contextual menu (Rename / Sort / Delete) |
+| **Task cards** | Priority left-stripe, tag pills, creation date, priority badge, optional deadline chip with urgency border; done-column cards are dimmed with strikethrough titles |
 | **Sidebar — Progress** | Animated SVG donut chart showing overall completion % with a per-section breakdown bar chart |
-| **Sidebar — Tags** | Live tag management: create, view, and delete tags from one place |
+| **Sidebar — Tags** | Live tag management: create, change colour, and delete tags from one place |
 | **Sidebar — Priority legend** | Quick-reference colour guide |
 | **Sidebar — Notes** | Rich-text project notes (Quill editor) |
 
-### Code Quality Improvements
+---
 
-- `ChangeDetectionStrategy.OnPush` on the main board component for better performance
-- `takeUntil(destroy$)` pattern on all subscriptions — no memory leaks
-- `debounceTime(300)` on the search input
-- Replaced all `==`/`!=` with `===`/`!==`
-- Removed all `console.log` calls and dead commented-out code
-- Replaced all `alert()` calls with the app's own modal notification service
-- Schema versioning system for `.prj` files (see below)
+## Due Date Urgency Colours
+
+When a task has a deadline the card bottom border shifts colour automatically:
+
+| Colour | Meaning |
+|---|---|
+| 🟢 Green | More than 3 days remaining |
+| 🟡 Amber | 1 – 3 days remaining |
+| 🟠 Orange | Less than 1 day remaining |
+| 🔴 Red | Overdue |
+
+The border is hidden on Done-column cards regardless of the deadline.
 
 ---
 
 ## Project File Schema Versioning
 
 `.prj` files carry a `schemaVersion` field. When a file saved by an older version is opened, a migration chain runs automatically to fill in any fields that didn't exist yet — existing data is never lost.
+
+| Version | What was added |
+|---|---|
+| 0 → 1 | `notes`, `tags`, normalised task fields |
+| 1 → 2 | `dueDate` (null by default on all existing tasks) |
 
 To add a new field in a future release:
 1. Bump `CURRENT_SCHEMA_VERSION` in `electron.service.ts`
@@ -108,7 +128,7 @@ Files without a `schemaVersion` field are treated as v0 and migrated forward.
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 14+
+- [Node.js](https://nodejs.org/) 16 (recommended; the stack targets Electron 12 / Angular 13)
 - npm 6+
 
 ### Install dependencies
@@ -127,7 +147,7 @@ npm start
 ### Build for production
 
 ```bash
-npm run build
+npm run build:prod
 ```
 
 ### Package as installer
@@ -145,10 +165,23 @@ The packaged output appears in `source/release/`.
 | Command | Description |
 |---|---|
 | `npm start` | Start in development mode with Electron + hot reload |
-| `npm run build` | Build Angular app to `/dist` |
+| `npm run build` | Build Angular app + compile main.ts |
 | `npm run build:prod` | Production build with AOT |
 | `npm run electron:local` | Build and launch in Electron |
 | `npm run electron:build` | Build and package as a distributable |
+
+---
+
+## Releases
+
+Releases are built automatically by GitHub Actions when a version tag (`vX.Y.Z`) is pushed. Each release publishes the following assets:
+
+| File | Platform |
+|---|---|
+| `Projscope Tasks-Setup-X.Y.Z-x64.exe` | Windows 64-bit installer (NSIS) |
+| `Projscope Tasks-Setup-X.Y.Z-ia32.exe` | Windows 32-bit installer (NSIS) |
+| `Projscope Tasks-Portable-X.Y.Z-x64.exe` | Windows 64-bit portable (no install needed) |
+| `Projscope Tasks-X.Y.Z-x64.AppImage` | Linux AppImage |
 
 ---
 
@@ -177,7 +210,7 @@ source/
       core/
         models/                    # Project, Task, Tag, Priority, AppSettings interfaces
         services/
-          electron/electron.service.ts  # All file I/O, IPC, project state
+          electron/electron.service.ts  # All file I/O, IPC, project state, migrations
           notification.service.ts       # Modals and snackbars
           theme.service.ts              # Light/dark theme switching
         themes/theme.ts            # Theme token definitions
