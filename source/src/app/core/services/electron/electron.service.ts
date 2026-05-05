@@ -84,7 +84,7 @@ export class ElectronService {
   fs: typeof fs;
   dialog: typeof dialog;
 
-  appSettings: AppSettings;
+  appSettings: AppSettings = new AppSettings();
 
   // ── Multi-project workspace state ─────────────────────────────────────────
   /** Counter for generating unique keys for new unsaved projects. */
@@ -653,13 +653,15 @@ export class ElectronService {
   }
 
   setPageTitle(change: boolean) {
+    const version = this.appVersion ? ` v${this.appVersion}` : '';
+    const base = `${ElectronService.PAGE_TITLE}${version}`;
     if (this.filePath === "") {
-      this.titleService.setTitle(ElectronService.PAGE_TITLE);
+      this.titleService.setTitle(base);
     } else {
       this.titleService.setTitle(
         change
-          ? `${ElectronService.PAGE_TITLE} - ${this.filePath}*`
-          : `${ElectronService.PAGE_TITLE} - ${this.filePath}`
+          ? `${base} - ${this.filePath}*`
+          : `${base} - ${this.filePath}`
       );
     }
   }
@@ -808,13 +810,25 @@ export class ElectronService {
         this.saveAppSettings();
         return;
       }
-      this.appSettings = JSON.parse(data);
+      try {
+        this.appSettings = JSON.parse(data);
+      } catch {
+        this.appSettings = new AppSettings();
+        this.themeService.setActiveThemeById(1);
+        this.saveAppSettings();
+        return;
+      }
 
       // Migrate: ensure openProjectPaths exists (backward compat with v<2.0.8 settings).
       if (!Array.isArray(this.appSettings.openProjectPaths)) {
         this.appSettings.openProjectPaths = this.appSettings.lastProjectPath
           ? [this.appSettings.lastProjectPath]
           : [];
+      }
+
+      // Migrate: ensure recentProjects exists.
+      if (!Array.isArray(this.appSettings.recentProjects)) {
+        this.appSettings.recentProjects = [];
       }
 
       this.themeService.setActiveThemeById(this.appSettings.themeId);

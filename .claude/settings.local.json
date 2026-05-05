@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git tag *)",
+      "Bash(git push *)",
+      "Bash(gh issue *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:signpath.io)",
+      "WebFetch(domain:signpath.org)",
+      "WebFetch(domain:projscope.com)",
+      "Bash(cp C:/Development/projscope-tasks-source/images/dashboard-bright.png C:/Development/projscope/web-site-new/public/projscope-tasks-bright.png)",
+      "Bash(cp C:/Development/projscope-tasks-source/images/dashboard-dark.png C:/Development/projscope/web-site-new/public/projscope-tasks-dark.png)",
+      "Bash(gh pr create --title 'feat: add app screenshot to Projscope Tasks case study page' --body ' *)",
+      "Bash(git pull *)",
+      "Bash(npm start *)",
+      "Bash(npx kill-port *)",
+      "Bash(taskkill /F /IM electron.exe /T)"
+    ]
+  }
+}
