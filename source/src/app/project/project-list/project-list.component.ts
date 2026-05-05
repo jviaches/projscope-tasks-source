@@ -18,7 +18,8 @@ export class ProjectListComponent implements OnInit {
   }
 
   loadProject() {
-    this.electronService.loadProject().then(() => {
+    this.electronService.loadProject().then((loaded) => {
+      if (!loaded) return;
       this.electronService.ipcRenderer.send("close-project-enable", true);
       this.electronService.redirectTo("/project", false);
     });

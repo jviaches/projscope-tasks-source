@@ -9,10 +9,16 @@ export interface Project {
     tags: Tag[];
 }
 
+export interface SectionSort {
+    field: 'name' | 'date';
+    dir: 'asc' | 'desc';
+}
+
 export interface Section {
     orderIndex: number;
     name: string;
     tasks: Task[];
+    sort?: SectionSort;
 }
 
 export interface Tag {

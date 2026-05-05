@@ -11,7 +11,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { Project, Tag, Task } from "../../core/models/project.model";
+import { Project, Tag, Task, SectionSort } from "../../core/models/project.model";
 import { NotificationService } from "../../core/services/notification.service";
 import { TaskViewComponent } from "../../task/task-view/task-view.component";
 import { ElectronService, ProjectEntry } from "../../core/services/electron/electron.service";
@@ -129,6 +129,11 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((project) => {
         this.project = project;
+        this.sectionSort = new Map(
+          project.sections
+            .filter(s => !!s.sort)
+            .map(s => [s.orderIndex, s.sort as SectionSort])
+        );
         this.recalculateData();
       });
 
@@ -262,20 +267,34 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
             const indexResult = section.tasks.findIndex((t) => t.id === viewedTask.id);
 
             if (indexResult !== -1) {
-              if (section.tasks[indexResult].title !== result.caption) {
-                section.tasks[indexResult].title = result.caption;
+              if (viewedTask.title !== result.caption) {
+                viewedTask.title = result.caption;
                 this.electronService.setDataChange();
                 this.recalculateData();
               }
 
-              if (section.tasks[indexResult].content !== result.text) {
-                section.tasks[indexResult].content = result.text;
+              if (viewedTask.content !== result.text) {
+                viewedTask.content = result.text;
                 this.electronService.setDataChange();
                 this.recalculateData();
               }
 
-              if (section.tasks[indexResult].priority !== result.priority.value) {
-                section.tasks[indexResult].priority = result.priority.value;
+              if (viewedTask.priority !== result.priority.value) {
+                viewedTask.priority = result.priority.value;
+                this.electronService.setDataChange();
+                this.recalculateData();
+              }
+
+              const incomingTagIds = (result.tags as Tag[]).map((t) => t.id).sort().join(',');
+              const currentTagIds = viewedTask.tags.map((t) => t.id).sort().join(',');
+              if (incomingTagIds !== currentTagIds) {
+                viewedTask.tags = result.tags;
+                this.electronService.setDataChange();
+                this.recalculateData();
+              }
+
+              if ((viewedTask.dueDate ?? null) !== (result.dueDate ?? null)) {
+                viewedTask.dueDate = result.dueDate ?? null;
                 this.electronService.setDataChange();
                 this.recalculateData();
               }
@@ -283,20 +302,6 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
               if (section.orderIndex - 1 !== result.section.value) {
                 this.project.sections[index].tasks.splice(indexResult, 1);
                 this.project.sections[result.section.value].tasks.push(viewedTask);
-                this.electronService.setDataChange();
-                this.recalculateData();
-              }
-
-              const incomingTagIds = (result.tags as Tag[]).map((t) => t.id).sort().join(',');
-              const currentTagIds = section.tasks[indexResult]?.tags.map((t) => t.id).sort().join(',') ?? '';
-              if (incomingTagIds !== currentTagIds) {
-                section.tasks[indexResult].tags = result.tags;
-                this.electronService.setDataChange();
-                this.recalculateData();
-              }
-
-              if ((section.tasks[indexResult]?.dueDate ?? null) !== (result.dueDate ?? null)) {
-                section.tasks[indexResult].dueDate = result.dueDate ?? null;
                 this.electronService.setDataChange();
                 this.recalculateData();
               }
@@ -559,12 +564,12 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
       if (current.dir === 'asc') {
         this.sectionSort.set(orderIndex, { field, dir: 'desc' });
       } else {
-        // third state: clear
         this.sectionSort.delete(orderIndex);
       }
     } else {
       this.sectionSort.set(orderIndex, { field, dir: 'asc' });
     }
+    this.persistSectionSort();
     this.recalculateData();
   }
 
@@ -574,7 +579,15 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
 
   clearSectionSort(orderIndex: number) {
     this.sectionSort.delete(orderIndex);
+    this.persistSectionSort();
     this.recalculateData();
+  }
+
+  private persistSectionSort() {
+    this.project.sections.forEach(s => {
+      s.sort = this.sectionSort.get(s.orderIndex) ?? undefined;
+    });
+    this.electronService.setDataChange();
   }
   // ────────────────────────────────────────────────────────────────────────
 

@@ -168,8 +168,9 @@ export class ElectronService {
           }
 
           // Restore all previously open projects from settings.
-          let pathsToLoad: string[] = (this.appSettings?.openProjectPaths ?? [])
-            .filter((p) => this.fs.existsSync(p));
+          const allSavedPaths: string[] = this.appSettings?.openProjectPaths ?? [];
+          const missingPaths = allSavedPaths.filter((p) => !this.fs.existsSync(p));
+          let pathsToLoad = allSavedPaths.filter((p) => this.fs.existsSync(p));
 
           // Backward-compat: if no openProjectPaths, fall back to lastProjectPath.
           if (pathsToLoad.length === 0 && this.appSettings?.lastProjectPath) {
@@ -181,24 +182,46 @@ export class ElectronService {
             }
           }
 
-          if (pathsToLoad.length === 0) return;
+          if (pathsToLoad.length === 0 && missingPaths.length === 0) return;
 
           const preferred = this.appSettings?.lastProjectPath ?? pathsToLoad[0];
           let navigated = false;
+          const failedToLoad: string[] = [];
 
           for (const p of pathsToLoad) {
             const shouldSwitch = p === preferred;
-            const loaded = await this.loadProjectFromPath(p, { switchTo: shouldSwitch });
-            if (loaded && !navigated) {
-              navigated = true;
-              this.ipcRenderer.send("close-project-enable", true);
-              this.redirectTo("/project", false);
+            const loaded = await this.loadProjectFromPath(p, { switchTo: shouldSwitch, silent: true });
+            if (loaded) {
+              if (!navigated) {
+                navigated = true;
+                this.ipcRenderer.send("close-project-enable", true);
+                this.redirectTo("/project", false);
+              }
+            } else {
+              failedToLoad.push(p);
             }
           }
 
-          // Guarantee the preferred project is active after the loop.
+          // Guarantee the preferred project is active; fall back if it failed.
           if (preferred && this._loadedProjects.has(preferred)) {
             this.switchProject(preferred);
+          } else if (this._loadedProjects.size > 0) {
+            this.switchProject(Array.from(this._loadedProjects.keys())[0]);
+          }
+
+          // Clean stale paths from settings and show one summary if anything failed.
+          const allFailed = [...missingPaths, ...failedToLoad];
+          if (allFailed.length > 0) {
+            this._syncSettingsOpenPaths();
+            const basename = (p: string) => p.replace(/\\/g, '/').split('/').pop() ?? p;
+            const lines = [
+              ...missingPaths.map((p) => `• ${basename(p)} — file not found`),
+              ...failedToLoad.map((p) => `• ${basename(p)} — could not be read or is corrupted`),
+            ].join('\n');
+            this.notificationService.showModalMessage(
+              'Some projects could not be loaded',
+              `The following projects were removed from your workspace:\n\n${lines}`
+            );
           }
         });
       });
@@ -496,7 +519,7 @@ export class ElectronService {
    */
   loadProjectFromPath(
     filePath: string,
-    opts: { switchTo?: boolean } = { switchTo: true }
+    opts: { switchTo?: boolean; silent?: boolean } = { switchTo: true }
   ): Promise<Project> {
     return new Promise<Project>((resolve) => {
       // Already in workspace → just switch.
@@ -508,10 +531,12 @@ export class ElectronService {
 
       this.fs.readFile(filePath, "utf-8", (err, data) => {
         if (err) {
-          this.notificationService.showModalMessage(
-            "Load Error",
-            `Failed to read file: ${err.message}`
-          );
+          if (!opts.silent) {
+            this.notificationService.showModalMessage(
+              "Load Error",
+              `Failed to read file: ${err.message}`
+            );
+          }
           resolve(null);
           return;
         }
@@ -538,10 +563,12 @@ export class ElectronService {
           this.refreshOpenProjectsList();
           resolve(parsed);
         } catch (error) {
-          this.notificationService.showModalMessage(
-            "Error",
-            "Incorrect or corrupted projscope file!"
-          );
+          if (!opts.silent) {
+            this.notificationService.showModalMessage(
+              "Error",
+              "Incorrect or corrupted projscope file!"
+            );
+          }
           resolve(null);
         }
       });
