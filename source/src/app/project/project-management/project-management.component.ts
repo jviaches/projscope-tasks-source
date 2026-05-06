@@ -129,6 +129,7 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((project) => {
         this.project = project;
+        if (!project) return;
         this.sectionSort = new Map(
           project.sections
             .filter(s => !!s.sort)

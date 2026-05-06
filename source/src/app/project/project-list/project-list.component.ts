@@ -123,6 +123,11 @@ export class ProjectListComponent implements OnInit {
     this.electronService.openExternal(GITHUB_URL);
   }
 
+  openChangelog() {
+    const tag = `v${this.electronService.appVersion}`;
+    this.electronService.openExternal(`${GITHUB_URL}/releases/tag/${tag}`);
+  }
+
   openCoffee() {
     this.electronService.openExternal("https://buymeacoffee.com/jviaches");
   }

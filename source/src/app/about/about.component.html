@@ -236,8 +236,7 @@
     <div class="af-left">
       <span>{{ 'welcome.license' | translate: { year: currentYear } }}</span>
       <a class="af-link" (click)="open(githubUrl + '/wiki')">{{ 'welcome.docs' | translate }}</a>
-      <a class="af-link" (click)="open(githubUrl + '/releases')">{{ 'welcome.changelog' | translate }}</a>
-      <a class="af-link">{{ 'welcome.shortcuts' | translate }}</a>
+      <a class="af-link" (click)="open(githubUrl + '/releases/tag/v' + electronService.appVersion)">{{ 'welcome.changelog' | translate }}</a>
     </div>
     <div class="af-right">{{ 'welcome.builtWith' | translate }}</div>
   </div>
