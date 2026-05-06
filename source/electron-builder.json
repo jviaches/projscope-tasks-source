@@ -59,7 +59,7 @@
   },
   "linux": {
     "icon": "dist/assets/icons/favicon.512x512.png",
-    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "artifactName": "ProjscopeTasks-${version}-${arch}.${ext}",
     "target": [
       "AppImage"
     ]

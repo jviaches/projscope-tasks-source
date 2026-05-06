@@ -49,10 +49,12 @@ jobs:
             "https://api.github.com/repos/$REPO/releases/tags/$TAG" \
             | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
 
+          # URL-encode the filename (replace spaces with %20)
+          ENCODED_NAME=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$NAME'))")
           echo "Uploading $NAME to release $RELEASE_ID ($TAG)"
 
           curl -sf -X POST \
-            "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=$NAME" \
+            "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=$ENCODED_NAME" \
             -H "Authorization: token $GH_TOKEN" \
             -H "Content-Type: application/octet-stream" \
             --data-binary "@$FILE"
