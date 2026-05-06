@@ -66,6 +66,7 @@
     "deadline": "Frist (optional)",
     "clearDeadline": "Frist löschen",
     "tags": "Tags",
+    "create": "Erstellen",
     "update": "Aktualisieren",
     "cancel": "Abbrechen"
   },

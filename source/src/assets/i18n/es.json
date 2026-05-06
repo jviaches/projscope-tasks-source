@@ -66,6 +66,7 @@
     "deadline": "Fecha límite (opcional)",
     "clearDeadline": "Eliminar fecha límite",
     "tags": "Etiquetas",
+    "create": "Crear",
     "update": "Actualizar",
     "cancel": "Cancelar"
   },

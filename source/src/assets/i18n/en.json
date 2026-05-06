@@ -66,6 +66,7 @@
     "deadline": "Deadline (optional)",
     "clearDeadline": "Clear deadline",
     "tags": "Tags",
+    "create": "Create",
     "update": "Update",
     "cancel": "Cancel"
   },

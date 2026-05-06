@@ -66,6 +66,7 @@
     "deadline": "Échéance (facultatif)",
     "clearDeadline": "Supprimer l'échéance",
     "tags": "Étiquettes",
+    "create": "Créer",
     "update": "Mettre à jour",
     "cancel": "Annuler"
   },

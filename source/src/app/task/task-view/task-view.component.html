@@ -60,7 +60,7 @@
 
   <div style="margin-top: 20px">
     <button mat-raised-button (click)="updateTask()" style="margin-right: 10px" [disabled]="caption === ''">
-      {{ 'task.update' | translate }}
+      {{ (isNewTask ? 'task.create' : 'task.update') | translate }}
     </button>
     <button mat-raised-button (click)="cancel()">{{ 'task.cancel' | translate }}</button>
   </div>

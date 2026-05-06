@@ -66,6 +66,10 @@ export class TaskViewComponent implements OnInit {
     }
   }
 
+  get isNewTask(): boolean {
+    return !this.data.task;
+  }
+
   ngOnInit() {}
 
   onContentChanged = (event: { html: string }) => {
