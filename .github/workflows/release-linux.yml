@@ -31,7 +31,30 @@ jobs:
       - name: Build Angular + compile Electron main process
         run: npm run build:prod
 
-      - name: Package & publish Linux AppImage
+      - name: Build Linux AppImage (no auto-publish)
+        run: npx electron-builder build --linux --publish never
+
+      - name: Upload AppImage to GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx electron-builder build --linux --publish always
+          REPO: ${{ github.repository }}
+        run: |
+          TAG="${{ github.event.release.tag_name || inputs.tag }}"
+          FILE=$(ls release/*.AppImage)
+          NAME=$(basename "$FILE")
+
+          # Get release id for the tag
+          RELEASE_ID=$(curl -sf \
+            -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/releases/tags/$TAG" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+
+          echo "Uploading $NAME to release $RELEASE_ID ($TAG)"
+
+          curl -sf -X POST \
+            "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=$NAME" \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@$FILE"
+
+          echo "Done."
