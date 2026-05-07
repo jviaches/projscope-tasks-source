@@ -33,6 +33,30 @@
   }
 }
 
+/* ── Deadline row ─────────────────────────────────────────────────────── */
+.deadline-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.deadline-field {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+
+.deadline-clear-btn {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
 .tags-section {
   margin-bottom: 12px;
 }

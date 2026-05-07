@@ -56,7 +56,16 @@
     "normal": "Normal",
     "minor": "Gering",
     "newTag": "Neuer Tag…",
-    "sortedBy": "Sortiert nach {{field}} {{dir}} — klicken zum Aufheben"
+    "sortedBy": "Sortiert nach {{field}} {{dir}} — klicken zum Aufheben",
+    "filter": {
+      "from": "Von",
+      "to": "Bis",
+      "today": "Heute",
+      "thisWeek": "Diese Woche",
+      "7days": "7 Tage",
+      "14days": "14 Tage",
+      "month": "30 Tage"
+    }
   },
   "task": {
     "details": "Aufgabendetails",

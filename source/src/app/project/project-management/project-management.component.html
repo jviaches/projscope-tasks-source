@@ -143,29 +143,82 @@
     </div>
   </div>
 
-  <!-- ══ DATE FILTER BAR ══════════════════════════════════════════════════ -->
-  <div class="date-filter-bar" [class.date-filter-bar--active]="isDateFilterActive">
-    <i class="fas fa-calendar-alt date-filter-bar__icon"></i>
-    <span class="date-filter-bar__label">{{ 'project.dateRange' | translate }}</span>
+  <!-- ══ FILTER BAR ════════════════════════════════════════════════════════ -->
+  <div class="date-filter-bar" [class.date-filter-bar--active]="isAnyFilterActive">
 
-    <div class="date-filter-bar__inputs">
-      <input type="date" class="date-filter-input"
-             [(ngModel)]="dateFrom"
-             (change)="onDateFilterChange()"
-             title="From" />
-      <span class="date-filter-bar__sep">→</span>
-      <input type="date" class="date-filter-input"
-             [(ngModel)]="dateTo"
-             (change)="onDateFilterChange()"
-             title="To" />
+    <!-- Date range + quick presets -->
+    <div class="filter-group">
+      <i class="fas fa-calendar-alt filter-group__icon"></i>
+      <div class="date-filter-bar__inputs">
+        <input type="date" class="date-filter-input"
+               [(ngModel)]="dateFrom"
+               (change)="onDateFilterChange()"
+               [title]="'project.filter.from' | translate" />
+        <span class="date-filter-bar__sep">→</span>
+        <input type="date" class="date-filter-input"
+               [(ngModel)]="dateTo"
+               (change)="onDateFilterChange()"
+               [title]="'project.filter.to' | translate" />
+      </div>
+      <div class="preset-chips">
+        <button class="preset-chip" [class.preset-chip--active]="activePreset === 'today'"
+                (click)="applyPreset('today')">{{ 'project.filter.today' | translate }}</button>
+        <button class="preset-chip" [class.preset-chip--active]="activePreset === 'week'"
+                (click)="applyPreset('week')">{{ 'project.filter.thisWeek' | translate }}</button>
+        <button class="preset-chip" [class.preset-chip--active]="activePreset === '7d'"
+                (click)="applyPreset('7d')">{{ 'project.filter.7days' | translate }}</button>
+        <button class="preset-chip" [class.preset-chip--active]="activePreset === '14d'"
+                (click)="applyPreset('14d')">{{ 'project.filter.14days' | translate }}</button>
+        <button class="preset-chip" [class.preset-chip--active]="activePreset === 'month'"
+                (click)="applyPreset('month')">{{ 'project.filter.month' | translate }}</button>
+      </div>
     </div>
 
-    <span class="date-filter-bar__count" *ngIf="isDateFilterActive">
+    <span class="filter-divider"></span>
+
+    <!-- Priority filter -->
+    <div class="filter-group">
+      <i class="fas fa-flag filter-group__icon"></i>
+      <div class="priority-chips">
+        <button class="priority-chip priority-chip--critical"
+                [class.priority-chip--active]="priorityFilter === 3"
+                (click)="setPriorityFilter(3)">{{ 'project.critical' | translate }}</button>
+        <button class="priority-chip priority-chip--high"
+                [class.priority-chip--active]="priorityFilter === 2"
+                (click)="setPriorityFilter(2)">{{ 'project.high' | translate }}</button>
+        <button class="priority-chip priority-chip--normal"
+                [class.priority-chip--active]="priorityFilter === 1"
+                (click)="setPriorityFilter(1)">{{ 'project.normal' | translate }}</button>
+        <button class="priority-chip priority-chip--minor"
+                [class.priority-chip--active]="priorityFilter === 0"
+                (click)="setPriorityFilter(0)">{{ 'project.minor' | translate }}</button>
+      </div>
+    </div>
+
+    <!-- Tag filter (only if project has tags) -->
+    <ng-container *ngIf="project?.tags?.length > 0">
+      <span class="filter-divider"></span>
+      <div class="filter-group">
+        <i class="fas fa-tag filter-group__icon"></i>
+        <div class="tag-filter-chips">
+          <button class="tag-filter-chip"
+                  *ngFor="let tag of project.tags"
+                  [class.tag-filter-chip--active]="tagFilter === tag.id"
+                  [style.--chip-color]="tag.color"
+                  (click)="setTagFilter(tag.id)">
+            {{ tag.name }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Result count + clear all -->
+    <span class="date-filter-bar__count" *ngIf="isAnyFilterActive">
       <i class="fas fa-filter"></i>
-      {{ filteredTaskCount }} {{ filteredTaskCount === 1 ? ('project.taskMatch' | translate) : ('project.tasksMatch' | translate) }}
+      {{ filteredTaskCount }}&nbsp;{{ filteredTaskCount === 1 ? ('project.taskMatch' | translate) : ('project.tasksMatch' | translate) }}
     </span>
 
-    <button class="ghost-btn date-filter-bar__clear" *ngIf="isDateFilterActive" (click)="clearDateFilter()">
+    <button class="ghost-btn date-filter-bar__clear" *ngIf="isAnyFilterActive" (click)="clearAllFilters()">
       <i class="fas fa-times"></i> {{ 'project.clear' | translate }}
     </button>
   </div>

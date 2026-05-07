@@ -34,14 +34,17 @@
     </mat-form-field>
   </form>
 
-  <mat-form-field appearance="legacy" class="example-full-width" style="width: 100%; margin-bottom: 4px;">
-    <mat-label>{{ 'task.deadline' | translate }}</mat-label>
-    <input matInput type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
-    <button matSuffix mat-icon-button *ngIf="dueDate" (click)="dueDate = ''" type="button"
-            [attr.aria-label]="'task.clearDeadline' | translate">
+  <div class="deadline-row">
+    <mat-form-field appearance="legacy" class="example-full-width deadline-field">
+      <mat-label>{{ 'task.deadline' | translate }}</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="dueDate" name="dueDate" />
+    </mat-form-field>
+    <button *ngIf="dueDate" mat-icon-button type="button" class="deadline-clear-btn"
+            [title]="'task.clearDeadline' | translate"
+            (click)="dueDate = ''">
       <mat-icon>clear</mat-icon>
     </button>
-  </mat-form-field>
+  </div>
 
   <div class="tags-section" *ngIf="availableTags.length > 0">
     <label class="tags-label">{{ 'task.tags' | translate }}</label>

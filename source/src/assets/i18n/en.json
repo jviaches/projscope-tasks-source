@@ -56,7 +56,16 @@
     "normal": "Normal",
     "minor": "Minor",
     "newTag": "New tag…",
-    "sortedBy": "Sorted by {{field}} {{dir}} — click to clear"
+    "sortedBy": "Sorted by {{field}} {{dir}} — click to clear",
+    "filter": {
+      "from": "From",
+      "to": "To",
+      "today": "Today",
+      "thisWeek": "This week",
+      "7days": "7 days",
+      "14days": "14 days",
+      "month": "30 days"
+    }
   },
   "task": {
     "details": "Task Details",

@@ -67,22 +67,94 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
   dateFrom: string = '';
   dateTo: string = '';
 
+  /** Active quick-preset key: 'today' | 'week' | '7d' | '14d' | 'month' | '' */
+  activePreset = '';
+
+  /** Priority filter: 0–3 matching Priority enum, or null = no filter. */
+  priorityFilter: number | null = null;
+
+  /** Tag filter: tag.id or null = no filter. */
+  tagFilter: number | null = null;
+
   get isDateFilterActive(): boolean {
     return !!this.dateFrom || !!this.dateTo;
   }
 
-  /** Total tasks visible across all columns after the date filter is applied. */
+  get isAnyFilterActive(): boolean {
+    return !!this.dateFrom || !!this.dateTo || this.priorityFilter !== null || this.tagFilter !== null;
+  }
+
+  /** Total tasks visible across all columns after all filters are applied. */
   get filteredTaskCount(): number {
     return Object.values(this.sectionsTasks).reduce((sum, tasks) => sum + tasks.length, 0);
   }
 
   onDateFilterChange() {
+    // Manual date edit clears preset highlight
+    this.activePreset = '';
+    this.recalculateData();
+  }
+
+  applyPreset(preset: string) {
+    const today = new Date();
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+    if (this.activePreset === preset) {
+      // Toggle off
+      this.activePreset = '';
+      this.dateFrom = '';
+      this.dateTo = '';
+    } else {
+      this.activePreset = preset;
+      this.dateTo = fmt(today);
+      if (preset === 'today') {
+        this.dateFrom = fmt(today);
+      } else if (preset === 'week') {
+        const day = today.getDay(); // 0=Sun, 1=Mon…
+        const diff = day === 0 ? -6 : 1 - day;
+        const monday = new Date(today);
+        monday.setDate(today.getDate() + diff);
+        this.dateFrom = fmt(monday);
+      } else if (preset === '7d') {
+        const d = new Date(today);
+        d.setDate(d.getDate() - 7);
+        this.dateFrom = fmt(d);
+      } else if (preset === '14d') {
+        const d = new Date(today);
+        d.setDate(d.getDate() - 14);
+        this.dateFrom = fmt(d);
+      } else if (preset === 'month') {
+        const d = new Date(today);
+        d.setDate(d.getDate() - 30);
+        this.dateFrom = fmt(d);
+      }
+    }
+    this.recalculateData();
+  }
+
+  setPriorityFilter(priority: number) {
+    this.priorityFilter = this.priorityFilter === priority ? null : priority;
+    this.recalculateData();
+  }
+
+  setTagFilter(tagId: number) {
+    this.tagFilter = this.tagFilter === tagId ? null : tagId;
     this.recalculateData();
   }
 
   clearDateFilter() {
     this.dateFrom = '';
     this.dateTo = '';
+    this.activePreset = '';
+    this.recalculateData();
+  }
+
+  clearAllFilters() {
+    this.dateFrom = '';
+    this.dateTo = '';
+    this.activePreset = '';
+    this.priorityFilter = null;
+    this.tagFilter = null;
     this.recalculateData();
   }
 
@@ -428,6 +500,26 @@ export class ProjectManagementComponent implements OnInit, OnDestroy {
             }
             return false;
           });
+        });
+      }
+
+      // Apply priority filter
+      if (this.priorityFilter !== null) {
+        this.project.sections.forEach((section) => {
+          const key = "cdk-drop-list-" + section.orderIndex;
+          this.sectionsTasks[key] = this.sectionsTasks[key].filter(
+            (task) => task.priority === this.priorityFilter
+          );
+        });
+      }
+
+      // Apply tag filter
+      if (this.tagFilter !== null) {
+        this.project.sections.forEach((section) => {
+          const key = "cdk-drop-list-" + section.orderIndex;
+          this.sectionsTasks[key] = this.sectionsTasks[key].filter(
+            (task) => task.tags?.some((t) => t.id === this.tagFilter)
+          );
         });
       }
     }

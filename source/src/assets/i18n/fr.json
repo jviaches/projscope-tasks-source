@@ -56,7 +56,16 @@
     "normal": "Normale",
     "minor": "Mineure",
     "newTag": "Nouvelle étiquette…",
-    "sortedBy": "Trié par {{field}} {{dir}} — cliquer pour annuler"
+    "sortedBy": "Trié par {{field}} {{dir}} — cliquer pour annuler",
+    "filter": {
+      "from": "Du",
+      "to": "Au",
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine",
+      "7days": "7 jours",
+      "14days": "14 jours",
+      "month": "30 jours"
+    }
   },
   "task": {
     "details": "Détails de la tâche",

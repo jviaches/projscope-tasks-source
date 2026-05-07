@@ -56,7 +56,16 @@
     "normal": "Normal",
     "minor": "Menor",
     "newTag": "Nueva etiqueta…",
-    "sortedBy": "Ordenado por {{field}} {{dir}} — clic para quitar"
+    "sortedBy": "Ordenado por {{field}} {{dir}} — clic para quitar",
+    "filter": {
+      "from": "Desde",
+      "to": "Hasta",
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "7days": "7 días",
+      "14days": "14 días",
+      "month": "30 días"
+    }
   },
   "task": {
     "details": "Detalles de la tarea",

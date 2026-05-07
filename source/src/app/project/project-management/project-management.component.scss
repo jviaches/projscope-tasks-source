@@ -332,12 +332,12 @@ input:checked + .toggle-slider {
   color: var(--accent); white-space: nowrap;
 }
 
-/* ── Date filter bar ───────────────────────────────────────────────────── */
+/* ── Filter bar ────────────────────────────────────────────────────────── */
 .date-filter-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 7px 16px;
   background: var(--surface-1);
   border-bottom: 1px solid var(--col-border);
   flex-shrink: 0;
@@ -348,26 +348,10 @@ input:checked + .toggle-slider {
     border-bottom-color: var(--accent);
   }
 
-  &__icon {
-    font-size: 13px;
-    color: var(--text-tertiary);
-    .date-filter-bar--active & { color: var(--accent); }
-  }
-
-  &__label {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    white-space: nowrap;
-  }
-
   &__inputs {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-left: 4px;
   }
 
   &__sep {
@@ -381,14 +365,132 @@ input:checked + .toggle-slider {
     color: var(--accent);
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-left: 4px;
+    gap: 4px;
+    white-space: nowrap;
   }
 
   &__clear {
     margin-left: auto;
     font-size: 11.5px;
     padding: 3px 10px;
+  }
+}
+
+/* Filter group — a labelled cluster of controls */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &__icon {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    .date-filter-bar--active & { color: var(--accent); }
+  }
+}
+
+/* Thin vertical separator between filter groups */
+.filter-divider {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: var(--col-border);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* Quick date preset chips */
+.preset-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.preset-chip {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border: 1px solid var(--col-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  &--active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+}
+
+/* Priority filter chips */
+.priority-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.priority-chip {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 120ms, box-shadow 120ms;
+  white-space: nowrap;
+  opacity: 0.65;
+
+  &:hover { opacity: 1; }
+
+  &--active {
+    opacity: 1;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  &--critical { background: #f44336; color: #fff; }
+  &--high     { background: #ff9800; color: #fff; }
+  &--normal   { background: #2196f3; color: #fff; }
+  &--minor    { background: var(--text-quaternary, #aaa); color: #fff; }
+}
+
+/* Tag filter chips */
+.tag-filter-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tag-filter-chip {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--chip-color, var(--col-border));
+  background: transparent;
+  color: var(--chip-color, var(--text-secondary));
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--chip-color, var(--accent));
+    color: #fff;
+  }
+
+  &--active {
+    background: var(--chip-color, var(--accent));
+    color: #fff;
   }
 }
 
