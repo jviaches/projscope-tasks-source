@@ -20,17 +20,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Node.js 16
-        uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v5
         with:
-          node-version: '16'
-          cache: npm
-          cache-dependency-path: source/package-lock.json
+          node-version: '22'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
@@ -47,11 +45,9 @@ jobs:
       - name: Upload Windows installers to release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
           files: source/release/Projscope*.exe
 
   # ── Linux → AppImage ─────────────────────────────────────────────────────
-  # Runs after Windows so the release already exists when we upload
   release-linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -62,20 +58,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Node.js 16
-        uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v5
         with:
-          node-version: '16'
-          cache: npm
-          cache-dependency-path: source/package-lock.json
+          node-version: '22'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Install Linux packaging deps
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm fakeroot
+        run: npm install --legacy-peer-deps
 
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
