@@ -13,9 +13,15 @@ Available for **Windows**, **macOS**, and **Linux** — no account, no cloud, no
 
 ## What is ProjScope Tasks?
 
-![Dashboard Bright](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-bright.png)
+<img width="1718" height="1389" alt="image" src="https://github.com/user-attachments/assets/8c283719-59e6-4fc8-a49b-e4aaa4b2ce7f" />
 
-![Dashboard Dark](https://github.com/jviaches/projscope-tasks-source/blob/main/images/dashboard-dark.png)
+<br />
+<br />
+<img width="1393" height="1129" alt="image" src="https://github.com/user-attachments/assets/cace6d06-b372-43f5-a3f2-b14f1cdb3603" />
+<br />
+<br />
+<img width="1717" height="1387" alt="image" src="https://github.com/user-attachments/assets/77774b4b-d35b-4a5c-8229-d56050dca3a5" />
+
 
 ProjScope Tasks is designed for solopreneurs, indie developers, and small teams who want a clean, fast, local-first task board with zero cloud dependency. Every project lives in a single encrypted `.prj` file on your machine — no accounts, no subscriptions, no data leaving your computer.
 
