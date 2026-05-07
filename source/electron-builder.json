@@ -61,7 +61,9 @@
     "icon": "dist/assets/icons/favicon.512x512.png",
     "artifactName": "ProjscopeTasks-${version}-${arch}.${ext}",
     "target": [
-      "AppImage"
+      "AppImage",
+      "deb",
+      "rpm"
     ]
   }
 }

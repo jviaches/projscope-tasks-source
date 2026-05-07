@@ -68,6 +68,9 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Install Linux packaging deps
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm fakeroot dpkg
+
       - name: Build Angular app + compile main.ts
         run: npm run build:prod
 
@@ -77,10 +80,13 @@ jobs:
           test -d dist    || (echo "dist/ missing"   && exit 1)
           echo "Build artifacts OK"
 
-      - name: Package Linux (no auto-publish)
+      - name: Package Linux (AppImage, deb, rpm)
         run: npx electron-builder build --linux --publish never
 
-      - name: Upload Linux AppImage to release
+      - name: Upload Linux packages to release
         uses: softprops/action-gh-release@v2
         with:
-          files: source/release/**/*.AppImage
+          files: |
+            source/release/*.AppImage
+            source/release/*.deb
+            source/release/*.rpm

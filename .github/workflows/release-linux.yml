@@ -6,9 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to upload to (e.g. v2.2.0)'
+        description: 'Release tag to upload to (e.g. v2.2.1)'
         required: true
-        default: 'v2.2.0'
+        default: 'v2.2.1'
+
+permissions:
+  contents: write
 
 jobs:
   build-linux:
@@ -28,35 +31,23 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Install Linux packaging deps
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends rpm fakeroot dpkg
+
       - name: Build Angular + compile Electron main process
         run: npm run build:prod
 
-      - name: Build Linux AppImage (no auto-publish)
+      - name: Build Linux packages (AppImage, deb, rpm)
         run: npx electron-builder build --linux --publish never
 
-      - name: Upload AppImage to GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-        run: |
-          TAG="${{ github.event.release.tag_name || inputs.tag }}"
-          FILE=$(ls release/*.AppImage)
-          NAME=$(basename "$FILE")
+      - name: List built artifacts
+        run: ls -lh release/*.AppImage release/*.deb release/*.rpm 2>/dev/null || true
 
-          # Get release id for the tag
-          RELEASE_ID=$(curl -sf \
-            -H "Authorization: token $GH_TOKEN" \
-            "https://api.github.com/repos/$REPO/releases/tags/$TAG" \
-            | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-
-          # URL-encode the filename (replace spaces with %20)
-          ENCODED_NAME=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$NAME'))")
-          echo "Uploading $NAME to release $RELEASE_ID ($TAG)"
-
-          curl -sf -X POST \
-            "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=$ENCODED_NAME" \
-            -H "Authorization: token $GH_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary "@$FILE"
-
-          echo "Done."
+      - name: Upload Linux packages to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name || inputs.tag }}
+          files: |
+            source/release/*.AppImage
+            source/release/*.deb
+            source/release/*.rpm
